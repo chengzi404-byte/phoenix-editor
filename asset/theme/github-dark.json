@@ -1,0 +1,39 @@
+{
+    "base": {
+        "background": "#10B981",
+        "foreground": "#24638D",
+        "insertbackground": "#24638D",
+        "selectbackground": "#357abd",
+        "selectforeground": "#24638D"
+    },
+    "keyword": "#ff6b6b",
+    "control": "#ff6b6b",
+    "operator": "#ED9E72",
+    "punctuation": "#ed9e72",
+
+    "class": "#10B981",
+    "function": "#10B981",
+    "method": "#10B981",
+    "variable": "#24638D",
+    "parameter": "#24638D",
+    "property": "#24638D",
+
+    "string": "#1da5f2",
+    "number": "#4CAF50",
+    "boolean": "#4CAF50",
+    "null": "#4CAF50",
+    "constant": "#4CAF50",
+
+    "comment": "#ff6b6b",
+    "docstring": "#ff6b6b",
+    "todo": "#ffd700",
+
+    "decorator": "#ff6b6b",
+    "builtin": "#4CAF50",
+    "self": "#24638D",
+    "namespace": "#10B981",
+
+    "type": "#10B981",
+    "type_annotation": "#10B981",
+    "interface": "#10B981"
+}

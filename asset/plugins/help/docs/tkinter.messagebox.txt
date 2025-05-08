@@ -1,0 +1,54 @@
+Help on module tkinter.messagebox in tkinter:
+
+NAME
+    tkinter.messagebox
+
+MODULE REFERENCE
+    https://docs.python.org/3.13/library/tkinter.messagebox.html
+
+    The following documentation is automatically generated from the Python
+    source files.  It may be incomplete, incorrect or include features that
+    are considered implementation detail and may vary between Python
+    implementations.  When in doubt, consult the module reference at the
+    location listed above.
+
+DESCRIPTION
+    # tk common message boxes
+    #
+    # this module provides an interface to the native message boxes
+    # available in Tk 4.2 and newer.
+    #
+    # written by Fredrik Lundh, May 1997
+    #
+
+FUNCTIONS
+    askokcancel(title=None, message=None, **options)
+        Ask if operation should proceed; return true if the answer is ok
+
+    askquestion(title=None, message=None, **options)
+        Ask a question
+
+    askretrycancel(title=None, message=None, **options)
+        Ask if operation should be retried; return true if the answer is yes
+
+    askyesno(title=None, message=None, **options)
+        Ask a question; return true if the answer is yes
+
+    askyesnocancel(title=None, message=None, **options)
+        Ask a question; return true if the answer is yes, None if cancelled.
+
+    showerror(title=None, message=None, **options)
+        Show an error message
+
+    showinfo(title=None, message=None, **options)
+        Show an info message
+
+    showwarning(title=None, message=None, **options)
+        Show a warning message
+
+DATA
+    __all__ = ['showinfo', 'showwarning', 'showerror', 'askquestion', 'ask...
+
+FILE
+    c:\program files\python313\lib\tkinter\messagebox.py
+

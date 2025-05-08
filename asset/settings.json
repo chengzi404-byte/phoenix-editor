@@ -1,0 +1,12 @@
+{
+    "file-encoding": "utf-8",
+    "lang": "zh-cn",
+    "font": "Consolas",
+    "fontsize": 12,
+    "code": "python",
+    "syntax-highlighting": {
+        "theme": "github-light",
+        "enable-type-hints": true,
+        "enable-docstrings": true
+    }
+}

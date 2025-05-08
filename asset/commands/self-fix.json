@@ -1,0 +1,10 @@
+[
+    "echo 'Fixing Python environment...'",
+    "echo 'Uninstalling and reinstalling packages...'",
+    "pip uninstall ttkbootstrap",
+    "pip uninstall pyecharts-snapshot",
+    "pip uninstall pyecharts",
+    "pip install ttkbootstrap",
+    "pip install pyecharts-snapshot",
+    "pip install pyecharts"
+]

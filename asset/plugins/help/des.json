@@ -1,0 +1,7 @@
+{
+    "uid": "10000",
+    "py_file": "",
+    "commands": {
+        "0": ["python ./help.py", "python帮助"]
+    }
+}

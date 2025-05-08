@@ -1,0 +1,16 @@
+{
+    "python": [
+        "command",
+        "python {}"
+    ],
+    "c": [
+        "command",
+        "gcc {} -o out.exe",
+        "./out.exe"
+    ],
+    "cpp": [
+        "command",
+        "g++ {} -o out.exe",
+        "./out.exe"
+    ]
+}
