@@ -16,7 +16,7 @@ import zipfile
 import tkinter as tk
 
 
-# -------------------- 全局变量 --------------------
+# -------------------- Global Variables --------------------
 global settings, highlighter_factory, file_path, logger
 global codehighlighter2, codehighlighter
 logger = setup_logger()
@@ -87,7 +87,7 @@ def load_language(lang):
             return json.load(f)
     return {}
 
-# -------------------- 设置面板相关函数 --------------------
+# -------------------- Settings Panel Functions --------------------
 def open_settings_panel():
     """打开设置面板"""
     settings_window = Toplevel()
@@ -95,7 +95,7 @@ def open_settings_panel():
     settings_window.geometry("400x300")
 
     def apply_settings():
-        """立即应用设置"""
+        """Apply settings immediately"""
         theme_name = theme_var.get()
         # 加载主题文件
         theme_file = f"./asset/theme/{theme_name}.json"
@@ -142,9 +142,9 @@ def open_settings_panel():
 
     Button(settings_window, text="关闭", command=settings_window.destroy).pack(anchor=E)
 
-# -------------------- UI 更新 --------------------
+# -------------------- UI Updates --------------------
 def update_ui_text():
-    """更新UI文本"""
+    """Update UI text"""
     # 菜单项配置字典
     menu_config = {
         'filemenu': {
@@ -178,9 +178,9 @@ def update_ui_text():
         for index, key in items.items():
             menu.entryconfig(index, label=lang_dict.get(key, key))
 
-# -------------------- 文件操作相关函数 --------------------
+# -------------------- File Operations --------------------
 def open_file():
-    """文件>打开文件"""
+    """File > Open File"""
     global file_path
     file_path = filedialog.askopenfilename(
         filetypes=[
@@ -203,7 +203,7 @@ def open_file():
     init_highlighter()
 
 def save_file():
-    """文件>保存文件"""
+    """File > Save File"""
     global file_path
     msg = codearea.get(0.0, END)
     if file_path == "./temp_script.txt":
@@ -229,7 +229,7 @@ def save_file():
     
 
 def save_as_file():
-    """文件>另存为文件"""
+    """File > Save As"""
     msg = codearea.get(0.0, END)
     file_path = filedialog.asksaveasfilename(
             filetypes=[
@@ -249,16 +249,16 @@ def save_as_file():
         fp.write(msg)
 
 def new_file():
-    """文件>新建文件"""
+    """File > New File"""
     codearea.delete(0.0, END)
 
 def new_window():
-    """文件>新建窗口"""
+    """File > New Window"""
     subprocess.run([sys.executable, "main.py"])
 
-# -------------------- 编辑相关函数 --------------------
+# -------------------- Edit Operations --------------------
 def copy():
-    """编辑>复制"""
+    """Edit > Copy"""
     global copy_msg
     try:
         copy_msg = codearea.selection_get()
@@ -269,30 +269,30 @@ def copy():
             pass
 
 def paste():
-    """编辑>粘贴"""
+    """Edit > Paste"""
     try:
         codearea.insert("insert", copy_msg)
     except:
         pass
 
 def delete():
-    """编辑>删除所选内容"""
+    """Edit > Delete Selection"""
     try:
         codearea.delete("sel.first", "sel.last")
     except:
         pass
 
 def undo():
-    """编辑>撤销"""
+    """Edit > Undo"""
     codearea.edit_undo()
 
 def redo():
-    """编辑>重做"""
+    """Edit > Redo"""
     codearea.edit_redo()
 
-# -------------------- 运行相关函数 --------------------
+# -------------------- Run Operations --------------------
 def run():
-    """运行>运行Python文件"""
+    """Run > Run Python File"""
     runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
@@ -308,7 +308,7 @@ def run():
     printarea.insert(END, "\n>>> ")
 
 def autosave():
-    """文件>自动保存"""
+    """File > Auto Save"""
     try:
         content = codearea.get("1.0", END)
         if Settings.Editor.file_path() != "./temp_script.txt":
@@ -321,11 +321,11 @@ def autosave():
         print(f"自动保存失败：{str(e)}")
 
 def clear_printarea():
-    """运行>清空输出"""
+    """Run > Clear Output"""
     printarea.delete(0.0, END)
 
 def terminal():
-    """运行>打开终端"""
+    """Run > Open Terminal"""
     def execute(event=None):
         cmd = terminal.get("2.0", "end-1c").strip()
         if cmd:
@@ -458,7 +458,7 @@ class Terminal(tk.Text):
         self.insert("1.0", self.prompt)
         
     def _handle_return(self, event):
-        """处理回车事件"""
+        """Handle Enter key event"""
         current_pos = self.index("insert")
         line_start = f"{current_pos} linestart"
         command = self.get(line_start, "insert").lstrip(self.prompt)
@@ -484,16 +484,16 @@ class Terminal(tk.Text):
 printarea = Terminal(paned, font=Font(root, family="Fira Code", size=12))
 paned.add(printarea)
 
-# 显示上一次编辑的内容
+# Show last edited content
 try:
     with open("./temp_script.txt", "r", encoding="utf-8") as fp:
         codearea.insert("1.0", fp.read())
 except FileNotFoundError:
-    # 如果临时文件不存在，创建一个空文件
+    # If temp file doesn't exist, create an empty one
     with open("./temp_script.txt", "w", encoding="utf-8") as fp:
         fp.write("")
 
-# 加载插件
+# Load plugins
 pluginlist = os.listdir("./asset/plugins/")
 print(pluginlist)
 pluginlist.remove("__init__.py")
@@ -503,7 +503,7 @@ for plugin in pluginlist:
         with open(f"./asset/plugins/{plugin}/des.json", "r", encoding="utf-8") as fp:
             plugin_data = json.load(fp)
     except Exception as e:
-        logger.warning("警告: 插件设置文件不存在")
+        logger.warning("Warning: Plugin config file not found")
         logger.error(f"返回错误: {str(e)}")
         print(e)
         continue
@@ -511,7 +511,7 @@ for plugin in pluginlist:
     try:
         subprocess.run(f"python ./asset/plugins/{plugin}/{plugin_data["py_file"]}")
     except Exception as e:
-        logger.warning("警告: 无运行文件")
+        logger.warning("Warning: No executable file found")
         logger.error(f"返回错误: {str(e)}")
         print(e)
 
@@ -525,16 +525,16 @@ for plugin in pluginlist:
     else:
         exec(f"""pluginmenu.add_command(command=run_plugin_{plugin_data["uid"]}, label=plugin_data["commands"]["0"][1]) """)
 
-# 加载语言设置
+# Load language settings
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
     lang_dict = json.load(fp)
 
-# 设置自动保存的定时器
+# Setup auto-save timer
 def schedule_autosave():
     autosave()
-    root.after(5000, schedule_autosave)  # 每5秒自动保存一次
+    root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
 
-# 启动自动保存
+# Start auto-save
 schedule_autosave()
 
 # 设置菜单
@@ -542,21 +542,21 @@ settingsmenu = Menu(tearoff=0)
 menu.add_cascade(menu=settingsmenu, label="设置")
 settingsmenu.add_command(command=open_settings_panel, label="打开设置面板")
 
-# 现在所有菜单都已创建，可以安全地调用update_ui_text
+# Now all menus are created, safe to call update_ui_text
 # update_ui_text()
 
 # 启动自动保存
 schedule_autosave()
 
-# 初始化
+# Initialization
 try:
     codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
     
     # 检查主题文件是否存在
     theme_file = "./asset/theme/vscode-dark.json"
     if not os.path.exists(theme_file):
-        logger.warning(f"警告: 主题文件 {theme_file} 不存在，使用默认主题")
-        # 使用内置的默认主题
+        logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
+        # Use built-in default theme
         theme_data = {
             "base": {
                 "background": "#1E1E1E",
@@ -572,7 +572,7 @@ try:
             with open(theme_file, "r", encoding="utf-8") as f:
                 theme_data = json.load(f)
         except Exception as e:
-            logger.warning(f"警告: 加载主题文件失败: {str(e)}，使用默认主题")
+            logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
             theme_data = {
                 "base": {
                     "background": "#1E1E1E",
@@ -605,7 +605,7 @@ try:
     root.bind("<Key>", on_key, add="+")
     
 except Exception as e:
-    logger.warning(f"警告: 代码高亮器初始化失败: {str(e)}")
+    logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
 
 
 if __name__ == "__main__":
@@ -613,5 +613,5 @@ if __name__ == "__main__":
 else:
     n = 1
 
-# 启动主循环
+# Start main loop
 root.mainloop(n)
