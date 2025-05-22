@@ -1,6 +1,5 @@
 from library.highlighter_factory import HighlighterFactory
 from library.logger import setup_logger
-from library.api import EditorAPI
 from tkinter import messagebox
 from tkinter import filedialog 
 from tkinter.font import Font
@@ -14,47 +13,47 @@ import json
 import subprocess
 import sys
 import zipfile
-import traceback
 import tkinter as tk
 
 
 # -------------------- 全局变量 --------------------
-global api, settings, highlighter_factory, file_path, logger
-api = EditorAPI()
+global settings, highlighter_factory, file_path, logger
+global codehighlighter2, codehighlighter
 logger = setup_logger()
-settings = api.settings
-file_path = api.file_path  # 设置默认值
 highlighter_factory = HighlighterFactory()
 
-# -------------------- 初始化函数 --------------------
-def initialize_application():
-    """初始化应用程序"""
-    try:
-        # 检查目录
-        check_required_directories()
-        
-        # 加载设置
-        if not api.load_settings():
-            logger.warning("无法加载设置，使用默认值")
-            
-        # 加载语言
-        if not api.load_language(api.settings.get("lang", "zh-cn")):
-            logger.warning("无法加载语言包，使用默认值")
-            
-        return True
-    except Exception as e:
-        logger.error(f"初始化失败: {str(e)}")
-        return False
+with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+    settings = json.load(fp)
 
-# -------------------- 初始化和设置 --------------------
-def check_required_directories():
-    """检查并创建必要的目录和文件"""
-    required_dirs = [
-        "./asset",
-        "./asset/plugins",
-        "./library/highlighter"
-    ]
-    for directory in required_dirs:
+class Settings:
+    class Editor:
+        def file_encoding():        return settings["editor.file-encoding"]
+        def lang():                 return settings["editor.lang"]
+        def langfile():             return f"./asset/lang/{settings["editor.lang"]}.json"
+        def font():                 return settings["editor.font"]
+        def font_size():            return settings["editor.fontsize"]
+        def file_path():            return settings["editor.file-path"]
+        def change(key, value):
+            settings[f"editor.{key}"] = value
+
+            with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+                json.dump(settings, fp)
+
+    class Highlighter:
+        def syntax_highlighting():  return settings["highlighter.syntax-highlighting"]
+
+        def change(key, value):
+            settings[f"highlighter.syntax-highlighting.{key}"] = value
+
+            with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+                json.dump(settings, fp)
+    
+    class Init:
+        def required_dirs():        return settings["init.required-dirs"]
+        def required_packages():    return settings["init.required-packages"]
+
+try:
+    for directory in Settings.Init.required_dirs():
         if not os.path.exists(directory):
             os.makedirs(directory)
             
@@ -74,6 +73,11 @@ def check_required_directories():
         }
         with open("./asset/settings.json", "w", encoding="utf-8") as f:
             json.dump(default_settings, f, indent=4, ensure_ascii=False)
+
+except Exception as e:
+    logger.error(f"初始化失败: {str(e)}")
+
+
 
 def load_language(lang):
     """加载语言文件"""
@@ -104,7 +108,7 @@ def open_settings_panel():
             print(f"应用主题失败: {str(e)}")
 
     # 主题设置
-    theme_var = StringVar(value=api.settings.get("theme", "vscode-dark"))
+    theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text="主题:").pack(anchor=W)
     rawdata = os.listdir("./asset/theme/")
     themes = ["vscode-dark"]
@@ -115,12 +119,12 @@ def open_settings_panel():
     OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
     # 字体设置
-    font_var = StringVar(value=settings.get("font", "Fira Code"))
+    font_var = StringVar(value=Settings.Editor.font())
     Label(settings_window, text="字体:").pack(anchor=W)
     Entry(settings_window, textvariable=font_var).pack(anchor=W, fill=X)
 
     # 字体大小设置
-    fontsize_var = IntVar(value=settings.get("fontsize", 18))
+    fontsize_var = IntVar(value=Settings.Editor.font_size())
     Label(settings_window, text="字体大小:").pack(anchor=W)
     Spinbox(settings_window, from_=8, to=72, textvariable=fontsize_var).pack(anchor=W, fill=X)
 
@@ -130,18 +134,11 @@ def open_settings_panel():
     fontsize_var.trace_add('write', lambda *args: apply_settings())
 
     # 多语言支持
-    lang_var = StringVar(value=settings.get("lang", "zh-cn"))
+    lang_var = StringVar(value=Settings.Editor.lang)
     Label(settings_window, text="语言:").pack(anchor=W)
-    OptionMenu(settings_window, lang_var, "zh-cn", "en", "es", "fr").pack(anchor=W, fill=X)
+    OptionMenu(settings_window, lang_var, "zh-cn", "en-us").pack(anchor=W, fill=X)
 
     lang_var.trace_add('write', lambda *args: load_language(lang_var.get()))
-
-    # 编程语言设置
-    code_var = StringVar(value=settings.get("code", "python"))
-    Label(settings_window, text="编程语言：").pack(anchor=W)
-    OptionMenu(settings_window, code_var, "python", "python", "c", "cpp", "bash", "java", "html", "javascript", "json", "ruby", "rust", "css", "objc")
-
-    code_var.trace_add('write', lambda *args: apply_settings())
 
     Button(settings_window, text="关闭", command=settings_window.destroy).pack(anchor=E)
 
@@ -156,7 +153,7 @@ def update_ui_text():
             3: "open_file",
             4: "save_file",
             5: "save_as_file",
-            7: "exit"
+            6: "exit"
         },
         'editmenu': {
             0: "undo",
@@ -199,15 +196,17 @@ def open_file():
         ]
     )
     codearea.delete(0.0, END)
-    with open(file_path, encoding=api.file_encoding) as f:
+    with open(file_path, encoding=Settings.Editor.file_encoding()) as f:
         content = f.read()
     codearea.insert(0.0, content)
+
+    init_highlighter()
 
 def save_file():
     """文件>保存文件"""
     global file_path
     msg = codearea.get(0.0, END)
-    if file_path == "./temp_script.py":
+    if file_path == "./temp_script.txt":
         file_path = filedialog.asksaveasfilename(
                     filetypes=[
                         ("Python文件", "*.py"),
@@ -221,6 +220,7 @@ def save_file():
                         ("所有文件", "*.*")
                     ]
                 )
+        init_highlighter()
     else:
         print(file_path)
 
@@ -293,7 +293,7 @@ def redo():
 # -------------------- 运行相关函数 --------------------
 def run():
     """运行>运行Python文件"""
-    runtool = subprocess.Popen([sys.executable, api.file_path], stdin=subprocess.PIPE, 
+    runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
     # 获取printarea的内容并转换为字节
@@ -311,11 +311,11 @@ def autosave():
     """文件>自动保存"""
     try:
         content = codearea.get("1.0", END)
-        if api.file_path != "./temp_script.py":
-            with open(api.file_path, "w", encoding=file_encoding) as f:
+        if Settings.Editor.file_path() != "./temp_script.txt":
+            with open(Settings.Editor.file_path(), "w", encoding=Settings.Editor.file_encoding()) as f:
                 f.write(content)
         
-        with open("./temp_script.py", "w", encoding=file_encoding) as f:
+        with open("./temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
         print(f"自动保存失败：{str(e)}")
@@ -372,6 +372,12 @@ def exit_editor():
         root.destroy()
         sys.exit(0)
 
+# 初始化代码高亮器
+def init_highlighter():
+    global codehighlighter2, codehighlighter
+
+    
+
 # -------------------- 创建窗口和菜单 --------------------
 
 # 创建主窗口
@@ -379,7 +385,7 @@ root = Window()
 root.title("火凤文本编辑器 Phoenix Notepad")
 root.geometry("800x600+100+100")
 root.configure(bg='black')
-root.iconbitmap(default="./asset/icon.ico")
+# root.iconbitmap(default="./asset/icon.ico")
 root.resizable(width=True, height=True)
 
 # 绑定快捷键
@@ -480,11 +486,11 @@ paned.add(printarea)
 
 # 显示上一次编辑的内容
 try:
-    with open("./temp_script.py", "r", encoding="utf-8") as fp:
+    with open("./temp_script.txt", "r", encoding="utf-8") as fp:
         codearea.insert("1.0", fp.read())
 except FileNotFoundError:
     # 如果临时文件不存在，创建一个空文件
-    with open("./temp_script.py", "w", encoding="utf-8") as fp:
+    with open("./temp_script.txt", "w", encoding="utf-8") as fp:
         fp.write("")
 
 # 加载插件
@@ -520,54 +526,31 @@ for plugin in pluginlist:
         exec(f"""pluginmenu.add_command(command=run_plugin_{plugin_data["uid"]}, label=plugin_data["commands"]["0"][1]) """)
 
 # 加载语言设置
-api.load_language(api.settings.get("lang", "zh-cn"))
-lang_dict = api.lang_dict
+with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
+    lang_dict = json.load(fp)
 
-# 读取设置
-if not api.load_settings():
-    logger.info("无法加载设置，使用默认值。")
+# 设置自动保存的定时器
+def schedule_autosave():
+    autosave()
+    root.after(5000, schedule_autosave)  # 每5秒自动保存一次
 
-file_encoding = settings.get("file-encoding", "utf-8")
+# 启动自动保存
+schedule_autosave()
 
-# 加载语言设置
-if not api.load_language(settings.get("lang", "zh-cn")):
-    print("无法加载语言包，使用默认值。")
-lang_dict = api.lang_dict
+# 设置菜单
+settingsmenu = Menu(tearoff=0)
+menu.add_cascade(menu=settingsmenu, label="设置")
+settingsmenu.add_command(command=open_settings_panel, label="打开设置面板")
 
-# 修改所有使用file_path的地方
-if api.file_path == "./temp_script.py":
-    api.file_path = file_path
+# 现在所有菜单都已创建，可以安全地调用update_ui_text
+# update_ui_text()
 
-# 修改所有使用copy_msg的地方
-if codearea.tag_ranges("sel"):  # 检查是否有选中的文本
-    api.copy_msg = codearea.selection_get()
-else:
-    api.copy_msg = ""  # 如果没有选中内容，设置为一个空字符串
+# 启动自动保存
+schedule_autosave()
 
-# 修改所有使用settings的地方
-if not api.load_settings():  # 确保设置成功加载
-    logger.info("无法加载设置，使用默认值。")
-    api.settings = {}  # 如果加载失败，设置为一个空字典
-
-# 确保settings不为None
-if api.settings is None:
-    api.settings = {}
-
-# 修改所有使用lang_dict的地方
-api.load_language(lang_dict)
-
+# 初始化
 try:
-    # 加载代码高亮工具
-    highlighter_module = __import__(f"library.highlighter.{api.settings.get('code', 'python')}", fromlist=['CodeHighlighter'])
-    CodeHighlighter = getattr(highlighter_module, 'CodeHighlighter')
-except (ImportError, KeyError):
-    # 如果加载失败，使用Python高亮器作为默认
-    from library.highlighter.python import CodeHighlighter
-    logger.warning(f"警告: 无法加载{api.settings.get('code', 'unknown')}高亮器，使用Python高亮器作为默认")
-
-# 初始化代码高亮器
-try:
-    codehighlighter = CodeHighlighter(codearea)
+    codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
     
     # 检查主题文件是否存在
     theme_file = "./asset/theme/vscode-dark.json"
@@ -604,7 +587,7 @@ try:
     codehighlighter.highlight()
 
     # 对printarea使用相同的设置
-    codehighlighter2 = CodeHighlighter(printarea)
+    codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
     codehighlighter2.set_theme(theme_data)
     codehighlighter2.highlight()
     
@@ -623,26 +606,7 @@ try:
     
 except Exception as e:
     logger.warning(f"警告: 代码高亮器初始化失败: {str(e)}")
-    traceback.print_exc()  # 打印完整的错误堆栈
 
-# 设置自动保存的定时器
-def schedule_autosave():
-    autosave()
-    root.after(5000, schedule_autosave)  # 每5秒自动保存一次
-
-# 启动自动保存
-schedule_autosave()
-
-# 设置菜单
-settingsmenu = Menu(tearoff=0)
-menu.add_cascade(menu=settingsmenu, label="设置")
-settingsmenu.add_command(command=open_settings_panel, label="打开设置面板")
-
-# 现在所有菜单都已创建，可以安全地调用update_ui_text
-# update_ui_text()
-
-# 启动自动保存
-schedule_autosave()
 
 if __name__ == "__main__":
     n = 0
