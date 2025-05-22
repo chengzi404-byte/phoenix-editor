@@ -6,15 +6,15 @@ class CodeHighlighter(BaseHighlighter):
         super().__init__(text_widget)
         # JavaScript特定的语法高亮规则
         self.keywords = {
-            # 控制流
+            # Control flow
             'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break',
             'continue', 'return', 'try', 'catch', 'finally', 'throw',
-            # 声明
+            # Declarations
             'var', 'let', 'const', 'function', 'class', 'extends',
             'constructor', 'super', 'new', 'this',
-            # 模块
+            # Modules
             'import', 'export', 'default', 'from', 'as',
-            # 其他
+            # Others
             'typeof', 'instanceof', 'in', 'of', 'void', 'delete',
             'async', 'await', 'yield'
         }

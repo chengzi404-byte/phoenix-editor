@@ -26,7 +26,7 @@ class CodeHighlighter(BaseHighlighter):
         self.setup_tags()
         
     def _highlight_node(self, node: ast.AST):
-        """扩展基础高亮器的节点处理"""
+        """Extend base highlighter's node processing"""
         super()._highlight_node(node)
         
         if not hasattr(node, 'lineno'):
@@ -41,7 +41,7 @@ class CodeHighlighter(BaseHighlighter):
             self._highlight_rust_macro(node, start, end)
             
     def _highlight_rust_name(self, node: ast.Name, start: str, end: str):
-        """高亮Rust特定的名称"""
+        """Highlight Rust-specific names"""
         name = node.id
         if name in self.keywords:
             self._add_tag("keyword", start, end)
@@ -51,6 +51,6 @@ class CodeHighlighter(BaseHighlighter):
             self._add_tag("constant", start, end)
             
     def _highlight_rust_macro(self, node: ast.Call, start: str, end: str):
-        """高亮Rust宏调用"""
+        """Highlight Rust macro calls"""
         if isinstance(node.func, ast.Name) and node.func.id.endswith("!"):
             self._add_tag("macro", start, end)

@@ -2,7 +2,7 @@ from . import highlighter
 import importlib
 
 class HighlighterFactory:
-    """代码高亮器工厂类"""
+    """Code highlighter factory class"""
     
     def __init__(self):
         # 文件扩展名到高亮器的映射
@@ -24,7 +24,7 @@ class HighlighterFactory:
         }
         
     def create_highlighter(self, file_extension, text_widget):
-        """根据文件扩展名创建对应的高亮器"""
+        """Create appropriate highlighter based on file extension"""
         try:
             # 获取高亮器类型
             highlighter_type = self.highlighter_map.get(file_extension.lower(), "python")

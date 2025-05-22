@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # Objective-C特定的语法高亮规则
+        # Objective-C specific syntax highlighting rules
         self.keywords = {
             # C关键字
             'auto', 'break', 'case', 'char', 'const', 'continue', 'default',

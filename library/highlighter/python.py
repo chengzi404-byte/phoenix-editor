@@ -20,7 +20,7 @@ class CodeHighlighter(BaseHighlighter):
         self.setup_tags()
         
     def _highlight_node(self, node: ast.AST):
-        """扩展基础高亮器的节点处理"""
+        """Extend base highlighter's node processing"""
         super()._highlight_node(node)
         
         if not hasattr(node, 'lineno'):
@@ -39,7 +39,7 @@ class CodeHighlighter(BaseHighlighter):
             self._highlight_async_function(node)
             
     def _highlight_f_string(self, node: ast.JoinedStr, start: str, end: str):
-        """高亮f-string"""
+        """Highlight f-strings"""
         self._add_tag("f_string", start, end)
         # 处理f-string中的表达式
         for value in node.values:
@@ -48,7 +48,7 @@ class CodeHighlighter(BaseHighlighter):
                 self._add_tag("variable", expr_start, expr_end)
                 
     def _highlight_try_except(self, node: ast.Try):
-        """高亮try-except块"""
+        """Highlight try-except blocks"""
         # 高亮异常类
         for handler in node.handlers:
             if handler.type:
@@ -56,7 +56,7 @@ class CodeHighlighter(BaseHighlighter):
                 self._add_tag("exception", start, end)
                 
     def _highlight_async_function(self, node: ast.AsyncFunctionDef):
-        """高亮异步函数"""
+        """Highlight async functions"""
         start, end = self.get_position(node)
         # 高亮async关键字
         async_end = f"{node.lineno}.{node.col_offset + 5}"

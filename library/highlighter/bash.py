@@ -24,7 +24,7 @@ class CodeHighlighter(BaseHighlighter):
         self.setup_tags()
         
     def _highlight_node(self, node: ast.AST):
-        """扩展基础高亮器的节点处理"""
+        """Extend base highlighter's node processing"""
         super()._highlight_node(node)
         
         if not hasattr(node, 'lineno'):
@@ -39,7 +39,7 @@ class CodeHighlighter(BaseHighlighter):
             self._highlight_bash_command(node, start, end)
             
     def _highlight_bash_name(self, node: ast.Name, start: str, end: str):
-        """高亮Bash特定的名称"""
+        """Highlight Bash-specific names"""
         name = node.id
         if name in self.keywords:
             self._add_tag("keyword", start, end)
@@ -47,6 +47,6 @@ class CodeHighlighter(BaseHighlighter):
             self._add_tag("variable", start, end)
             
     def _highlight_bash_command(self, node: ast.Call, start: str, end: str):
-        """高亮Bash命令"""
+        """Highlight Bash commands"""
         if isinstance(node.func, ast.Name):
             self._add_tag("command", start, end)

@@ -8,7 +8,7 @@ class FileIcons:
         self.load_icons()
         
     def load_icons(self):
-        """加载所有文件类型图标"""
+        """Load all file type icons"""
         icon_dir = Path("./asset/icons")
         
         # 文件类型到图标的映射
@@ -56,7 +56,7 @@ class FileIcons:
                     self.icons[icon_file] = self.get_default_icon()
                 
     def get_icon(self, file_path):
-        """根据文件扩展名获取对应的图标"""
+        """Get icon based on file extension"""
         try:
             ext = Path(file_path).suffix.lower()
             icon_file = self.file_types.get(ext, self.file_types["default"])
@@ -66,5 +66,5 @@ class FileIcons:
             return self.get_default_icon()
             
     def get_default_icon(self):
-        """获取默认图标"""
+        """Get default icon"""
         return self.icons.get("file.png") 

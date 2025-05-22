@@ -27,7 +27,7 @@ class CodeHighlighter(BaseHighlighter):
         self.setup_tags()
         
     def _highlight_node(self, node: ast.AST):
-        """扩展基础高亮器的节点处理"""
+        """Extend base highlighter's node processing"""
         super()._highlight_node(node)
         
         if not hasattr(node, 'lineno'):
@@ -42,7 +42,7 @@ class CodeHighlighter(BaseHighlighter):
             self._highlight_cpp_class(node, start, end)
             
     def _highlight_cpp_name(self, node: ast.Name, start: str, end: str):
-        """高亮C++特定的名称"""
+        """Highlight C++ specific names"""
         name = node.id
         if name in self.keywords:
             self._add_tag("keyword", start, end)
@@ -52,7 +52,7 @@ class CodeHighlighter(BaseHighlighter):
             self._add_tag("namespace", start, end)
             
     def _highlight_cpp_class(self, node: ast.ClassDef, start: str, end: str):
-        """高亮C++类定义"""
+        """Highlight C++ class definitions"""
         # 处理模板
         for decorator in node.decorator_list:
             if isinstance(decorator, ast.Call) and decorator.func.id == "template":

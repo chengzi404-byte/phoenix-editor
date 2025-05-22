@@ -16,7 +16,7 @@ class CodeHighlighter(BaseHighlighter):
             "media": "#C586C0"
         })
         
-        # CSS属性和值关键字
+        # CSS property and value keywords
         self.properties = {
             "color", "background", "margin", "padding", "border", "font",
             "width", "height", "display", "position", "top", "left", "right",

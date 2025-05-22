@@ -14,7 +14,7 @@ class CodeHighlighter(BaseHighlighter):
             "entity": "#D4D4D4"
         })
         
-        # HTML标签和属性关键字
+        # HTML tags and attribute keywords
         self.tags = {
             "html", "head", "body", "div", "span", "p", "a", "img", "script",
             "style", "link", "meta", "title", "h1", "h2", "h3", "h4", "h5", "h6",

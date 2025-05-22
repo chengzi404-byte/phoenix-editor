@@ -27,7 +27,7 @@ class CodeHighlighter(BaseHighlighter):
         self.setup_tags()
         
     def _highlight_node(self, node: ast.AST):
-        """扩展基础高亮器的节点处理"""
+        """Extend base highlighter's node processing"""
         super()._highlight_node(node)
         
         if not hasattr(node, 'lineno'):
@@ -42,7 +42,7 @@ class CodeHighlighter(BaseHighlighter):
             self._highlight_java_class(node, start, end)
             
     def _highlight_java_name(self, node: ast.Name, start: str, end: str):
-        """高亮Java特定的名称"""
+        """Highlight Java-specific names"""
         name = node.id
         if name in self.keywords:
             self._add_tag("keyword", start, end)
@@ -50,7 +50,7 @@ class CodeHighlighter(BaseHighlighter):
             self._add_tag("annotation", start, end)
             
     def _highlight_java_class(self, node: ast.ClassDef, start: str, end: str):
-        """高亮Java类定义"""
+        """Highlight Java class definitions"""
         # 处理泛型
         for base in node.bases:
             if isinstance(base, ast.Subscript):
