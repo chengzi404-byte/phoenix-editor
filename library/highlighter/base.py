@@ -75,12 +75,12 @@ class BaseHighlighter:
         }
         
     def setup_tags(self):
-        """设置所有语法高亮标签"""
+        """Configure all syntax highlighting tags"""
         for tag, color in self.syntax_colors.items():
             self.text_widget.tag_configure(tag, foreground=color)
             
     def _setup_bindings(self):
-        """设置事件绑定"""
+        """Set up event bindings"""
         self.text_widget.bind('<<Modified>>', self._on_text_change)
         self.text_widget.bind('<KeyRelease>', self._on_key_release)
         self.text_widget.bind('(', self._handle_open_parenthesis)  # 绑定左括号
@@ -88,24 +88,24 @@ class BaseHighlighter:
         self.text_widget.bind('<Tab>', self._handle_tab_key)  # 绑定Tab键
         
     def _on_text_change(self, event=None):
-        """处理文本修改事件"""
+        """Handle text modification events"""
         if self.text_widget.edit_modified():
             self.text_widget.edit_modified(False)
             self._queue_highlight()
             
     def _on_key_release(self, event=None):
-        """处理按键释放事件"""
+        """Handle key release events"""
         if event.keysym in ('Return', 'BackSpace', 'Delete'):
             self._queue_highlight()
             
     def _queue_highlight(self):
-        """将高亮任务加入队列"""
+        """Queue highlight task"""
         if not self._highlight_pending:
             self._highlight_pending = True
             self.text_widget.after(self._highlight_delay, self._delayed_highlight)
             
     def _delayed_highlight(self):
-        """延迟执行高亮"""
+        """Execute highlighting with delay"""
         try:
             current_content = self.text_widget.get("1.0", "end-1c")
             # 只在内容真正改变时才执行高亮
@@ -118,7 +118,7 @@ class BaseHighlighter:
             self._highlight_pending = False
             
     def highlight(self):
-        """执行语法高亮"""
+        """Perform syntax highlighting"""
         try:
             # 保存当前状态
             current_insert = self.text_widget.index("insert")
@@ -155,7 +155,7 @@ class BaseHighlighter:
             print(f"高亮错误: {str(e)}")
             
     def _basic_highlight(self, text: str):
-        """在语法错误时进行基本的高亮"""
+        """Basic highlighting when syntax errors occur"""
         try:
             import re
             
@@ -196,7 +196,7 @@ class BaseHighlighter:
             print(f"基本高亮处理错误: {str(e)}")
             
     def _clear_tags(self):
-        """清除所有语法高亮标签"""
+        """Remove all syntax highlighting tags"""
         try:
             for tag in self.syntax_colors.keys():
                 self.text_widget.tag_remove(tag, "1.0", "end")
@@ -204,14 +204,14 @@ class BaseHighlighter:
             print(f"清除标签错误: {str(e)}")
             
     def _add_tag(self, tag: str, start: str, end: str):
-        """添加语法高亮标签"""
+        """Add syntax highlighting tag"""
         try:
             self.text_widget.tag_add(tag, start, end)
         except Exception as e:
             print(f"添加标签错误 - 标签: {tag}, 开始: {start}, 结束: {end}, 错误: {str(e)}")
 
     def get_position(self, node: ast.AST) -> Tuple[str, str]:
-        """获取AST节点的开始和结束位置"""
+        """Get start and end positions of AST node"""
         if hasattr(node, 'lineno'):
             start = f"{node.lineno}.{node.col_offset}"
             end = f"{node.end_lineno}.{node.end_col_offset}" if hasattr(node, 'end_lineno') else f"{node.lineno}.{node.col_offset + len(str(node))}"
@@ -219,7 +219,7 @@ class BaseHighlighter:
         return "1.0", "1.0"
 
     def _highlight_comments_and_strings(self, text: str):
-        """高亮注释和字符串"""
+        """Highlight comments and strings"""
         try:
             # 将文本分割成行
             lines = text.split('\n')
@@ -271,12 +271,12 @@ class BaseHighlighter:
             print(f"注释和字符串高亮错误: {str(e)}")
             
     def _process_ast(self, tree: ast.AST):
-        """处理AST树"""
+        """Process AST tree"""
         for node in ast.walk(tree):
             self._highlight_node(node)
             
     def _highlight_node(self, node: ast.AST):
-        """高亮特定AST节点"""
+        """Highlight specific AST node"""
         if not hasattr(node, 'lineno'):
             return
         
@@ -315,7 +315,7 @@ class BaseHighlighter:
             self._highlight_operator(node, start, end)
 
     def _highlight_class_def(self, node: ast.ClassDef, start: str, end: str):
-        """高亮类定义"""
+        """Highlight class definition"""
         # 高亮class关键字
         keyword_end = f"{node.lineno}.{node.col_offset + 5}"
         self._add_tag("keyword", start, keyword_end)
@@ -331,7 +331,7 @@ class BaseHighlighter:
             self._add_tag("class", base_start, base_end)
 
     def _highlight_function_def(self, node: ast.FunctionDef, start: str, end: str):
-        """高亮函数定义"""
+        """Highlight function definition"""
         # 高亮def关键字
         keyword_end = f"{node.lineno}.{node.col_offset + 3}"
         self._add_tag("keyword", start, keyword_end)
@@ -360,7 +360,7 @@ class BaseHighlighter:
                 self._add_tag("type_annotation", ann_start, ann_end)
 
     def _highlight_import(self, node: ast.Import):
-        """高亮导入语句"""
+        """Highlight import statements"""
         for alias in node.names:
             if hasattr(alias, 'lineno'):
                 start = f"{alias.lineno}.{alias.col_offset}"
@@ -372,7 +372,7 @@ class BaseHighlighter:
                     self._add_tag("variable", as_start, as_end)
 
     def _highlight_import_from(self, node: ast.ImportFrom):
-        """高亮from导入语句"""
+        """Highlight from-import statements"""
         if node.module:
             start = f"{node.lineno}.{node.col_offset + 5}"  # 5 是 'from ' 的长度
             end = f"{node.lineno}.{node.col_offset + 5 + len(node.module)}"
@@ -389,7 +389,7 @@ class BaseHighlighter:
                     self._add_tag("variable", as_start, as_end)
 
     def _highlight_attribute(self, node: ast.Attribute):
-        """高亮属性访问"""
+        """Highlight attribute access"""
         if isinstance(node.value, ast.Name):
             # 高亮对象名
             start, _ = self.get_position(node.value)
@@ -402,7 +402,7 @@ class BaseHighlighter:
         self._add_tag("property", attr_start, attr_end)
 
     def _highlight_name(self, node: ast.Name, start: str, end: str):
-        """高亮名称"""
+        """Highlight name"""
         if node.id in keyword.kwlist:
             self._add_tag("keyword", start, end)
         elif node.id in dir(builtins):
@@ -415,7 +415,7 @@ class BaseHighlighter:
             self._add_tag("variable", start, end)
             
     def _highlight_call(self, node: ast.Call):
-        """高亮函数调用"""
+        """Highlight function call"""
         if isinstance(node.func, ast.Name):
             start, end = self.get_position(node.func)
             if node.func.id in dir(builtins):
@@ -424,24 +424,24 @@ class BaseHighlighter:
                 self._add_tag("function", start, end)
                 
     def _highlight_constant(self, node: ast.Constant, start: str, end: str):
-        """高亮常量"""
+        """Highlight constant"""
         if isinstance(node.value, (int, float)):
             self._add_tag("number", start, end)
         elif isinstance(node.value, str):
             self._add_tag("string", start, end)
             
     def _highlight_arg(self, node: ast.arg, start: str, end: str):
-        """高亮函数参数"""
+        """Highlight function argument"""
         self._add_tag("parameter", start, end)
         
     def _highlight_annotation(self, node: ast.AnnAssign):
-        """高亮类型注解"""
+        """Highlight type annotation"""
         if node.annotation:
             start, end = self.get_position(node.annotation)
             self._add_tag("type_annotation", start, end)
 
     def _highlight_assignment(self, node: ast.Assign):
-        """高亮赋值语句"""
+        """Highlight assignment statement"""
         for target in node.targets:
             start, end = self.get_position(target)
             self._add_tag("variable", start, end)
@@ -451,7 +451,7 @@ class BaseHighlighter:
             self._add_tag("variable", start, end)
 
     def _handle_open_parenthesis(self, event):
-        """处理左括号补全"""
+        """Handle parenthesis auto-completion"""
         try:
             current_pos = self.text_widget.index("insert")
             self.text_widget.insert(current_pos, '(')  # 插入左括号
@@ -463,11 +463,11 @@ class BaseHighlighter:
         return None
 
     def _highlight_operator(self, node: ast.AST, start: str, end: str):
-        """高亮运算符"""
+        """Highlight operator"""
         self._add_tag("operator", start, end)
 
     def _handle_return_key(self, event):
-        """处理回车键以实现自动缩进"""
+        """Handle return key for auto-indentation"""
         try:
             current_line = self.text_widget.get("insert linestart", "insert")
             indent = len(current_line) - len(current_line.lstrip())
@@ -481,15 +481,15 @@ class BaseHighlighter:
         return None
 
     def _handle_tab_key(self, event):
-        """处理Tab键以插入4个空格"""
+        """Handle tab key to insert 4 spaces"""
         self.text_widget.insert("insert", " " * 4)
         return "break"  # 阻止默认的Tab行为
 
     def set_theme(self, theme_data):
-        """设置主题
+        """Set theme
         
         Args:
-            theme_data: 可以是主题名称字符串或主题配置字典
+            theme_data: Can be theme name string or theme config dict
         """
         try:
             if isinstance(theme_data, str):
