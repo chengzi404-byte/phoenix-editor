@@ -1,39 +1,39 @@
 {
     "base": {
-        "background": "#10B981",
-        "foreground": "#24638D",
-        "insertbackground": "#24638D",
-        "selectbackground": "#357abd",
-        "selectforeground": "#24638D"
+        "background": "#0D1117",
+        "foreground": "#C9D1D9",
+        "insertbackground": "#C9D1D9",
+        "selectbackground": "#363D4A",
+        "selectforeground": "#C9D1D9"
     },
-    "keyword": "#ff6b6b",
-    "control": "#ff6b6b",
-    "operator": "#ED9E72",
-    "punctuation": "#ed9e72",
-
-    "class": "#10B981",
-    "function": "#10B981",
-    "method": "#10B981",
-    "variable": "#24638D",
-    "parameter": "#24638D",
-    "property": "#24638D",
-
-    "string": "#1da5f2",
-    "number": "#4CAF50",
-    "boolean": "#4CAF50",
-    "null": "#4CAF50",
-    "constant": "#4CAF50",
-
-    "comment": "#ff6b6b",
-    "docstring": "#ff6b6b",
-    "todo": "#ffd700",
-
-    "decorator": "#ff6b6b",
-    "builtin": "#4CAF50",
-    "self": "#24638D",
-    "namespace": "#10B981",
-
-    "type": "#10B981",
-    "type_annotation": "#10B981",
-    "interface": "#10B981"
-}
+    "keyword": "#FF7B72",
+    "control": "#FF7B72",
+    "operator": "#C9D1D9",
+    "punctuation": "#C9D1D9",
+    
+    "class": "#D2A8FF",
+    "function": "#D2A8FF",
+    "method": "#D2A8FF",
+    "variable": "#C9D1D9",
+    "parameter": "#C9D1D9",
+    "property": "#C9D1D9",
+    
+    "string": "#A5D6FF",
+    "number": "#79C0FF",
+    "boolean": "#79C0FF",
+    "null": "#79C0FF",
+    "constant": "#79C0FF",
+    
+    "comment": "#8B949E",
+    "docstring": "#8B949E",
+    "todo": "#FFA657",
+    
+    "decorator": "#D2A8FF",
+    "builtin": "#79C0FF",
+    "self": "#C9D1D9",
+    "namespace": "#D2A8FF",
+    
+    "type": "#D2A8FF",
+    "type_annotation": "#D2A8FF",
+    "interface": "#D2A8FF"
+}    
