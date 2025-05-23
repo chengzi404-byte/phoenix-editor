@@ -1,7 +1,0 @@
-{
-    "uid": "10001",
-    "py_file": "",
-    "commands": {
-        "0": ["python ./asset/plugins/pipUI/pipUI.py", "PIP可视化工具"]
-    }
-}

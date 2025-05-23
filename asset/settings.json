@@ -1,12 +1,20 @@
 {
-    "file-encoding": "utf-8",
-    "lang": "zh-cn",
-    "font": "Consolas",
-    "fontsize": 12,
-    "code": "python",
-    "syntax-highlighting": {
+    "editor.file-encoding": "utf-8",
+    "editor.lang": "zh-cn",
+    "editor.font": "Consolas",
+    "editor.fontsize": 12,
+    "editor.file-path": "./temp_script.txt",
+    "highlighter.syntax-highlighting": {
         "theme": "github-light",
         "enable-type-hints": true,
         "enable-docstrings": true
-    }
+    },
+    "init.required-dirs": [
+        "./asset/",
+        "./library/",
+        "./logs/"
+    ],
+    "init.required-packages": [
+        
+    ]
 }
