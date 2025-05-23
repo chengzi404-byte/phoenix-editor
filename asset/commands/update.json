@@ -1,5 +1,0 @@
-[
-    "pip install ttkbootstrap --upgrade",
-    "pip install pyecharts --upgrade",
-    "pip install pyecharts-snapshot --upgrade"
-]
