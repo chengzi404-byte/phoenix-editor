@@ -1,0 +1,17 @@
+{
+    "new_file": "新建文件",
+    "new_window": "新建窗口",
+    "open_file": "打开文件",
+    "save_file": "保存文件",
+    "save_as_file": "另存为",
+    "exit": "退出",
+    "undo": "撤销",
+    "redo": "重做",
+    "copy": "复制",
+    "paste": "粘贴",
+    "delete": "删除",
+    "run": "运行",
+    "clear_output": "清除输出",
+    "terminal": "终端",
+    "open_settings": "设置"
+}

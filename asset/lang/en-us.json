@@ -1,0 +1,17 @@
+{
+    "new_file": "New File",
+    "new_window": "New Window",
+    "open_file": "Open File",
+    "save_file": "Save File",
+    "save_as_file": "Save As",
+    "exit": "Exit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "copy": "Copy",
+    "paste": "Paste",
+    "delete": "Delete",
+    "run": "Run",
+    "clear_output": "Clear Output",
+    "terminal": "Terminal",
+    "open_settings": "Settings"
+}

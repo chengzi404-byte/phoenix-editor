@@ -85,6 +85,7 @@ def load_language(lang):
     if os.path.exists(lang_file):
         with open(lang_file, "r", encoding="utf-8") as f:
             return json.load(f)
+    update_ui_text()
     return {}
 
 # -------------------- Settings Panel Functions --------------------
@@ -492,38 +493,6 @@ except FileNotFoundError:
     # If temp file doesn't exist, create an empty one
     with open("./temp_script.txt", "w", encoding="utf-8") as fp:
         fp.write("")
-
-# Load plugins
-pluginlist = os.listdir("./asset/plugins/")
-print(pluginlist)
-pluginlist.remove("__init__.py")
-for plugin in pluginlist:
-    # 加载插件
-    try:
-        with open(f"./asset/plugins/{plugin}/des.json", "r", encoding="utf-8") as fp:
-            plugin_data = json.load(fp)
-    except Exception as e:
-        logger.warning("Warning: Plugin config file not found")
-        logger.error(f"返回错误: {str(e)}")
-        print(e)
-        continue
-    
-    try:
-        subprocess.run(f"python ./asset/plugins/{plugin}/{plugin_data["py_file"]}")
-    except Exception as e:
-        logger.warning("Warning: No executable file found")
-        logger.error(f"返回错误: {str(e)}")
-        print(e)
-
-    exec(f"""def run_plugin_{plugin_data["uid"]}(): subprocess.run(plugin_data["commands"]["0"][0]) """)
-    
-    if len(plugin_data["commands"]) != 1:
-        subpluginmenu = Menu(tearoff=0)
-        pluginmenu.add_cascade(menu=subpluginmenu, label=plugin)
-        for command in len(plugin_data["commands"]):
-            subpluginmenu.add_command(command=subprocess.run(plugin_data["commands"][str(command)][0]), label=plugin_data["commands"][str(command)][1])
-    else:
-        exec(f"""pluginmenu.add_command(command=run_plugin_{plugin_data["uid"]}, label=plugin_data["commands"]["0"][1]) """)
 
 # Load language settings
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
