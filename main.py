@@ -137,7 +137,7 @@ def open_settings_panel():
     # 多语言支持
     lang_var = StringVar(value=Settings.Editor.lang)
     Label(settings_window, text="语言:").pack(anchor=W)
-    OptionMenu(settings_window, lang_var, "zh-cn", "en-us").pack(anchor=W, fill=X)
+    OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
 
     lang_var.trace_add('write', lambda *args: load_language(lang_var.get()))
 
@@ -147,29 +147,30 @@ def open_settings_panel():
 def update_ui_text():
     """Update UI text"""
     # 菜单项配置字典
+    # 菜单项配置字典
     menu_config = {
         'filemenu': {
-            0: "new_file",
-            1: "new_window",
-            3: "open_file",
-            4: "save_file",
-            5: "save_as_file",
-            6: "exit"
+            "0": "new_file",
+            "1": "new_window",
+            "3": "open_file",
+            "4": "save_file",
+            "5": "save_as_file",
+            "6": "exit"
         },
         'editmenu': {
-            0: "undo",
-            1: "redo",
-            3: "copy",
-            4: "paste",
-            5: "delete"
+            "0": "undo",
+            "1": "redo",
+            "3": "copy",
+            "4": "paste",
+            "5": "delete"
         },
         'runmenu': {
-            0: "run",
-            1: "clear_output",
-            2: "terminal"
+            "0": "run",
+            "1": "clear_output",
+            "2": "terminal"
         },
         'settingsmenu': {
-            0: "open_settings"
+            "0": "open_settings"
         }
     }
 
