@@ -1,0 +1,17 @@
+{
+    "new_file": "Neue Datei",
+    "new_window": "Neues Fenster",
+    "open_file": "Datei öffnen",
+    "save_file": "Datei speichern",
+    "save_as_file": "Datei unter",
+    "exit": "Beenden",
+    "undo": "Rückgängig machen",
+    "redo": "Wiederholen",
+    "copy": "Kopieren",
+    "paste": "Einfügen",
+    "delete": "Löschen",
+    "run": "Ausführen",
+    "clear_output": "Ausgabe löschen",
+    "terminal": "Terminal",
+    "open_settings": "Einstellungen öffnen"
+}
