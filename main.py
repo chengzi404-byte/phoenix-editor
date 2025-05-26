@@ -202,7 +202,63 @@ def open_file():
         content = f.read()
     codearea.insert(0.0, content)
 
-    init_highlighter()
+    try:
+        codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
+        
+        # 检查主题文件是否存在
+        theme_file = "./asset/theme/vscode-dark.json"
+        if not os.path.exists(theme_file):
+            logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
+            # Use built-in default theme
+            theme_data = {
+                "base": {
+                    "background": "#1E1E1E",
+                    "foreground": "#D4D4D4",
+                    "insertbackground": "#D4D4D4",
+                    "selectbackground": "#264F78",
+                    "selectforeground": "#D4D4D4"
+                }
+            }
+        else:
+            # 加载主题
+            try:
+                with open(theme_file, "r", encoding="utf-8") as f:
+                    theme_data = json.load(f)
+            except Exception as e:
+                logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
+                theme_data = {
+                    "base": {
+                        "background": "#1E1E1E",
+                        "foreground": "#D4D4D4",
+                        "insertbackground": "#D4D4D4",
+                        "selectbackground": "#264F78",
+                        "selectforeground": "#D4D4D4"
+                    }
+                }
+        
+        codehighlighter.set_theme(theme_data)
+        codehighlighter.highlight()
+
+        # 对printarea使用相同的设置
+        codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
+        codehighlighter2.set_theme(theme_data)
+        codehighlighter2.highlight()
+        
+        def on_key(event):
+            # 处理自动保存
+            autosave()
+            return None
+        
+        # 移除所有原有的按键绑定
+        for binding in root.bind_all():
+            if binding.startswith('<Key'):
+                root.unbind_all(binding)
+        
+        # 添加新的按键绑定
+        root.bind("<Key>", on_key, add="+")
+        
+    except Exception as e:
+        logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
 
 def save_file():
     """File > Save File"""
@@ -222,7 +278,63 @@ def save_file():
                         ("所有文件", "*.*")
                     ]
                 )
-        init_highlighter()
+        try:
+            codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
+            
+            # 检查主题文件是否存在
+            theme_file = "./asset/theme/vscode-dark.json"
+            if not os.path.exists(theme_file):
+                logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
+                # Use built-in default theme
+                theme_data = {
+                    "base": {
+                        "background": "#1E1E1E",
+                        "foreground": "#D4D4D4",
+                        "insertbackground": "#D4D4D4",
+                        "selectbackground": "#264F78",
+                        "selectforeground": "#D4D4D4"
+                    }
+                }
+            else:
+                # 加载主题
+                try:
+                    with open(theme_file, "r", encoding="utf-8") as f:
+                        theme_data = json.load(f)
+                except Exception as e:
+                    logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
+                    theme_data = {
+                        "base": {
+                            "background": "#1E1E1E",
+                            "foreground": "#D4D4D4",
+                            "insertbackground": "#D4D4D4",
+                            "selectbackground": "#264F78",
+                            "selectforeground": "#D4D4D4"
+                        }
+                    }
+            
+            codehighlighter.set_theme(theme_data)
+            codehighlighter.highlight()
+
+            # 对printarea使用相同的设置
+            codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
+            codehighlighter2.set_theme(theme_data)
+            codehighlighter2.highlight()
+            
+            def on_key(event):
+                # 处理自动保存
+                autosave()
+                return None
+            
+            # 移除所有原有的按键绑定
+            for binding in root.bind_all():
+                if binding.startswith('<Key'):
+                    root.unbind_all(binding)
+            
+            # 添加新的按键绑定
+            root.bind("<Key>", on_key, add="+")
+            
+        except Exception as e:
+            logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
     else:
         print(file_path)
 
@@ -373,12 +485,6 @@ def exit_editor():
     if messagebox.askokcancel("退出", "确定要退出吗？"):
         root.destroy()
         sys.exit(0)
-
-# 初始化代码高亮器
-def init_highlighter():
-    global codehighlighter2, codehighlighter
-
-    
 
 # -------------------- 创建窗口和菜单 --------------------
 

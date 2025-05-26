@@ -7,7 +7,8 @@
     "highlighter.syntax-highlighting": {
         "theme": "github-light",
         "enable-type-hints": true,
-        "enable-docstrings": true
+        "enable-docstrings": true,
+        "code": "python"
     },
     "init.required-dirs": [
         "./asset/",
