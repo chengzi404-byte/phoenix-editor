@@ -1,1 +1,6 @@
+print(input())
+print("--- By Phoenix Editor")
+
+
+
 

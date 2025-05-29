@@ -3,11 +3,7 @@ from library.logger import setup_logger
 from tkinter import messagebox
 from tkinter import filedialog 
 from tkinter.font import Font
-from ttkbootstrap import (Window, Button, Text, 
-                          Menu, Toplevel, StringVar, 
-                          Label, OptionMenu, Entry, 
-                          IntVar, Spinbox,PanedWindow,
-                          END, VERTICAL, BOTH, E, W, X)
+from tkinter import *
 import os
 import json
 import subprocess
@@ -411,10 +407,10 @@ def run():
                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
     # 获取printarea的内容并转换为字节
-    input_data = printarea.get(0.0, END).encode('utf-8')  # 转换为字节
+    input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
     stdout, stderr = runtool.communicate(input=input_data)
 
-    printarea.insert(END, f"%Run {file_path}\n")
+    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
     printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
     printarea.insert(END, stdout.decode())  # 解码为字符串
     # printarea.insert(END, stderr.decode())  # 解码为字符串
@@ -489,7 +485,7 @@ def exit_editor():
 # -------------------- 创建窗口和菜单 --------------------
 
 # 创建主窗口
-root = Window()
+root = Tk()
 root.title("火凤文本编辑器 Phoenix Notepad")
 root.geometry("800x600+100+100")
 root.configure(bg='black')
@@ -589,8 +585,12 @@ class Terminal(tk.Text):
         return "break"
 
 # 将终端添加到分割器
-printarea = Terminal(paned, font=Font(root, family="Fira Code", size=12))
-paned.add(printarea)
+subpaned = PanedWindow(paned, orient=HORIZONTAL)
+paned.add(subpaned)
+inputarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
+subpaned.add(inputarea)
+printarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
+subpaned.add(printarea)
 
 # Show last edited content
 try:
