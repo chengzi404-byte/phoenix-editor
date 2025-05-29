@@ -1,23 +1,49 @@
-# phoenix-ide
-![](https://shields.io/badge/release-v0.1-orange)
-![](https://shields.io/badge/welcome-green)
-## Intruduction
-It's just an individual competition project
-## Mirrors
-I also created the mirror on (Gitee)[https://gitee.com/], you can download by the way:
-``` bash
-https://gitee.com/chengzi404_admin/phoenix-editor/
-```
-## How to use
-There are two ways to download. Before download our repository, please run these commands to download the libraries.
-``` bash
-pip install ttkbootstrap
-```
-### 1. Git
-Open the terminal and paste these commands:
-``` bash
-git clone https://github.com/remain404/phoenix-ide/phoenix-ide.git
-```
-And run it by python.
-### 2. Github releases
-Choose the latest release and download the source code. Run it by python.
+# Phoenix Editor
+
+[![](https://shields.io/badge/最新版本-v0.2-blue)](https://gitee.com/chengzi404_admin/phoenix-editor/repository/archive/v0.2.zip)
+[![](https://shields.io/badge/欢迎-orange)](https://gitee.com/chengzi404_admin/phoenix-editor)
+
+# 下载版本
+
+## v0.2
+
+### v0.2.0
+
+[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.2)
+
+**更新内容**
+
+- 更多主题
+    - dracula
+    - nord
+    - material
+    - solarized-light
+- 加入了输入页面，能够输入数据
+
+## v0.1
+
+### v0.1.1 
+
+[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.1.1)
+
+**更新内容**
+
+加入了更多的语言文件，为后续的多语言开发留下了基础。
+
+修复 [Issue ICA62S](https://gitee.com/chengzi404_admin/phoenix-editor/issues/ICA62S)
+
+**详细更新内容:**
+https://gitee.com/chengzi404_admin/phoenix-editor/commits/v0.1.1
+
+### v0.1.0 
+
+[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.1)
+
+项目的第一个版本。
+
+**详细更新内容:**
+https://gitee.com/chengzi404_admin/phoenix-editor/commits/v0.1
+
+# 许可证
+
+使用 GPL 开源许可证。
