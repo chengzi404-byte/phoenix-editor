@@ -1,15 +1,18 @@
 from library.highlighter_factory import HighlighterFactory
 from library.logger import setup_logger
+from library.api import Settings
 from tkinter import messagebox
 from tkinter import filedialog 
 from tkinter.font import Font
 from tkinter import *
+from threading import Thread
 import os
 import json
 import subprocess
 import sys
 import zipfile
 import tkinter as tk
+import pathlib
 
 
 # -------------------- Global Variables --------------------
@@ -17,36 +20,6 @@ global settings, highlighter_factory, file_path, logger
 global codehighlighter2, codehighlighter
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
-
-with open("./asset/settings.json", "r", encoding="utf-8") as fp:
-    settings = json.load(fp)
-
-class Settings:
-    class Editor:
-        def file_encoding():        return settings["editor.file-encoding"]
-        def lang():                 return settings["editor.lang"]
-        def langfile():             return f"./asset/lang/{settings["editor.lang"]}.json"
-        def font():                 return settings["editor.font"]
-        def font_size():            return settings["editor.fontsize"]
-        def file_path():            return settings["editor.file-path"]
-        def change(key, value):
-            settings[f"editor.{key}"] = value
-
-            with open("./asset/settings.json", "r", encoding="utf-8") as fp:
-                json.dump(settings, fp)
-
-    class Highlighter:
-        def syntax_highlighting():  return settings["highlighter.syntax-highlighting"]
-
-        def change(key, value):
-            settings[f"highlighter.syntax-highlighting.{key}"] = value
-
-            with open("./asset/settings.json", "r", encoding="utf-8") as fp:
-                json.dump(settings, fp)
-    
-    class Init:
-        def required_dirs():        return settings["init.required-dirs"]
-        def required_packages():    return settings["init.required-packages"]
 
 try:
     for directory in Settings.Init.required_dirs():
@@ -94,7 +67,7 @@ def open_settings_panel():
     def apply_settings():
         """Apply settings immediately"""
         theme_name = theme_var.get()
-        # 加载主题文件
+        # Load Theme File
         theme_file = f"./asset/theme/{theme_name}.json"
         try:
             with open(theme_file, "r", encoding="utf-8") as f:
@@ -102,40 +75,42 @@ def open_settings_panel():
             codehighlighter.set_theme(theme_data)
             codearea.configure(font=Font(settings_window, family=font_var.get(), size=fontsize_var.get()))
         except Exception as e:
-            print(f"应用主题失败: {str(e)}")
+            logger.error(f"应用主题失败: {str(e)}")
 
-    # 主题设置
+
+    # Theme
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text="主题:").pack(anchor=W)
-    rawdata = os.listdir("./asset/theme/")
-    themes = ["vscode-dark"]
-    rawdata.remove("vscode-dark.json")
-    for theme in rawdata:
-        themes.append(theme.split('.')[0])
+    themes = Settings.Package.themes()
 
     OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
-    # 字体设置
+    # Font type
     font_var = StringVar(value=Settings.Editor.font())
     Label(settings_window, text="字体:").pack(anchor=W)
     Entry(settings_window, textvariable=font_var).pack(anchor=W, fill=X)
 
-    # 字体大小设置
+    # Font size
     fontsize_var = IntVar(value=Settings.Editor.font_size())
     Label(settings_window, text="字体大小:").pack(anchor=W)
     Spinbox(settings_window, from_=8, to=72, textvariable=fontsize_var).pack(anchor=W, fill=X)
 
-    # 主题设置
+    # Traces
     theme_var.trace_add('write', lambda *args: apply_settings())
     font_var.trace_add('write', lambda *args: apply_settings())
     fontsize_var.trace_add('write', lambda *args: apply_settings())
 
-    # 多语言支持
+    # Multi-languange
     lang_var = StringVar(value=Settings.Editor.lang)
     Label(settings_window, text="语言:").pack(anchor=W)
     OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
 
     lang_var.trace_add('write', lambda *args: load_language(lang_var.get()))
+
+    # Highlight code type
+    code_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["code"])
+    Label(settings_window, text="代码类型：").pack(anchor=W)
+    OptionMenu(settings_window, code_var, )
 
     Button(settings_window, text="关闭", command=settings_window.destroy).pack(anchor=E)
 
@@ -403,19 +378,22 @@ def redo():
 # -------------------- Run Operations --------------------
 def run():
     """Run > Run Python File"""
-    runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
-                           stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    def runthread():
+        runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
+                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+        # Clear inputarea
+        inputarea.delete(0.0, END)
+        
+        # Get inputarea information and change to byte
+        input_data = inputarea.get(0.0, END).encode('utf-8')  # change to byte
+        stdout, stderr = runtool.communicate(input=input_data)
+
+        printarea.insert(END, stdout.decode())  # decode
+        # printarea.insert(END, stderr.decode())  # decode (Removed)
     
-    # 获取printarea的内容并转换为字节
-    input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
-    stdout, stderr = runtool.communicate(input=input_data)
-
-    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
-    printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
-    printarea.insert(END, stdout.decode())  # 解码为字符串
-    # printarea.insert(END, stderr.decode())  # 解码为字符串
-
-    printarea.insert(END, "\n>>> ")
+    run_thread = Thread(target=runthread)
+    run_thread.join(Settings.Run.timeout())
 
 def autosave():
     """File > Auto Save"""

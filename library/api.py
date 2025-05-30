@@ -1,47 +1,51 @@
-from .validator import validate_settings
 import json
-import os
-class EditorAPI:
-    """编辑器公共API"""
-    def __init__(self):
-        self.file_path = "./temp_script.py"
-        self.copy_msg = ""
-        self.settings = {}
-        self.lang_dict = {}
-        self.codehighlighter = None
-        self.file_encoding = "utf-8"
-        
-    def load_settings(self):
-        """加载设置"""
-        try:
+import pathlib
+
+with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+    settings = json.load(fp)
+
+class Settings:
+    class Editor:
+        def file_encoding():        return settings["editor.file-encoding"]
+        def lang():                 return settings["editor.lang"]
+        def langfile():             return f"./asset/packages/lang/{settings["editor.lang"]}.json"
+        def font():                 return settings["editor.font"]
+        def font_size():            return settings["editor.fontsize"]
+        def file_path():            return settings["editor.file-path"]
+        def change(key, value):
+            settings[f"editor.{key}"] = value
+
             with open("./asset/settings.json", "r", encoding="utf-8") as fp:
-                self.settings = json.load(fp)
-            if not validate_settings(self.settings):
-                raise ValueError("无效的设置文件")
-            self.file_encoding = self.settings.get("file-encoding", "utf-8")
-            return True
-        except Exception as e:
-            print(f"加载设置失败: {str(e)}")
-            return False
+                json.dump(settings, fp)
+
+    class Highlighter:
+        def syntax_highlighting():  return settings["highlighter.syntax-highlighting"]
+
+        def change(key, value):
+            settings[f"highlighter.syntax-highlighting.{key}"] = value
+
+            with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+                json.dump(settings, fp)
+    
+    class Init:
+        def required_dirs():        return settings["init.required-dirs"]
+        def required_packages():    return settings["init.required-packages"]
+    
+    class Run:
+        def timeout():
+            if settings["race-mode"]: 
+                return settings["run.timeout"] 
+            else: 
+                return None
+    
+    class Package:
+        def themes():
+            with open(f"{pathlib.Path.cwd().parent()}/asset/packages/packages/themes.json", "r", encoding="utf-8") as fp:
+                return json.load(fp)
             
-    def save_settings(self):
-        """保存设置"""
-        try:
-            with open("./asset/settings.json", "w", encoding="utf-8") as fp:
-                json.dump(self.settings, fp, indent=4, ensure_ascii=False)
-            return True
-        except Exception as e:
-            print(f"保存设置失败: {str(e)}")
-            return False
-            
-    def load_language(self, lang):
-        """加载语言包"""
-        try:
-            lang_file = f"./asset/lang_{lang}.json"
-            if os.path.exists(lang_file):
-                with open(lang_file, "r", encoding="utf-8") as f:
-                    self.lang_dict = json.load(f)
-            return True
-        except Exception as e:
-            print(f"加载语言包失败: {str(e)}")
-            return False 
+        def code_support():
+            with open(f"{pathlib.Path.cwd().parent()}/asset/packages/packages/code_support.json", "r", encoding="utf-8") as fp:
+                return json.load(fp)
+
+    class Path:
+        def main_dir():                  return pathlib.Path.cwd().parent()

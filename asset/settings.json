@@ -16,6 +16,10 @@
         "./logs/"
     ],
     "init.required-packages": [
-        
-    ]
+        "code_support.json",
+        "themes.json",
+        "lang"
+    ],
+    "run.timeout": 1000,
+    "run.racemode": false
 }
