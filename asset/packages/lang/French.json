@@ -1,17 +1,41 @@
 {
-    "new_file": "Nouveau fichier",
-    "new_window": "Nouvelle fenêtre",
-    "open_file": "Ouvrir un fichier",
-    "save_file": "Enregistrer le fichier",
-    "save_as_file": "Enregistrer sous",
-    "exit": "Quitter",
-    "undo": "Annuler",
-    "redo": "Réduire",
-    "copy": "Copier",
-    "paste": "Coller",
-    "delete": "Supprimer",
-    "run": "Exécuter",
-    "clear_output": "Effacer la sortie",
-    "terminal": "Terminal",
-    "open_settings": "Paramètres"
+    "plugin": {
+        "download-success": ["Plugin", "Téléchargement du plugin réussi. Veuillez redémarrer le logiciel."],
+        "download-failture": ["Plugin", "Échec de l'installation du plugin : {}"]
+    }, 
+    "settings": {
+        "font": "Police",
+        "font-size": "Taille de police",
+        "theme": "Thème",
+        "languange": "Langue",
+        "restart": "Veuillez redémarrer le logiciel pour appliquer les paramètres",
+        "close": "Fermer",
+        "title": "Paramètres"
+    },
+    "menus": {
+        "configure": "Configurer",
+        "open-settings": "Paramètres",
+
+        "file": "Fichier",
+        "new-file": "Nouveau fichier",
+        "new-window": "Nouvelle fenêtre",
+        "open-file": "Ouvrir un fichier",
+        "save-file": "Enregistrer le fichier",
+        "save-as-file": "Enregistrer sous",
+        "exit": "Quitter",
+
+        "edit": "Édition",
+        "undo": "Annuler",
+        "redo": "Rétablir",
+        "copy": "Copier",
+        "paste": "Coller",
+        "delete": "Supprimer",
+        
+        "plugin": "Plugin",
+
+        "run": "Exécuter",
+        "clear-output": "Effacer la sortie",
+        "terminal": "Terminal"
+    },
+    "info-window-title": "Notification"
 }

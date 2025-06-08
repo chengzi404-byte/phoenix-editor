@@ -1,17 +1,41 @@
 {
-    "new_file": "Neue Datei",
-    "new_window": "Neues Fenster",
-    "open_file": "Datei öffnen",
-    "save_file": "Datei speichern",
-    "save_as_file": "Datei unter",
-    "exit": "Beenden",
-    "undo": "Rückgängig machen",
-    "redo": "Wiederholen",
-    "copy": "Kopieren",
-    "paste": "Einfügen",
-    "delete": "Löschen",
-    "run": "Ausführen",
-    "clear_output": "Ausgabe löschen",
-    "terminal": "Terminal",
-    "open_settings": "Einstellungen öffnen"
+    "plugin": {
+        "download-success": ["Plugin", "Plugin erfolgreich heruntergeladen. Bitte starten Sie die Software neu."],
+        "download-failture": ["Plugin", "Plugin-Installation fehlgeschlagen: {}"]
+    }, 
+    "settings": {
+        "font": "Schriftart",
+        "font-size": "Schriftgröße",
+        "theme": "Design",
+        "languange": "Sprache",
+        "restart": "Bitte starten Sie die Software neu, um die Einstellungen zu übernehmen",
+        "close": "Schließen",
+        "title": "Einstellungen"
+    },
+    "menus": {
+        "configure": "Konfigurieren",
+        "open-settings": "Einstellungen",
+
+        "file": "Datei",
+        "new-file": "Neue Datei",
+        "new-window": "Neues Fenster",
+        "open-file": "Datei öffnen",
+        "save-file": "Datei speichern",
+        "save-as-file": "Speichern unter",
+        "exit": "Beenden",
+
+        "edit": "Bearbeiten",
+        "undo": "Rückgängig",
+        "redo": "Wiederholen",
+        "copy": "Kopieren",
+        "paste": "Einfügen",
+        "delete": "Löschen",
+        
+        "plugin": "Plugin",
+
+        "run": "Ausführen",
+        "clear-output": "Ausgabe löschen",
+        "terminal": "Terminal"
+    },
+    "info-window-title": "Hinweis"
 }
