@@ -5,14 +5,12 @@ from tkinter import messagebox
 from tkinter import filedialog 
 from tkinter.font import Font
 from tkinter import *
-from threading import Thread
 import os
 import json
 import subprocess
 import sys
 import zipfile
 import tkinter as tk
-import pathlib
 
 
 # -------------------- Global Variables --------------------
@@ -21,19 +19,26 @@ global codehighlighter2, codehighlighter
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
 
+with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+    settings = json.load(fp)
+
+# Load language settings
+with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
+    lang_dict = json.load(fp)
+
 try:
     for directory in Settings.Init.required_dirs():
         if not os.path.exists(directory):
             os.makedirs(directory)
             
-    # 检查并创建默认设置文件
+    # Check and create the normal files
     if not os.path.exists("./asset/settings.json"):
         default_settings = {
             "file-encoding": "utf-8",
             "lang": "zh-cn",
             "font": "Consolas",
             "fontsize": 12,
-            "code": "python",  # 默认使用Python高亮
+            "code": "python",  # Use the python highlighter as normal
             "syntax-highlighting": {
                 "theme": "vscode-dark",
                 "enable-type-hints": True,
@@ -46,110 +51,66 @@ try:
 except Exception as e:
     logger.error(f"初始化失败: {str(e)}")
 
-
-
-def load_language(lang):
-    """加载语言文件"""
-    lang_file = f"./asset/lang_{lang}.json"
-    if os.path.exists(lang_file):
-        with open(lang_file, "r", encoding="utf-8") as f:
-            return json.load(f)
-    update_ui_text()
-    return {}
-
 # -------------------- Settings Panel Functions --------------------
 def open_settings_panel():
-    """打开设置面板"""
+    """Open Settings Panel"""
     settings_window = Toplevel()
-    settings_window.title("设置")
+    settings_window.title(lang_dict["settings"]["title"])
     settings_window.geometry("400x300")
 
     def apply_settings():
         """Apply settings immediately"""
         theme_name = theme_var.get()
-        # Load Theme File
+        # Load theme file
         theme_file = f"./asset/theme/{theme_name}.json"
         try:
+            # Apply changes
             with open(theme_file, "r", encoding="utf-8") as f:
                 theme_data = json.load(f)
             codehighlighter.set_theme(theme_data)
             codearea.configure(font=Font(settings_window, family=font_var.get(), size=fontsize_var.get()))
         except Exception as e:
-            logger.error(f"应用主题失败: {str(e)}")
+            print(f"应用主题失败: {str(e)}")
+    
+    def apply_lang():
+        lang_file = lang_var.get()
+        Settings.Editor.change("lang", lang_file)
+        messagebox.showinfo(lang_dict["info-window-title"], lang_dict["settings"]["restart"])
 
-
-    # Theme
+    # 主题设置
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
-    Label(settings_window, text="主题:").pack(anchor=W)
-    themes = Settings.Package.themes()
+    Label(settings_window, text=lang_dict["settings"]["theme"]).pack(anchor=W)
+    rawdata = os.listdir("./asset/theme/")
+    themes = ["vscode-dark"]
+    rawdata.remove("vscode-dark.json")
+    for theme in rawdata:
+        themes.append(theme.split('.')[0])
 
     OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
-    # Font type
+    # 字体设置
     font_var = StringVar(value=Settings.Editor.font())
-    Label(settings_window, text="字体:").pack(anchor=W)
+    Label(settings_window, text=lang_dict["settings"]["font"]).pack(anchor=W)
     Entry(settings_window, textvariable=font_var).pack(anchor=W, fill=X)
 
-    # Font size
+    # 字体大小设置
     fontsize_var = IntVar(value=Settings.Editor.font_size())
-    Label(settings_window, text="字体大小:").pack(anchor=W)
+    Label(settings_window, text=lang_dict["settings"]["font-size"]).pack(anchor=W)
     Spinbox(settings_window, from_=8, to=72, textvariable=fontsize_var).pack(anchor=W, fill=X)
 
-    # Traces
+    # 主题设置
     theme_var.trace_add('write', lambda *args: apply_settings())
     font_var.trace_add('write', lambda *args: apply_settings())
     fontsize_var.trace_add('write', lambda *args: apply_settings())
 
-    # Multi-languange
+    # 多语言支持
     lang_var = StringVar(value=Settings.Editor.lang)
-    Label(settings_window, text="语言:").pack(anchor=W)
+    Label(settings_window, text=lang_dict["settings"]["languange"]).pack(anchor=W)
     OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
 
-    lang_var.trace_add('write', lambda *args: load_language(lang_var.get()))
+    lang_var.trace_add('write', lambda *args: apply_lang())
 
-    # Highlight code type
-    code_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["code"])
-    Label(settings_window, text="代码类型：").pack(anchor=W)
-    OptionMenu(settings_window, code_var, )
-
-    Button(settings_window, text="关闭", command=settings_window.destroy).pack(anchor=E)
-
-# -------------------- UI Updates --------------------
-def update_ui_text():
-    """Update UI text"""
-    # 菜单项配置字典
-    # 菜单项配置字典
-    menu_config = {
-        'filemenu': {
-            "0": "new_file",
-            "1": "new_window",
-            "3": "open_file",
-            "4": "save_file",
-            "5": "save_as_file",
-            "6": "exit"
-        },
-        'editmenu': {
-            "0": "undo",
-            "1": "redo",
-            "3": "copy",
-            "4": "paste",
-            "5": "delete"
-        },
-        'runmenu': {
-            "0": "run",
-            "1": "clear_output",
-            "2": "terminal"
-        },
-        'settingsmenu': {
-            "0": "open_settings"
-        }
-    }
-
-    # 循环更新菜单项
-    for menu_name, items in menu_config.items():
-        menu = globals()[menu_name]
-        for index, key in items.items():
-            menu.entryconfig(index, label=lang_dict.get(key, key))
+    Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
 
 # -------------------- File Operations --------------------
 def open_file():
@@ -378,22 +339,19 @@ def redo():
 # -------------------- Run Operations --------------------
 def run():
     """Run > Run Python File"""
-    def runthread():
-        runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
-                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-
-        # Clear inputarea
-        inputarea.delete(0.0, END)
-        
-        # Get inputarea information and change to byte
-        input_data = inputarea.get(0.0, END).encode('utf-8')  # change to byte
-        stdout, stderr = runtool.communicate(input=input_data)
-
-        printarea.insert(END, stdout.decode())  # decode
-        # printarea.insert(END, stderr.decode())  # decode (Removed)
+    runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
+                           stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
-    run_thread = Thread(target=runthread)
-    run_thread.join(Settings.Run.timeout())
+    # 获取printarea的内容并转换为字节
+    input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
+    stdout, stderr = runtool.communicate(input=input_data)
+
+    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
+    printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
+    printarea.insert(END, stdout.decode())  # 解码为字符串
+    # printarea.insert(END, stderr.decode())  # 解码为字符串
+
+    printarea.insert(END, "\n>>> ")
 
 def autosave():
     """File > Auto Save"""
@@ -450,27 +408,27 @@ def download_plugin():
             plugin_zip = zipfile.ZipFile(plugin_path, "r")
             plugin_zip.extractall("./asset/plugins/")
             plugin_zip.close()
-            messagebox.showinfo("插件", "插件安装成功，请重启软件")
+            messagebox.showinfo("Plugin", "Plugin installation successful, please restart the software")
     except Exception as e:
-        messagebox.showerror("错误", f"插件安装失败：{str(e)}")
+        messagebox.showerror("Error", f"Plugin installation failed: {str(e)}")
 
 def exit_editor():
-    """退出编辑器"""
-    if messagebox.askokcancel("退出", "确定要退出吗？"):
+    """Exit"""
+    if messagebox.askokcancel("Exit", "Are you sure you want to exit?"):
         root.destroy()
         sys.exit(0)
 
-# -------------------- 创建窗口和菜单 --------------------
+# -------------------- Create the window and menus --------------------
 
-# 创建主窗口
+# Create the main window
 root = Tk()
-root.title("火凤文本编辑器 Phoenix Notepad")
+root.title("Phoenix-Notepad")
 root.geometry("800x600+100+100")
 root.configure(bg='black')
 # root.iconbitmap(default="./asset/icon.ico")
 root.resizable(width=True, height=True)
 
-# 绑定快捷键
+# Binding
 root.bind("<Control-c>", lambda event: copy())
 root.bind("<Control-v>", lambda event: paste())
 root.bind("<Control-x>", lambda event: delete())
@@ -479,52 +437,52 @@ root.bind("<Control-y>", lambda event: redo())
 root.bind("<F5>", lambda event: run())
 root.bind("<Key>", lambda event: autosave())
 
-# 创建所有菜单
+# Create all the menus
 menu = Menu()
 root.config(menu=menu)
 
-# 文件菜单
+# File menu
 filemenu = Menu(tearoff=0)
-menu.add_cascade(menu=filemenu, label="文件")
-filemenu.add_command(command=new_file, label="新建文件")
-filemenu.add_command(command=new_window, label="新建窗口")
+menu.add_cascade(menu=filemenu, label=lang_dict["menus"]["file"])
+filemenu.add_command(command=new_file, label=lang_dict["menus"]["new-file"])
+filemenu.add_command(command=new_window, label=lang_dict["menus"]["new-window"])
 filemenu.add_separator()
-filemenu.add_command(command=open_file, label="打开文件")
-filemenu.add_command(command=save_file, label="保存文件")
-filemenu.add_command(command=save_as_file, label="另存为文件")
+filemenu.add_command(command=open_file, label=lang_dict["menus"]["open-file"])
+filemenu.add_command(command=save_file, label=lang_dict["menus"]["save-file"])
+filemenu.add_command(command=save_as_file, label=lang_dict["menus"]["save-as-file"])
 filemenu.add_separator()
-filemenu.add_command(command=exit_editor, label="退出")
+filemenu.add_command(command=exit_editor, label=lang_dict["menus"]["exit"])
 
-# 编辑菜单
+# Edit menu
 editmenu = Menu(tearoff=0)
-menu.add_cascade(menu=editmenu, label="编辑")
-editmenu.add_command(command=undo, label="撤销")
-editmenu.add_command(command=redo, label="重做")
+menu.add_cascade(menu=editmenu, label=lang_dict["menus"]["edit"])
+editmenu.add_command(command=undo, label=lang_dict["menus"]["undo"])
+editmenu.add_command(command=redo, label=lang_dict["menus"]["redo"])
 editmenu.add_separator()
-editmenu.add_command(command=copy, label="复制")
-editmenu.add_command(command=paste, label="粘贴")
-editmenu.add_command(command=delete, label="删除所选内容")
+editmenu.add_command(command=copy, label=lang_dict["menus"]["copy"])
+editmenu.add_command(command=paste, label=lang_dict["menus"]["paste"])
+editmenu.add_command(command=delete, label=lang_dict["menus"]["delete"])
 
-# 运行菜单
+# Run menu
 runmenu = Menu(tearoff=0)
-menu.add_cascade(menu=runmenu, label="运行")
-runmenu.add_command(command=run, label="运行")
-runmenu.add_command(command=clear_printarea, label="清空输出")
-runmenu.add_command(command=terminal, label="终端")
+menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
+runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
+runmenu.add_command(command=clear_printarea, label=lang_dict["menus"]["clear-output"])
+runmenu.add_command(command=terminal, label=lang_dict["menus"]["terminal"])
 
-# 插件菜单
+# Plugin menu (comming soon)
 pluginmenu = Menu(tearoff=0)
-menu.add_cascade(menu=pluginmenu, label="插件")
+menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
 
-# 创建分割器
+# Create the paned window
 paned = PanedWindow(root, orient=VERTICAL)
 paned.pack(fill=BOTH, expand=True)
 
-# 创建代码区
+# Create the code area
 codearea = Text(paned, font=Font(root, family="Consolas", size=12))
 paned.add(codearea)
 
-# 创建输出区域为终端
+# Create the output area as the terminal
 class Terminal(tk.Text):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -547,7 +505,7 @@ class Terminal(tk.Text):
         
         if command.strip():
             try:
-                # 执行命令
+                # Execute
                 result = subprocess.run(
                     [sys.executable, '-c', command],
                     capture_output=True,
@@ -562,7 +520,6 @@ class Terminal(tk.Text):
         self.insert("end", f"\n{self.prompt}")
         return "break"
 
-# 将终端添加到分割器
 subpaned = PanedWindow(paned, orient=HORIZONTAL)
 paned.add(subpaned)
 inputarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
@@ -579,10 +536,6 @@ except FileNotFoundError:
     with open("./temp_script.txt", "w", encoding="utf-8") as fp:
         fp.write("")
 
-# Load language settings
-with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
-    lang_dict = json.load(fp)
-
 # Setup auto-save timer
 def schedule_autosave():
     autosave()
@@ -591,15 +544,12 @@ def schedule_autosave():
 # Start auto-save
 schedule_autosave()
 
-# 设置菜单
+# Configure menu
 settingsmenu = Menu(tearoff=0)
-menu.add_cascade(menu=settingsmenu, label="设置")
-settingsmenu.add_command(command=open_settings_panel, label="打开设置面板")
+menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["configure"])
+settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
 
-# Now all menus are created, safe to call update_ui_text
-# update_ui_text()
-
-# 启动自动保存
+# Enable autosave
 schedule_autosave()
 
 # Initialization
@@ -640,22 +590,22 @@ try:
     codehighlighter.set_theme(theme_data)
     codehighlighter.highlight()
 
-    # 对printarea使用相同的设置
+    # Use the same configure to the terminal
     codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
     codehighlighter2.set_theme(theme_data)
     codehighlighter2.highlight()
     
     def on_key(event):
-        # 处理自动保存
+        # Process auto-save
         autosave()
         return None
     
-    # 移除所有原有的按键绑定
+    # Remove all the key binds
     for binding in root.bind_all():
         if binding.startswith('<Key'):
             root.unbind_all(binding)
     
-    # 添加新的按键绑定
+    # Add new key bind
     root.bind("<Key>", on_key, add="+")
     
 except Exception as e:
