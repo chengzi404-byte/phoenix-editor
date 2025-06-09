@@ -490,21 +490,19 @@ class BaseHighlighter:
         """Set theme
         
         Args:
-            theme_data: Can be theme name string or theme config dict
+            theme_data: Must be theme name string
         """
         try:
-            if isinstance(theme_data, str):
-                # 如果传入的是主题名称，从主题文件加载
-                theme_file = Path("./asset/theme") / f"{theme_data}.json"
-                if not theme_file.exists():
-                    print(f"警告: 主题文件 {theme_file} 不存在，使用默认主题")
-                    return
-                    
-                with open(theme_file, "r", encoding="utf-8") as f:
-                    theme_data = json.load(f)
-                
-                self.theme_name = theme_data
+            theme_file = Path.cwd() / f"{theme_data}"
+            if not theme_file.exists():
+                print(f"警告: 主题文件 {theme_file} 不存在，使用默认主题")
+                return
             
+            self.theme_name = theme_data
+
+            with open(theme_file, "r", encoding="utf-8") as f:
+                theme_data = json.load(f)
+        
             # 配置文本部件的基础样式
             if "base" in theme_data:
                 self.text_widget.configure(**theme_data["base"])

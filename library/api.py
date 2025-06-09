@@ -40,11 +40,11 @@ class Settings:
     
     class Package:
         def themes():
-            with open(f"{pathlib.Path.cwd().parent()}/asset/packages/packages/themes.json", "r", encoding="utf-8") as fp:
+            with open(f"{pathlib.Path.cwd().parent()}/asset/packages/themes.json", "r", encoding="utf-8") as fp:
                 return json.load(fp)
             
         def code_support():
-            with open(f"{pathlib.Path.cwd().parent()}/asset/packages/packages/code_support.json", "r", encoding="utf-8") as fp:
+            with open(f"{pathlib.Path.cwd().parent()}/asset/packages/code_support.json", "r", encoding="utf-8") as fp:
                 return json.load(fp)
 
     class Path:

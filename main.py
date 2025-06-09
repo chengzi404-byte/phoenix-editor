@@ -64,10 +64,7 @@ def open_settings_panel():
         # Load theme file
         theme_file = f"./asset/theme/{theme_name}.json"
         try:
-            # Apply changes
-            with open(theme_file, "r", encoding="utf-8") as f:
-                theme_data = json.load(f)
-            codehighlighter.set_theme(theme_data)
+            codehighlighter.set_theme(theme_file)
             codearea.configure(font=Font(settings_window, family=font_var.get(), size=fontsize_var.get()))
         except Exception as e:
             print(f"应用主题失败: {str(e)}")
@@ -152,29 +149,15 @@ def open_file():
                     "selectforeground": "#D4D4D4"
                 }
             }
-        else:
-            # 加载主题
-            try:
-                with open(theme_file, "r", encoding="utf-8") as f:
-                    theme_data = json.load(f)
-            except Exception as e:
-                logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
-                theme_data = {
-                    "base": {
-                        "background": "#1E1E1E",
-                        "foreground": "#D4D4D4",
-                        "insertbackground": "#D4D4D4",
-                        "selectbackground": "#264F78",
-                        "selectforeground": "#D4D4D4"
-                    }
-                }
+            with open(theme_file, "w", encoding="utf-8") as fp:
+                json.dump(theme_data, fp)
         
-        codehighlighter.set_theme(theme_data)
+        codehighlighter.set_theme(theme_file)
         codehighlighter.highlight()
 
         # 对printarea使用相同的设置
         codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-        codehighlighter2.set_theme(theme_data)
+        codehighlighter2.set_theme(theme_file)
         codehighlighter2.highlight()
         
         def on_key(event):
@@ -228,29 +211,15 @@ def save_file():
                         "selectforeground": "#D4D4D4"
                     }
                 }
-            else:
-                # 加载主题
-                try:
-                    with open(theme_file, "r", encoding="utf-8") as f:
-                        theme_data = json.load(f)
-                except Exception as e:
-                    logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
-                    theme_data = {
-                        "base": {
-                            "background": "#1E1E1E",
-                            "foreground": "#D4D4D4",
-                            "insertbackground": "#D4D4D4",
-                            "selectbackground": "#264F78",
-                            "selectforeground": "#D4D4D4"
-                        }
-                    }
+                with open(theme_file, "w", encoding="utf-8") as fp: 
+                    json.dump(theme_data, fp)
             
-            codehighlighter.set_theme(theme_data)
+            codehighlighter.set_theme(theme_file)
             codehighlighter.highlight()
 
             # 对printarea使用相同的设置
             codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-            codehighlighter2.set_theme(theme_data)
+            codehighlighter2.set_theme(theme_file)
             codehighlighter2.highlight()
             
             def on_key(event):
@@ -571,29 +540,13 @@ try:
                 "selectforeground": "#D4D4D4"
             }
         }
-    else:
-        # 加载主题
-        try:
-            with open(theme_file, "r", encoding="utf-8") as f:
-                theme_data = json.load(f)
-        except Exception as e:
-            logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
-            theme_data = {
-                "base": {
-                    "background": "#1E1E1E",
-                    "foreground": "#D4D4D4",
-                    "insertbackground": "#D4D4D4",
-                    "selectbackground": "#264F78",
-                    "selectforeground": "#D4D4D4"
-                }
-            }
     
-    codehighlighter.set_theme(theme_data)
+    codehighlighter.set_theme(theme_file)
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
     codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-    codehighlighter2.set_theme(theme_data)
+    codehighlighter2.set_theme(theme_file)
     codehighlighter2.highlight()
     
     def on_key(event):
