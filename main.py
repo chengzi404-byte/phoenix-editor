@@ -83,9 +83,10 @@ def open_settings_panel():
     rawdata = os.listdir("./asset/theme/")
     themes = ["vscode-dark"]
     rawdata.remove("vscode-dark.json")
+    logger.info(f"Load themes: {rawdata}")
     for theme in rawdata:
         themes.append(theme.split('.')[0])
-
+    theme_var.set(codehighlighter.get_theme())
     OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
     # 字体设置

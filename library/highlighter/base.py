@@ -10,10 +10,7 @@ from tkinter import Toplevel, Listbox, BOTH, END
 from pathlib import Path
 
 class BaseHighlighter:
-    def __init__(self, text_widget):
-        self.text_widget = text_widget
-        # 初始化默认的语法高亮颜色
-        self.syntax_colors = {
+    def __init__(self, text_widget, syntax_colors= {
             "keyword": "#569CD6",
             "control": "#C586C0",
             "operator": "#D4D4D4",
@@ -39,7 +36,11 @@ class BaseHighlighter:
             "type": "#4EC9B0",
             "type_annotation": "#4EC9B0",
             "interface": "#4EC9B0"
-        }
+        }, theme_name="vscode-dark"):
+        self.text_widget = text_widget
+        # 初始化默认的语法高亮颜色
+        self.syntax_colors = syntax_colors
+        self.theme_name = theme_name
         
         self.setup_tags()
         self._setup_bindings()
@@ -501,6 +502,8 @@ class BaseHighlighter:
                     
                 with open(theme_file, "r", encoding="utf-8") as f:
                     theme_data = json.load(f)
+                
+                self.theme_name = theme_data
             
             # 配置文本部件的基础样式
             if "base" in theme_data:
@@ -518,3 +521,8 @@ class BaseHighlighter:
             print(f"警告: 设置主题失败: {str(e)}")
             # 保持当前主题不变
 
+    def get_theme(self):
+        """
+        Get theme type
+        """
+        return self.theme_name
