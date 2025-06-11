@@ -64,7 +64,10 @@ def open_settings_panel():
         # Load theme file
         theme_file = f"./asset/theme/{theme_name}.json"
         try:
-            codehighlighter.set_theme(theme_file)
+            # Apply changes
+            with open(theme_file, "r", encoding="utf-8") as f:
+                theme_data = json.load(f)
+            codehighlighter.set_theme(theme_data)
             codearea.configure(font=Font(settings_window, family=font_var.get(), size=fontsize_var.get()))
         except Exception as e:
             print(f"应用主题失败: {str(e)}")
@@ -80,10 +83,9 @@ def open_settings_panel():
     rawdata = os.listdir("./asset/theme/")
     themes = ["vscode-dark"]
     rawdata.remove("vscode-dark.json")
-    logger.info(f"Load themes: {rawdata}")
     for theme in rawdata:
         themes.append(theme.split('.')[0])
-    theme_var.set(codehighlighter.get_theme())
+
     OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
     # 字体设置
@@ -149,15 +151,29 @@ def open_file():
                     "selectforeground": "#D4D4D4"
                 }
             }
-            with open(theme_file, "w", encoding="utf-8") as fp:
-                json.dump(theme_data, fp)
+        else:
+            # 加载主题
+            try:
+                with open(theme_file, "r", encoding="utf-8") as f:
+                    theme_data = json.load(f)
+            except Exception as e:
+                logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
+                theme_data = {
+                    "base": {
+                        "background": "#1E1E1E",
+                        "foreground": "#D4D4D4",
+                        "insertbackground": "#D4D4D4",
+                        "selectbackground": "#264F78",
+                        "selectforeground": "#D4D4D4"
+                    }
+                }
         
-        codehighlighter.set_theme(theme_file)
+        codehighlighter.set_theme(theme_data)
         codehighlighter.highlight()
 
         # 对printarea使用相同的设置
         codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-        codehighlighter2.set_theme(theme_file)
+        codehighlighter2.set_theme(theme_data)
         codehighlighter2.highlight()
         
         def on_key(event):
@@ -211,15 +227,29 @@ def save_file():
                         "selectforeground": "#D4D4D4"
                     }
                 }
-                with open(theme_file, "w", encoding="utf-8") as fp: 
-                    json.dump(theme_data, fp)
+            else:
+                # 加载主题
+                try:
+                    with open(theme_file, "r", encoding="utf-8") as f:
+                        theme_data = json.load(f)
+                except Exception as e:
+                    logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
+                    theme_data = {
+                        "base": {
+                            "background": "#1E1E1E",
+                            "foreground": "#D4D4D4",
+                            "insertbackground": "#D4D4D4",
+                            "selectbackground": "#264F78",
+                            "selectforeground": "#D4D4D4"
+                        }
+                    }
             
-            codehighlighter.set_theme(theme_file)
+            codehighlighter.set_theme(theme_data)
             codehighlighter.highlight()
 
             # 对printarea使用相同的设置
             codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-            codehighlighter2.set_theme(theme_file)
+            codehighlighter2.set_theme(theme_data)
             codehighlighter2.highlight()
             
             def on_key(event):
@@ -316,10 +346,11 @@ def run():
     input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
     stdout, stderr = runtool.communicate(input=input_data)
 
+    printarea.delete(0.0, END)
     printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
     printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
-    printarea.insert(END, stdout.decode())  # 解码为字符串
-    # printarea.insert(END, stderr.decode())  # 解码为字符串
+    printarea.insert(END, stdout.decode(errors="replace"))  # 解码为字符串
+    printarea.insert(END, stderr.decode(errors="replace"))  # 解码为字符串
 
     printarea.insert(END, "\n>>> ")
 
@@ -452,49 +483,11 @@ paned.pack(fill=BOTH, expand=True)
 codearea = Text(paned, font=Font(root, family="Consolas", size=12))
 paned.add(codearea)
 
-# Create the output area as the terminal
-class Terminal(tk.Text):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.configure(
-            background='#1E1E1E',
-            foreground='#D4D4D4',
-            insertbackground='#D4D4D4',
-            selectbackground='#264F78',
-            selectforeground='#D4D4D4'
-        )
-        self.bind('<Return>', self._handle_return)
-        self.prompt = ">>> "
-        self.insert("1.0", self.prompt)
-        
-    def _handle_return(self, event):
-        """Handle Enter key event"""
-        current_pos = self.index("insert")
-        line_start = f"{current_pos} linestart"
-        command = self.get(line_start, "insert").lstrip(self.prompt)
-        
-        if command.strip():
-            try:
-                # Execute
-                result = subprocess.run(
-                    [sys.executable, '-c', command],
-                    capture_output=True,
-                    text=True
-                )
-                self.insert("end", "\n" + result.stdout)
-                if result.stderr:
-                    self.insert("end", "\n" + result.stderr)
-            except Exception as e:
-                self.insert("end", f"\n错误: {str(e)}")
-            
-        self.insert("end", f"\n{self.prompt}")
-        return "break"
-
 subpaned = PanedWindow(paned, orient=HORIZONTAL)
 paned.add(subpaned)
-inputarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
+inputarea = Text(subpaned, font=Font(root, family="Consolas", size=12))
 subpaned.add(inputarea)
-printarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
+printarea = Text(subpaned, font=Font(root, family="Consolas", size=12))
 subpaned.add(printarea)
 
 # Show last edited content
@@ -540,14 +533,34 @@ try:
                 "selectforeground": "#D4D4D4"
             }
         }
+    else:
+        # 加载主题
+        try:
+            with open(theme_file, "r", encoding="utf-8") as f:
+                theme_data = json.load(f)
+        except Exception as e:
+            logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
+            theme_data = {
+                "base": {
+                    "background": "#1E1E1E",
+                    "foreground": "#D4D4D4",
+                    "insertbackground": "#D4D4D4",
+                    "selectbackground": "#264F78",
+                    "selectforeground": "#D4D4D4"
+                }
+            }
     
-    codehighlighter.set_theme(theme_file)
+    codehighlighter.set_theme(theme_data)
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
     codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-    codehighlighter2.set_theme(theme_file)
+    codehighlighter2.set_theme(theme_data)
     codehighlighter2.highlight()
+
+    codehighlighter3 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), inputarea)
+    codehighlighter3.set_theme(theme_data)
+    codehighlighter3.highlight()
     
     def on_key(event):
         # Process auto-save

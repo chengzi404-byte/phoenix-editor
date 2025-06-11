@@ -10,7 +10,10 @@ from tkinter import Toplevel, Listbox, BOTH, END
 from pathlib import Path
 
 class BaseHighlighter:
-    def __init__(self, text_widget, syntax_colors= {
+    def __init__(self, text_widget):
+        self.text_widget = text_widget
+        # 初始化默认的语法高亮颜色
+        self.syntax_colors = {
             "keyword": "#569CD6",
             "control": "#C586C0",
             "operator": "#D4D4D4",
@@ -36,11 +39,7 @@ class BaseHighlighter:
             "type": "#4EC9B0",
             "type_annotation": "#4EC9B0",
             "interface": "#4EC9B0"
-        }, theme_name="vscode-dark"):
-        self.text_widget = text_widget
-        # 初始化默认的语法高亮颜色
-        self.syntax_colors = syntax_colors
-        self.theme_name = theme_name
+        }
         
         self.setup_tags()
         self._setup_bindings()
@@ -490,19 +489,19 @@ class BaseHighlighter:
         """Set theme
         
         Args:
-            theme_data: Must be theme name string
+            theme_data: Can be theme name string or theme config dict
         """
         try:
-            theme_file = Path.cwd() / f"{theme_data}"
-            if not theme_file.exists():
-                print(f"警告: 主题文件 {theme_file} 不存在，使用默认主题")
-                return
+            if isinstance(theme_data, str):
+                # 如果传入的是主题名称，从主题文件加载
+                theme_file = Path("./asset/theme") / f"{theme_data}.json"
+                if not theme_file.exists():
+                    print(f"警告: 主题文件 {theme_file} 不存在，使用默认主题")
+                    return
+                    
+                with open(theme_file, "r", encoding="utf-8") as f:
+                    theme_data = json.load(f)
             
-            self.theme_name = theme_data
-
-            with open(theme_file, "r", encoding="utf-8") as f:
-                theme_data = json.load(f)
-        
             # 配置文本部件的基础样式
             if "base" in theme_data:
                 self.text_widget.configure(**theme_data["base"])
@@ -519,8 +518,3 @@ class BaseHighlighter:
             print(f"警告: 设置主题失败: {str(e)}")
             # 保持当前主题不变
 
-    def get_theme(self):
-        """
-        Get theme type
-        """
-        return self.theme_name
