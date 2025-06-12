@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # Java特定的关键字
+        # Java keywords
         self.keywords = {
             'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch',
             'char', 'class', 'const', 'continue', 'default', 'do', 'double',
@@ -16,13 +16,13 @@ class CodeHighlighter(BaseHighlighter):
             'try', 'void', 'volatile', 'while'
         }
         
-        # Java特定的语法高亮规则
+        # Java syntax colors
         self.syntax_colors.update({
-            "annotation": self.syntax_colors["decorator"],  # 注解
-            "generic": self.syntax_colors["type"],         # 泛型
-            "interface": self.syntax_colors["interface"],  # 接口
-            "enum": self.syntax_colors["type"],           # 枚举
-            "package": self.syntax_colors["namespace"],    # 包名
+            "annotation": self.syntax_colors["decorator"],  # Annotation
+            "generic": self.syntax_colors["type"],         # Generic
+            "interface": self.syntax_colors["interface"],  # Interface
+            "enum": self.syntax_colors["type"],           # Enum
+            "package": self.syntax_colors["namespace"],    # Package
         })
         self.setup_tags()
         
@@ -35,7 +35,7 @@ class CodeHighlighter(BaseHighlighter):
             
         start, end = self.get_position(node)
         
-        # Java特定的节点处理
+        # Java Process
         if isinstance(node, ast.Name):
             self._highlight_java_name(node, start, end)
         elif isinstance(node, ast.ClassDef):
@@ -46,12 +46,12 @@ class CodeHighlighter(BaseHighlighter):
         name = node.id
         if name in self.keywords:
             self._add_tag("keyword", start, end)
-        elif name.startswith("@"):  # 注解
+        elif name.startswith("@"):  # Comment
             self._add_tag("annotation", start, end)
             
     def _highlight_java_class(self, node: ast.ClassDef, start: str, end: str):
         """Highlight Java class definitions"""
-        # 处理泛型
+        # Process generic
         for base in node.bases:
             if isinstance(base, ast.Subscript):
                 base_start, base_end = self.get_position(base)
