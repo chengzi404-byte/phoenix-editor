@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # JSON特定的语法高亮规则
+        # JSON syntax colors
         self.syntax_colors.update({
             "key": "#9CDCFE",
             "string": "#CE9178",
