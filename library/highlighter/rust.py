@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # Rust特定的关键字
+        # Rust keyword
         self.keywords = {
             "as", "async", "await", "break", "const", "continue", "crate", 
             "dyn", "else", "enum", "extern", "false", "fn", "for", "if", 
@@ -13,14 +13,13 @@ class CodeHighlighter(BaseHighlighter):
             "super", "trait", "true", "type", "unsafe", "use", "where", "while"
         }
         
-        # Rust特定的语法高亮规则
         self.syntax_colors.update({
-            "macro": self.syntax_colors["function"],      # 宏
-            "lifetime": self.syntax_colors["decorator"],  # 生命周期标注
-            "attribute": self.syntax_colors["decorator"], # 属性
+            "macro": self.syntax_colors["function"],      # Macro
+            "lifetime": self.syntax_colors["decorator"],  # Lifetime
+            "attribute": self.syntax_colors["decorator"], # Attr
             "trait": self.syntax_colors["interface"],    # trait
-            "enum": self.syntax_colors["type"],          # 枚举
-            "struct": self.syntax_colors["type"],        # 结构体
+            "enum": self.syntax_colors["type"],          # Enum
+            "struct": self.syntax_colors["type"],        # Struct
         })
         self.setup_tags()
         
@@ -33,7 +32,6 @@ class CodeHighlighter(BaseHighlighter):
             
         start, end = self.get_position(node)
         
-        # Rust特定的节点处理
         if isinstance(node, ast.Name):
             self._highlight_rust_name(node, start, end)
         elif isinstance(node, ast.Call):
@@ -44,9 +42,9 @@ class CodeHighlighter(BaseHighlighter):
         name = node.id
         if name in self.keywords:
             self._add_tag("keyword", start, end)
-        elif name.startswith("'"):  # 生命周期标注
+        elif name.startswith("'"):  # Lifetime
             self._add_tag("lifetime", start, end)
-        elif name.isupper():  # 常量
+        elif name.isupper():  # Constant
             self._add_tag("constant", start, end)
             
     def _highlight_rust_macro(self, node: ast.Call, start: str, end: str):
