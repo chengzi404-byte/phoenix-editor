@@ -346,10 +346,11 @@ def run():
     input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
     stdout, stderr = runtool.communicate(input=input_data)
 
+    printarea.delete(0.0, END)
     printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
     printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
-    printarea.insert(END, stdout.decode())  # 解码为字符串
-    # printarea.insert(END, stderr.decode())  # 解码为字符串
+    printarea.insert(END, stdout.decode(errors="replace"))  # 解码为字符串
+    printarea.insert(END, stderr.decode(errors="replace"))  # 解码为字符串
 
     printarea.insert(END, "\n>>> ")
 
@@ -482,49 +483,11 @@ paned.pack(fill=BOTH, expand=True)
 codearea = Text(paned, font=Font(root, family="Consolas", size=12))
 paned.add(codearea)
 
-# Create the output area as the terminal
-class Terminal(tk.Text):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.configure(
-            background='#1E1E1E',
-            foreground='#D4D4D4',
-            insertbackground='#D4D4D4',
-            selectbackground='#264F78',
-            selectforeground='#D4D4D4'
-        )
-        self.bind('<Return>', self._handle_return)
-        self.prompt = ">>> "
-        self.insert("1.0", self.prompt)
-        
-    def _handle_return(self, event):
-        """Handle Enter key event"""
-        current_pos = self.index("insert")
-        line_start = f"{current_pos} linestart"
-        command = self.get(line_start, "insert").lstrip(self.prompt)
-        
-        if command.strip():
-            try:
-                # Execute
-                result = subprocess.run(
-                    [sys.executable, '-c', command],
-                    capture_output=True,
-                    text=True
-                )
-                self.insert("end", "\n" + result.stdout)
-                if result.stderr:
-                    self.insert("end", "\n" + result.stderr)
-            except Exception as e:
-                self.insert("end", f"\n错误: {str(e)}")
-            
-        self.insert("end", f"\n{self.prompt}")
-        return "break"
-
 subpaned = PanedWindow(paned, orient=HORIZONTAL)
 paned.add(subpaned)
-inputarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
+inputarea = Text(subpaned, font=Font(root, family="Consolas", size=12))
 subpaned.add(inputarea)
-printarea = Terminal(subpaned, font=Font(root, family="Consolas", size=12))
+printarea = Text(subpaned, font=Font(root, family="Consolas", size=12))
 subpaned.add(printarea)
 
 # Show last edited content
@@ -594,6 +557,10 @@ try:
     codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
     codehighlighter2.set_theme(theme_data)
     codehighlighter2.highlight()
+
+    codehighlighter3 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), inputarea)
+    codehighlighter3.set_theme(theme_data)
+    codehighlighter3.highlight()
     
     def on_key(event):
         # Process auto-save
