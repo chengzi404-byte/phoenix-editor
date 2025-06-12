@@ -5,6 +5,17 @@
 
 # Download
 
+## v0.3
+
+### v0.3.0
+
+[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.3)
+
+**v0.3.0 Update Content**
+
+- Multi-languange support
+- Fix the bug #ICDSX9 
+
 ## v0.2
 
 ### v0.2.0
