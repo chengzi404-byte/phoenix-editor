@@ -6,13 +6,13 @@ class CodeHighlighter(BaseHighlighter):
         super().__init__(text_widget)
         # Objective-C specific syntax highlighting rules
         self.keywords = {
-            # C关键字
+            # C keyword
             'auto', 'break', 'case', 'char', 'const', 'continue', 'default',
             'do', 'double', 'else', 'enum', 'extern', 'float', 'for', 'goto',
             'if', 'int', 'long', 'register', 'return', 'short', 'signed',
             'sizeof', 'static', 'struct', 'switch', 'typedef', 'union',
             'unsigned', 'void', 'volatile', 'while',
-            # Objective-C特有关键字
+            # Objective-C special keyword
             '@interface', '@implementation', '@protocol', '@end', '@private',
             '@protected', '@public', '@class', '@selector', '@encode',
             '@synchronized', '@try', '@catch', '@finally', '@throw',
