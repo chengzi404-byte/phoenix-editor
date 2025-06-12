@@ -1,12 +1,11 @@
 import ast
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Tuple
 import tokenize
 import io
 import keyword
 import builtins
 import re
 import json
-from tkinter import Toplevel, Listbox, BOTH, END
 from pathlib import Path
 
 class BaseHighlighter:

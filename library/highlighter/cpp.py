@@ -1,7 +1,5 @@
 from .base import BaseHighlighter
 import re
-import tokenize
-import io
 
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):

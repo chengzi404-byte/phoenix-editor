@@ -1,6 +1,5 @@
 from .base import BaseHighlighter
 import ast
-import keyword
 
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
