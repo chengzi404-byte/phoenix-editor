@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # Ruby特定的语法高亮规则
+        # Ruby keywords
         self.keywords = {
             'def', 'class', 'module', 'if', 'else', 'elsif', 'unless',
             'case', 'when', 'while', 'until', 'for', 'break', 'next',
