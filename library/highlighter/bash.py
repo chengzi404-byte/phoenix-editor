@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # Bash特定的关键字
+        # Bash keywords
         self.keywords = {
             "if", "then", "else", "elif", "fi", "case", "esac", "for",
             "while", "until", "do", "done", "in", "function", "select",
@@ -15,11 +15,11 @@ class CodeHighlighter(BaseHighlighter):
         
         # Bash特定的语法高亮规则
         self.syntax_colors.update({
-            "variable": self.syntax_colors["variable"],    # 变量
-            "command": self.syntax_colors["function"],     # 命令
-            "parameter": self.syntax_colors["parameter"],  # 参数
-            "heredoc": self.syntax_colors["string"],      # Here文档
-            "subshell": self.syntax_colors["operator"],   # 子shell
+            "variable": self.syntax_colors["variable"],    # Varible
+            "command": self.syntax_colors["function"],     # Command
+            "parameter": self.syntax_colors["parameter"],  # Parameter
+            "heredoc": self.syntax_colors["string"],      # Heredoc
+            "subshell": self.syntax_colors["operator"],   # subshell
         })
         self.setup_tags()
         
@@ -32,7 +32,7 @@ class CodeHighlighter(BaseHighlighter):
             
         start, end = self.get_position(node)
         
-        # Bash特定的节点处理
+        # Bash Process
         if isinstance(node, ast.Name):
             self._highlight_bash_name(node, start, end)
         elif isinstance(node, ast.Call):

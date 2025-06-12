@@ -7,7 +7,7 @@ class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
         
-        # C++ 特定的关键字
+        # C++ keywords
         self.keywords = {
             'if', 'else', 'while', 'for', 'do', 'switch', 'case', 'break', 
             'continue', 'return', 'try', 'catch', 'throw', 'new', 'delete',
@@ -18,7 +18,7 @@ class CodeHighlighter(BaseHighlighter):
             'thread_local', 'alignas', 'alignof', 'noexcept', 'nullptr'
         }
         
-        # C++ 数据类型
+        # C++ types
         self.types = {
             'int', 'char', 'short', 'long', 'float', 'double', 'bool', 'void',
             'wchar_t', 'char16_t', 'char32_t', 'uint8_t', 'int8_t', 'uint16_t',
@@ -26,13 +26,13 @@ class CodeHighlighter(BaseHighlighter):
             'ptrdiff_t', 'nullptr_t'
         }
         
-        # C++ 预处理指令
+        # C++ preprocessor
         self.preprocessor = {
             '#include', '#define', '#ifdef', '#ifndef', '#endif', '#if', '#elif',
             '#else', '#pragma', '#error', '#line'
         }
         
-        # 重置语法颜色映射（如果需要不同的颜色方案）
+        # reset theme
         self.syntax_colors.update({
             "keyword": "#569CD6",        # 关键字
             "type": "#4EC9B0",           # 数据类型
@@ -48,35 +48,35 @@ class CodeHighlighter(BaseHighlighter):
         self.setup_tags()
         
     def _highlight_comments_and_strings(self, text: str):
-        """高亮 C++ 中的注释和字符串"""
+        """Highlight C++ Comments and String"""
         try:
-            # 处理多行注释
+            # Process multi line comment
             multi_line_comment_pattern = r'(/\*[\s\S]*?\*/)'
             for match in re.finditer(multi_line_comment_pattern, text):
                 self._highlight_match("comment", match, text)
             
-            # 处理单行注释
+            # Process single line comment
             single_line_comment_pattern = r'(//.*?$)'
             for match in re.finditer(single_line_comment_pattern, text, re.MULTILINE):
                 self._highlight_match("comment", match, text)
             
-            # 处理字符串
+            # Process strings
             string_pattern = r'(\".*?\"|\'.*?\')'
             for match in re.finditer(string_pattern, text):
                 self._highlight_match("string", match, text)
                 
-            # 处理字符常量
+            # Process charactor
             char_pattern = r'(\'.*?\')'
             for match in re.finditer(char_pattern, text):
                 self._highlight_match("string", match, text)
                 
         except Exception as e:
             print(f"注释和字符串高亮错误: {str(e)}")
-            # 如果正则表达式处理失败，尝试使用基本高亮
+            # try
             self._basic_highlight(text)
             
     def _highlight_match(self, tag: str, match: re.Match, text: str):
-        """高亮匹配的文本区域"""
+        """Highlight area"""
         start_pos = match.start()
         end_pos = match.end()
         
@@ -94,17 +94,17 @@ class CodeHighlighter(BaseHighlighter):
         self._add_tag(tag, start, end)
             
     def _basic_highlight(self, text: str):
-        """基本高亮 - 处理 C++ 代码"""
+        """basic highlight"""
         try:
-            # 先处理注释和字符串（已优化）
+            # Process
             self._highlight_comments_and_strings(text)
             
-            # 处理预处理指令
+            # Preprocessor
             preprocessor_pattern = r'(#\w+)'
             for match in re.finditer(preprocessor_pattern, text, re.MULTILINE):
                 self._highlight_match("preprocessor", match, text)
             
-            # 处理关键字和类型
+            # Keywords and types
             keywords_and_types = sorted(self.keywords.union(self.types), key=len, reverse=True)
             pattern = r'\b(' + '|'.join(re.escape(k) for k in keywords_and_types) + r')\b'
             
@@ -113,20 +113,20 @@ class CodeHighlighter(BaseHighlighter):
                 tag = "type" if keyword in self.types else "keyword"
                 self._highlight_match(tag, match, text)
             
-            # 处理函数名（简单版本：匹配后跟括号的标识符）
+            # Process functions
             function_pattern = r'\b(\w+)\s*\('
             for match in re.finditer(function_pattern, text):
                 function_name = match.group(1)
-                # 排除关键字和类型
+                # Match
                 if function_name not in self.keywords and function_name not in self.types:
                     self._highlight_match("function", match, text)
             
-            # 处理数字
+            # Process numbers
             number_pattern = r'\b(\d+(\.\d+)?([eE][+-]?\d+)?)\b'
             for match in re.finditer(number_pattern, text):
                 self._highlight_match("number", match, text)
             
-            # 处理运算符
+            # Process operators
             operators = r'(\+|-|\*|/|%|=|==|!=|<|>|<=|>=|&&|\|\||!|\^|&|\||~|<<|>>|\+\+|--)'
             for match in re.finditer(operators, text):
                 self._highlight_match("operator", match, text)
@@ -135,9 +135,9 @@ class CodeHighlighter(BaseHighlighter):
             print(f"基本高亮处理错误: {str(e)}")
             
     def highlight(self):
-        """执行语法高亮"""
+        """highlight"""
         try:
-            # 保存当前状态
+            # Save current status
             current_insert = self.text_widget.index("insert")
             current_view = self.text_widget.yview()
             current_selection = None
@@ -149,14 +149,13 @@ class CodeHighlighter(BaseHighlighter):
             except:
                 pass
                 
-            # 执行高亮
+            # Highlight
             self._clear_tags()
             text = self.text_widget.get("1.0", "end-1c")
             
-            # 使用基本高亮（基于正则表达式）
+            # Basic highlight
             self._basic_highlight(text)
-                
-            # 恢复状态
+
             self.text_widget.mark_set("insert", current_insert)
             self.text_widget.yview_moveto(current_view[0])
             if current_selection:
