@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # CSS特定的语法高亮规则
+        # Css syntax colors
         self.syntax_colors.update({
             "selector": "#D7BA7D",
             "property": "#9CDCFE",
