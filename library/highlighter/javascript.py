@@ -4,7 +4,7 @@ import ast
 class CodeHighlighter(BaseHighlighter):
     def __init__(self, text_widget):
         super().__init__(text_widget)
-        # JavaScript特定的语法高亮规则
+        # JavaScript keywords
         self.keywords = {
             # Control flow
             'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break',
