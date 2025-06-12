@@ -1,5 +1,0 @@
-init
-feat: 增加代码编辑器分页功能
-refactor: 重构代码高亮内容
-refactor: 重构插件加载模式
-fix: 修复代码高亮内容

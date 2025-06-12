@@ -1,5 +1,0 @@
-libraries:
-    ttkbootstrap
-
-files:
-    (none)
