@@ -11,7 +11,7 @@ from pathlib import Path
 class BaseHighlighter:
     def __init__(self, text_widget):
         self.text_widget = text_widget
-        # 初始化默认的语法高亮颜色
+        # Initlaze normal syntax colors
         self.syntax_colors = {
             "keyword": "#569CD6",
             "control": "#C586C0",
@@ -43,13 +43,13 @@ class BaseHighlighter:
         self.setup_tags()
         self._setup_bindings()
         
-        # 修改防抖动设置
+        # Highlight delay config
         self._highlight_pending = False
         self._last_change_time = 0
-        self._highlight_delay = 50  # 降低延迟时间
-        self._last_content = ""     # 添加内容缓存
+        self._highlight_delay = 50  # Lower delay
+        self._last_content = ""     # Add content cache
         
-        # 添加自动补全配置
+        # Auto pairs
         self.auto_pairs = {
             '"': '"',
             "'": "'",
@@ -60,11 +60,11 @@ class BaseHighlighter:
             "'''": "'''"
         }
         
-        # 添加基础关键字列表
+        # Basic keyword list
         self.keywords = set(keyword.kwlist)
         self.builtins = set(dir(builtins))
         
-        # 添加语言特定的关键字
+        # Languange keywords
         self.language_keywords = {
             'control': {'if', 'else', 'elif', 'while', 'for', 'try', 'except', 'finally', 'with', 'break', 'continue', 'return'},
             'definition': {'def', 'class', 'lambda', 'async', 'await'},
@@ -107,19 +107,19 @@ class BaseHighlighter:
         """Execute highlighting with delay"""
         try:
             current_content = self.text_widget.get("1.0", "end-1c")
-            # 只在内容真正改变时才执行高亮
+            # Highlight when content changed
             if current_content != self._last_content:
                 self.highlight()
                 self._last_content = current_content
         except Exception as e:
-            print(f"高亮处理错误: {str(e)}")
+            print(f"Highlight failed: {str(e)}")
         finally:
             self._highlight_pending = False
             
     def highlight(self):
         """Perform syntax highlighting"""
         try:
-            # 保存当前状态
+            # Save current status
             current_insert = self.text_widget.index("insert")
             current_view = self.text_widget.yview()
             current_selection = None
@@ -131,11 +131,11 @@ class BaseHighlighter:
             except:
                 pass
                 
-            # 执行高亮
+            # Highlight
             self._clear_tags()
             text = self.text_widget.get("1.0", "end-1c")
             
-            # 处理注释和字符串
+            # Process comments and strings
             self._highlight_comments_and_strings(text)
             
             try:
@@ -144,25 +144,25 @@ class BaseHighlighter:
             except SyntaxError:
                 self._basic_highlight(text)
                 
-            # 恢复状态
+            # Backup
             self.text_widget.mark_set("insert", current_insert)
             self.text_widget.yview_moveto(current_view[0])
             if current_selection:
                 self.text_widget.tag_add("sel", *current_selection)
                 
         except Exception as e:
-            print(f"高亮错误: {str(e)}")
+            print(f"Highlight failed: {str(e)}")
             
     def _basic_highlight(self, text: str):
         """Basic highlighting when syntax errors occur"""
         try:
             import re
             
-            # 将文本分割成行
+            # Split words into lines
             lines = text.split('\n')
             
             for line_num, line in enumerate(lines, 1):
-                # 高亮关键字
+                # Highlight keywords
                 for keyword in self.keywords:
                     pattern = r'\b' + re.escape(keyword) + r'\b'
                     for match in re.finditer(pattern, line):
@@ -170,21 +170,21 @@ class BaseHighlighter:
                         end = f"{line_num}.{match.end()}"
                         self._add_tag("keyword", start, end)
                         
-                # 高亮字符串
+                # Highlight strings
                 string_pattern = r'("(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')'
                 for match in re.finditer(string_pattern, line):
                     start = f"{line_num}.{match.start()}"
                     end = f"{line_num}.{match.end()}"
                     self._add_tag("string", start, end)
                     
-                # 高亮数字
+                # Highlight numbers
                 number_pattern = r'\b\d+(\.\d+)?\b'
                 for match in re.finditer(number_pattern, line):
                     start = f"{line_num}.{match.start()}"
                     end = f"{line_num}.{match.end()}"
                     self._add_tag("number", start, end)
                     
-                # 高亮注释
+                # Highlight comments
                 comment_pattern = r'#.*$'
                 for match in re.finditer(comment_pattern, line):
                     start = f"{line_num}.{match.start()}"
@@ -192,7 +192,7 @@ class BaseHighlighter:
                     self._add_tag("comment", start, end)
                     
         except Exception as e:
-            print(f"基本高亮处理错误: {str(e)}")
+            print(f"Basic highlight failed: {str(e)}")
             
     def _clear_tags(self):
         """Remove all syntax highlighting tags"""
@@ -200,14 +200,14 @@ class BaseHighlighter:
             for tag in self.syntax_colors.keys():
                 self.text_widget.tag_remove(tag, "1.0", "end")
         except Exception as e:
-            print(f"清除标签错误: {str(e)}")
+            print(f"Clear tag error: {str(e)}")
             
     def _add_tag(self, tag: str, start: str, end: str):
         """Add syntax highlighting tag"""
         try:
             self.text_widget.tag_add(tag, start, end)
         except Exception as e:
-            print(f"添加标签错误 - 标签: {tag}, 开始: {start}, 结束: {end}, 错误: {str(e)}")
+            print(f"Add tag error - tag: {tag}, start: {start}, end: {end}, err: {str(e)}")
 
     def get_position(self, node: ast.AST) -> Tuple[str, str]:
         """Get start and end positions of AST node"""
@@ -220,22 +220,22 @@ class BaseHighlighter:
     def _highlight_comments_and_strings(self, text: str):
         """Highlight comments and strings"""
         try:
-            # 将文本分割成行
+            # Split content into lines
             lines = text.split('\n')
             current_pos = 0
             
             for line_num, line in enumerate(lines, 1):
-                # 处理多行字符串
+                # Process multi comment/string
                 triple_quote_pattern = r'("""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\')'
                 for match in re.finditer(triple_quote_pattern, text[current_pos:]):
                     start_pos = current_pos + match.start()
                     end_pos = current_pos + match.end()
                     
-                    # 计算起始行和列
+                    # Start row & col
                     start_line = text.count('\n', 0, start_pos) + 1
                     start_col = start_pos - text.rfind('\n', 0, start_pos) - 1
                     
-                    # 计算结束行和列
+                    # End row & col
                     end_line = text.count('\n', 0, end_pos) + 1
                     end_col = end_pos - text.rfind('\n', 0, end_pos) - 1
                     
@@ -243,7 +243,7 @@ class BaseHighlighter:
                     end = f"{end_line}.{end_col}"
                     self._add_tag("docstring", start, end)
                 
-                # 处理单行注释和字符串
+                # Single comment & strings & number & opreator ...
                 tokens = list(tokenize.generate_tokens(io.StringIO(line).readline))
                 for token in tokens:
                     token_type = token.type
@@ -264,10 +264,10 @@ class BaseHighlighter:
                 current_pos += len(line) + 1  # +1 for the newline character
                 
         except tokenize.TokenError:
-            # 如果tokenize失败，尝试使用正则表达式
+            # basic highlight
             self._basic_highlight(text)
         except Exception as e:
-            print(f"注释和字符串高亮错误: {str(e)}")
+            print(f"Comment and strings highlight error: {str(e)}")
             
     def _process_ast(self, tree: ast.AST):
         """Process AST tree"""
@@ -281,7 +281,7 @@ class BaseHighlighter:
         
         start, end = self.get_position(node)
         
-        # 处理不同类型的节点
+        # Process different nodes
         if isinstance(node, ast.ClassDef):
             self._highlight_class_def(node, start, end)
         elif isinstance(node, ast.FunctionDef):
@@ -315,45 +315,45 @@ class BaseHighlighter:
 
     def _highlight_class_def(self, node: ast.ClassDef, start: str, end: str):
         """Highlight class definition"""
-        # 高亮class关键字
+        # Class keyword
         keyword_end = f"{node.lineno}.{node.col_offset + 5}"
         self._add_tag("keyword", start, keyword_end)
         
-        # 高亮类名
+        # Class name
         name_start = f"{node.lineno}.{node.col_offset + 6}"
         name_end = f"{node.lineno}.{node.col_offset + 6 + len(node.name)}"
         self._add_tag("class", name_start, name_end)
         
-        # 高亮基类
+        # Base class
         for base in node.bases:
             base_start, base_end = self.get_position(base)
             self._add_tag("class", base_start, base_end)
 
     def _highlight_function_def(self, node: ast.FunctionDef, start: str, end: str):
         """Highlight function definition"""
-        # 高亮def关键字
+        # Def keyword
         keyword_end = f"{node.lineno}.{node.col_offset + 3}"
         self._add_tag("keyword", start, keyword_end)
         
-        # 高亮函数名
+        # Name highlight
         name_start = f"{node.lineno}.{node.col_offset + 4}"
         name_end = f"{node.lineno}.{node.col_offset + 4 + len(node.name)}"
-        # 检查是否为魔术方法
+        # Check
         if node.name.startswith('__') and node.name.endswith('__'):
             self._add_tag("method", name_start, name_end)
         else:
             self._add_tag("function", name_start, name_end)
         
-        # 高亮装饰器
+        # Decorator highlight
         for decorator in node.decorator_list:
             dec_start, dec_end = self.get_position(decorator)
             self._add_tag("decorator", dec_start, dec_end)
         
-        # 高亮参数
+        # Argument highlight
         for arg in node.args.args:
             arg_start, arg_end = self.get_position(arg)
             self._add_tag("parameter", arg_start, arg_end)
-            # 高亮参数类型注解
+
             if arg.annotation:
                 ann_start, ann_end = self.get_position(arg.annotation)
                 self._add_tag("type_annotation", ann_start, ann_end)
@@ -373,7 +373,7 @@ class BaseHighlighter:
     def _highlight_import_from(self, node: ast.ImportFrom):
         """Highlight from-import statements"""
         if node.module:
-            start = f"{node.lineno}.{node.col_offset + 5}"  # 5 是 'from ' 的长度
+            start = f"{node.lineno}.{node.col_offset + 5}" 
             end = f"{node.lineno}.{node.col_offset + 5 + len(node.module)}"
             self._add_tag("namespace", start, end)
         
@@ -390,12 +390,12 @@ class BaseHighlighter:
     def _highlight_attribute(self, node: ast.Attribute):
         """Highlight attribute access"""
         if isinstance(node.value, ast.Name):
-            # 高亮对象名
+            # Highlight attribute access
             start, _ = self.get_position(node.value)
             end = f"{node.value.lineno}.{node.value.col_offset + len(node.value.id)}"
             self._add_tag("variable", start, end)
         
-        # 高亮属性名
+        # Highlight attribles
         attr_start = f"{node.lineno}.{node.col_offset + len(str(node.value)) + 1}"
         attr_end = f"{node.lineno}.{node.col_offset + len(str(node.value)) + 1 + len(node.attr)}"
         self._add_tag("property", attr_start, attr_end)
@@ -453,12 +453,12 @@ class BaseHighlighter:
         """Handle parenthesis auto-completion"""
         try:
             current_pos = self.text_widget.index("insert")
-            self.text_widget.insert(current_pos, '(')  # 插入左括号
-            self.text_widget.insert(f"{current_pos} + 1c", self.auto_pairs['('])  # 插入右括号
-            self.text_widget.mark_set("insert", f"{current_pos} + 1c")  # 将光标移到括号之间
-            return "break"  # 阻止默认的插入行为
+            self.text_widget.insert(current_pos, '(')  # Insert left
+            self.text_widget.insert(f"{current_pos} + 1c", self.auto_pairs['('])  # Insert right
+            self.text_widget.mark_set("insert", f"{current_pos} + 1c")  # Move the curser
+            return "break"  
         except Exception as e:
-            print(f"左括号补全错误: {str(e)}")
+            print(f"Auto completion error: {str(e)}")
         return None
 
     def _highlight_operator(self, node: ast.AST, start: str, end: str):
@@ -470,50 +470,49 @@ class BaseHighlighter:
         try:
             current_line = self.text_widget.get("insert linestart", "insert")
             indent = len(current_line) - len(current_line.lstrip())
-            # 检查当前行是否以冒号结尾，表示需要增加缩进
+
             if current_line.rstrip().endswith(":"):
-                indent += 4  # 增加一个缩进级别
+                indent += 4  # Indentation
             self.text_widget.insert("insert", "\n" + " " * indent)
-            return "break"  # 阻止默认的回车行为
+            return "break" 
         except Exception as e:
-            print(f"自动缩进错误: {str(e)}")
+            print(f"Auto indentation error: {str(e)}")
         return None
 
     def _handle_tab_key(self, event):
         """Handle tab key to insert 4 spaces"""
         self.text_widget.insert("insert", " " * 4)
-        return "break"  # 阻止默认的Tab行为
+        return "break" 
 
     def set_theme(self, theme_data):
         """Set theme
         
         Args:
-            theme_data: Can be theme name string or theme config dict
+            theme_data: Can be theme config dict
         """
         try:
             if isinstance(theme_data, str):
-                # 如果传入的是主题名称，从主题文件加载
+                # Load theme
                 theme_file = Path("./asset/theme") / f"{theme_data}.json"
                 if not theme_file.exists():
-                    print(f"警告: 主题文件 {theme_file} 不存在，使用默认主题")
+                    print(f"警告: File {theme_file} doesn't exsits, use normal theme")
                     return
                     
                 with open(theme_file, "r", encoding="utf-8") as f:
                     theme_data = json.load(f)
             
-            # 配置文本部件的基础样式
+            # Basic properties
             if "base" in theme_data:
                 self.text_widget.configure(**theme_data["base"])
                 
-            # 更新语法高亮颜色
+            # Update colors
             for tag, color in theme_data.items():
                 if tag != "base" and isinstance(color, str):
                     self.syntax_colors[tag] = color
                     
-            # 重新设置所有标签
+            # Setup tags
             self.setup_tags()
             
         except Exception as e:
-            print(f"警告: 设置主题失败: {str(e)}")
-            # 保持当前主题不变
+            print(f"Theme error: {str(e)}")
 

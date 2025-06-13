@@ -49,7 +49,7 @@ try:
             json.dump(default_settings, f, indent=4, ensure_ascii=False)
 
 except Exception as e:
-    logger.error(f"初始化失败: {str(e)}")
+    logger.error(f"Initlaze failed: {str(e)}")
 
 # -------------------- Settings Panel Functions --------------------
 def open_settings_panel():
@@ -70,7 +70,7 @@ def open_settings_panel():
             codehighlighter.set_theme(theme_data)
             codearea.configure(font=Font(settings_window, family=font_var.get(), size=fontsize_var.get()))
         except Exception as e:
-            print(f"应用主题失败: {str(e)}")
+            print(f"Use theme failed: {str(e)}")
     
     def apply_lang():
         lang_file = lang_var.get()
@@ -395,7 +395,7 @@ def terminal():
     terminal.bind("<Return>", execute)
 
 def download_plugin():
-    """插件>下载插件"""
+    """Plugin > Download plugin"""
     try:
         plugin_path = filedialog.askopenfilename(
             title="打开插件",
@@ -519,7 +519,7 @@ schedule_autosave()
 try:
     codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
     
-    # 检查主题文件是否存在
+    # Check 
     theme_file = "./asset/theme/vscode-dark.json"
     if not os.path.exists(theme_file):
         logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
@@ -534,7 +534,7 @@ try:
             }
         }
     else:
-        # 加载主题
+        # Load theme
         try:
             with open(theme_file, "r", encoding="utf-8") as f:
                 theme_data = json.load(f)

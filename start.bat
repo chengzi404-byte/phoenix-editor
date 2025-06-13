@@ -1,2 +1,2 @@
-echo "[INFO] 正在启动 Phoenix Editor"
+echo "[INFO] Starting Phoenix Editor"
 python main.py
