@@ -3,7 +3,7 @@ import os
 
 
 def setup_logger():
-    """设置日志记录器"""
+    """Setup logger"""
     if not os.path.exists("./logs"):
         os.makedirs("./logs")
 
