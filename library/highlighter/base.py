@@ -491,16 +491,6 @@ class BaseHighlighter:
             theme_data: Can be theme config dict
         """
         try:
-            if isinstance(theme_data, str):
-                # Load theme
-                theme_file = Path("./asset/theme") / f"{theme_data}.json"
-                if not theme_file.exists():
-                    print(f"警告: File {theme_file} doesn't exsits, use normal theme")
-                    return
-                    
-                with open(theme_file, "r", encoding="utf-8") as f:
-                    theme_data = json.load(f)
-            
             # Basic properties
             if "base" in theme_data:
                 self.text_widget.configure(**theme_data["base"])
