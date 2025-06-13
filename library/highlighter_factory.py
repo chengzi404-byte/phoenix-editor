@@ -5,7 +5,7 @@ class HighlighterFactory:
     """Code highlighter factory class"""
     
     def __init__(self):
-        # 文件扩展名到高亮器的映射
+        # File extenision map
         self.highlighter_map = {
             ".py": "python",
             ".js": "javascript",
@@ -25,15 +25,15 @@ class HighlighterFactory:
         
     def create_highlighter(self, file_extension, text_widget):
         """Create appropriate highlighter based on file extension"""
-        # 获取高亮器类型
+        # Get highlighter type
         highlighter_type = api.Settings.Highlighter.syntax_highlighting()["code"]
         
-        # 动态导入高亮器模块
+        # Import module
         module_name = f"library.highlighter.{highlighter_type}"
         module = importlib.import_module(module_name)
 
         print(module_name)
         
-        # 创建高亮器实例
+        # Create highlighter
         highlighter_class = getattr(module, 'CodeHighlighter')
         return highlighter_class(text_widget)
