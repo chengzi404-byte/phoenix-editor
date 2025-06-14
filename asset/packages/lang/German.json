@@ -37,7 +37,6 @@
         "clear-output": "Ausgabe löschen",
         "terminal": "Terminal"
     },
-    "info-window-title": "Hinweis",
     "file-types": [
         "Python-Datei",
         "HTML-Datei",
@@ -48,5 +47,8 @@
         "C/C++-Datei",
         "Objective-C-Datei",
         "Alle Dateien"
-    ]
+    ],
+    "info-window-title": "Hinweis",
+    "title": "Feuerphoenix-Editor",
+    "help": "Feuerphoenix-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
 }

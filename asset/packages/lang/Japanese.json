@@ -37,7 +37,6 @@
         "clear-output": "出力をクリア",
         "terminal": "ターミナル"
     },
-    "info-window-title": "通知",
     "file-types": [
         "Pythonファイル",
         "HTMLファイル",
@@ -48,5 +47,8 @@
         "C/C++ファイル",
         "Objective-Cファイル",
         "すべてのファイル"
-    ]
+    ],
+    "info-window-title": "通知",
+    "title": "火鳳エディタ",
+    "help": "火鳳エディタ\nバージョン：v0.3.1\n\n作者：chengzi404(gitee) remain(github)"
 }

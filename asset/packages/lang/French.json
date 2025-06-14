@@ -37,7 +37,6 @@
         "clear-output": "Effacer la sortie",
         "terminal": "Terminal"
     },
-    "info-window-title": "Notification",
     "file-types" : [
         "Fichier Python",
         "Fichier HTML",
@@ -48,5 +47,8 @@
         "Fichier C/C++",
         "Fichier Objective - C",
         "Tous les fichiers"
-    ]
+    ],
+    "info-window-title": "Notification",
+    "title": "Éditeur Phénix",
+    "help": "Éditeur Phénix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
 }

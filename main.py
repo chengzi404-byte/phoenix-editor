@@ -382,7 +382,7 @@ def terminal():
                                      text=True)
                 terminal.insert("end", "\n" + result.stdout + result.stderr)
             except Exception as e:
-                terminal.insert("end", "\ERR: " + str(e))
+                terminal.insert("end", "ERR: " + str(e))
         terminal.insert("end", "\n$ ")
         return "break"  # Prevent the default enter behavior
 
@@ -423,7 +423,7 @@ def exit_editor():
 
 # Create the main window
 root = Tk()
-root.title("Phoenix-Notepad")
+root.title(lang_dict["title"])
 root.geometry("800x600+100+100")
 root.configure(bg='black')
 # root.iconbitmap(default="./asset/icon.ico")
@@ -474,6 +474,9 @@ runmenu.add_command(command=terminal, label=lang_dict["menus"]["terminal"])
 # Plugin menu (comming soon)
 pluginmenu = Menu(tearoff=0)
 menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
+
+# Help menu
+menu.add_command(label="帮助", command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
 
 # Create the paned window
 paned = PanedWindow(root, orient=VERTICAL)

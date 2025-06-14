@@ -37,7 +37,6 @@
         "clear-output": "Очистить вывод",
         "terminal": "Терминал"
     },
-    "info-window-title": "Уведомление",
     "file-types": [
         "Python файл",
         "HTML файл",
@@ -48,5 +47,8 @@
         "C/C++ файл",
         "Objective-C файл",
         "Все файлы"
-    ]
+    ],
+    "info-window-title": "Уведомление",
+    "title": "Редактор «Огненный феникс»",
+    "help": "Редактор «Огненный феникс»\nВерсия: v0.3.1\n\nАвтор: chengzi404(gitee) remain(github)"
 }

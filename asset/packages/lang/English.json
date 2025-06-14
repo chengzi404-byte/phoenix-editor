@@ -37,7 +37,6 @@
         "clear-output": "Clear Output",
         "terminal": "Terminal"
     },
-    "info-window-title": "Notification",
     "file-types": [
         "Python files",
         "HTML files",
@@ -48,5 +47,8 @@
         "C/C++ files",
         "Objective-C files",
         "All files"
-    ]
+    ],
+    "info-window-title": "Notification",
+    "title": "Phoenix Editor",
+    "help": "Phoenix Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
 }

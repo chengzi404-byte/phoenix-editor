@@ -37,7 +37,6 @@
         "clear-output": "清除输出",
         "terminal": "终端"
     },
-    "info-window-title": "提示",
     "file-types": [
         "Python 文件",
         "HTML 文件",
@@ -48,5 +47,8 @@
         "C/C++ 文件",
         "Objective-C 文件",
         "所有文件"
-    ]
+    ],
+    "info-window-title": "提示",
+    "title": "火凤编辑器",
+    "help": "火凤编辑器\n版本：v0.3.1\n\n作者：chengzi404(gitee) remain(github)"
 }
