@@ -37,5 +37,16 @@
         "clear-output": "清除输出",
         "terminal": "终端"
     },
-    "info-window-title": "提示"
+    "info-window-title": "提示",
+    "file-types": [
+        "Python 文件",
+        "HTML 文件",
+        "CSS 文件",
+        "JavaScript 文件",
+        "JSON 文件",
+        "Ruby 文件",
+        "C/C++ 文件",
+        "Objective-C 文件",
+        "所有文件"
+    ]
 }

@@ -37,5 +37,16 @@
         "clear-output": "Ausgabe löschen",
         "terminal": "Terminal"
     },
-    "info-window-title": "Hinweis"
+    "info-window-title": "Hinweis",
+    "file-types": [
+        "Python-Datei",
+        "HTML-Datei",
+        "CSS-Datei",
+        "JavaScript-Datei",
+        "JSON-Datei",
+        "Ruby-Datei",
+        "C/C++-Datei",
+        "Objective-C-Datei",
+        "Alle Dateien"
+    ]
 }

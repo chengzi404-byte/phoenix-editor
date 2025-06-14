@@ -118,15 +118,15 @@ def open_file():
     global file_path
     file_path = filedialog.askopenfilename(
         filetypes=[
-            ("Python文件", "*.py"),
-            ("HTML文件", "*.html"),
-            ("CSS文件", "*.css"),
-            ("JavaScript文件", "*.js"),
-            ("JSON文件", "*.json"),
-            ("Ruby文件", "*.rb"),
-            ("C/C++文件", "*.c;*.cpp;*.h"),
-            ("Objective-C文件", "*.m"),
-            ("所有文件", "*.*")
+            (lang_dict["file-types"][0], "*.py"),
+            (lang_dict["file-types"][1], "*.html"),
+            (lang_dict["file-types"][2], "*.css"),
+            (lang_dict["file-types"][3], "*.js"),
+            (lang_dict["file-types"][4], "*.json"),
+            (lang_dict["file-types"][5], "*.rb"),
+            (lang_dict["file-types"][6], "*.c;*.cpp;*.h"),
+            (lang_dict["file-types"][7], "*.m"),
+            (lang_dict["file-types"][8], "*.*")
         ]
     )
     codearea.delete(0.0, END)
@@ -199,15 +199,15 @@ def save_file():
     if file_path == "./temp_script.txt":
         file_path = filedialog.asksaveasfilename(
                     filetypes=[
-                        ("Python文件", "*.py"),
-                        ("HTML文件", "*.html"),
-                        ("CSS文件", "*.css"),
-                        ("JavaScript文件", "*.js"),
-                        ("JSON文件", "*.json"),
-                        ("Ruby文件", "*.rb"),
-                        ("C/C++文件", "*.c;*.cpp;*.h"),
-                        ("Objective-C文件", "*.m"),
-                        ("所有文件", "*.*")
+                        (lang_dict["file-types"][0], "*.py"),
+                        (lang_dict["file-types"][1], "*.html"),
+                        (lang_dict["file-types"][2], "*.css"),
+                        (lang_dict["file-types"][3], "*.js"),
+                        (lang_dict["file-types"][4], "*.json"),
+                        (lang_dict["file-types"][5], "*.rb"),
+                        (lang_dict["file-types"][6], "*.c;*.cpp;*.h"),
+                        (lang_dict["file-types"][7], "*.m"),
+                        (lang_dict["file-types"][8], "*.*")
                     ]
                 )
         try:
@@ -279,15 +279,15 @@ def save_as_file():
     msg = codearea.get(0.0, END)
     file_path = filedialog.asksaveasfilename(
             filetypes=[
-                ("Python文件", "*.py"),
-                ("HTML文件", "*.html"),
-                ("CSS文件", "*.css"),
-                ("JavaScript文件", "*.js"),
-                ("JSON文件", "*.json"),
-                ("Ruby文件", "*.rb"),
-                ("C/C++文件", "*.c;*.cpp;*.h"),
-                ("Objective-C文件", "*.m"),
-                ("所有文件", "*.*")
+                (lang_dict["file-types"][0], "*.py"),
+                (lang_dict["file-types"][1], "*.html"),
+                (lang_dict["file-types"][2], "*.css"),
+                (lang_dict["file-types"][3], "*.js"),
+                (lang_dict["file-types"][4], "*.json"),
+                (lang_dict["file-types"][5], "*.rb"),
+                (lang_dict["file-types"][6], "*.c;*.cpp;*.h"),
+                (lang_dict["file-types"][7], "*.m"),
+                (lang_dict["file-types"][8], "*.*")
             ]
         )
     

@@ -37,5 +37,16 @@
         "clear-output": "Clear Output",
         "terminal": "Terminal"
     },
-    "info-window-title": "Notification"
+    "info-window-title": "Notification",
+    "file-types": [
+        "Python files",
+        "HTML files",
+        "CSS files",
+        "JavaScript files",
+        "JSON files",
+        "Ruby files",
+        "C/C++ files",
+        "Objective-C files",
+        "All files"
+    ]
 }

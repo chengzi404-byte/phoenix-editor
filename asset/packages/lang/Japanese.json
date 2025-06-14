@@ -37,5 +37,16 @@
         "clear-output": "出力をクリア",
         "terminal": "ターミナル"
     },
-    "info-window-title": "通知"
+    "info-window-title": "通知",
+    "file-types": [
+        "Pythonファイル",
+        "HTMLファイル",
+        "CSSファイル",
+        "JavaScriptファイル",
+        "JSONファイル",
+        "Rubyファイル",
+        "C/C++ファイル",
+        "Objective-Cファイル",
+        "すべてのファイル"
+    ]
 }

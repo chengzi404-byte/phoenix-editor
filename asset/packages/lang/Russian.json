@@ -37,5 +37,16 @@
         "clear-output": "Очистить вывод",
         "terminal": "Терминал"
     },
-    "info-window-title": "Уведомление"
+    "info-window-title": "Уведомление",
+    "file-types": [
+        "Python файл",
+        "HTML файл",
+        "CSS файл",
+        "JavaScript файл",
+        "JSON файл",
+        "Ruby файл",
+        "C/C++ файл",
+        "Objective-C файл",
+        "Все файлы"
+    ]
 }
