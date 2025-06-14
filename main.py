@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import filedialog 
 from tkinter.font import Font
 from tkinter import *
+from pathlib import Path
 import os
 import json
 import subprocess
@@ -72,9 +73,11 @@ def open_settings_panel():
         except Exception as e:
             print(f"Use theme failed: {str(e)}")
     
-    def apply_lang():
+    def apply_restart_settings():
         lang_file = lang_var.get()
+        code_type = code_var.get()
         Settings.Editor.change("lang", lang_file)
+        Settings.Highlighter.change("code", code_type)
         messagebox.showinfo(lang_dict["info-window-title"], lang_dict["settings"]["restart"])
 
     # Theme
@@ -104,11 +107,20 @@ def open_settings_panel():
     fontsize_var.trace_add('write', lambda *args: apply_settings())
 
     # Multi-languange support
-    lang_var = StringVar(value=Settings.Editor.lang)
+    lang_var = StringVar(value=Settings.Editor.lang())
     Label(settings_window, text=lang_dict["settings"]["languange"]).pack(anchor=W)
     OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
 
-    lang_var.trace_add('write', lambda *args: apply_lang())
+    lang_var.trace_add('write', lambda *args: apply_restart_settings())
+
+    # Code settings
+    code_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["code"])
+    with open(f"{Path.cwd() / "asset" / "packages" / "code_support.json"}", "r", encoding="utf-8") as fp:
+        support_code_type = json.load(fp)
+    Label(settings_window, text=lang_dict["settings"]["coding-languange"]).pack(anchor=W)
+    OptionMenu(settings_window, code_var, *support_code_type).pack(anchor=W, fill=X)
+
+    code_var.trace_add('write', lambda *args: apply_restart_settings())
 
     Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
 

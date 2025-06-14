@@ -10,7 +10,8 @@
         "languange": "言語",
         "restart": "設定を適用するにはソフトウェアを再起動してください",
         "close": "閉じる",
-        "title": "設定"
+        "title": "設定",
+        "coding-languange": "プログラミング言語"
     },
     "menus": {
         "configure": "設定",

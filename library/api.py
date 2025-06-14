@@ -24,7 +24,7 @@ class Settings:
         def change(key, value):
             settings[f"highlighter.syntax-highlighting.{key}"] = value
 
-            with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+            with open("./asset/settings.json", "w", encoding="utf-8") as fp:
                 json.dump(settings, fp)
     
     class Init:

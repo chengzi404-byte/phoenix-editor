@@ -10,7 +10,8 @@
         "languange": "Language",
         "restart": "Please restart the software to apply settings",
         "close": "Close",
-        "title": "Settings"
+        "title": "Settings",
+        "coding-languange": "Programming Language"
     },
     "menus": {
         "configure": "Configure",

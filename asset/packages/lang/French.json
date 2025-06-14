@@ -10,7 +10,8 @@
         "languange": "Langue",
         "restart": "Veuillez redémarrer le logiciel pour appliquer les paramètres",
         "close": "Fermer",
-        "title": "Paramètres"
+        "title": "Paramètres",
+        "coding-languange": "Langage de programmation"
     },
     "menus": {
         "configure": "Configurer",

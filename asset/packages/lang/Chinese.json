@@ -10,7 +10,8 @@
         "languange": "语言",
         "restart": "请重新启动软件来应用设置",
         "close": "关闭",
-        "title": "设置"
+        "title": "设置",
+        "coding-languange": "编程语言"
     },
     "menus": {
         "configure": "设置",

@@ -10,7 +10,8 @@
         "languange": "Sprache",
         "restart": "Bitte starten Sie die Software neu, um die Einstellungen zu übernehmen",
         "close": "Schließen",
-        "title": "Einstellungen"
+        "title": "Einstellungen",
+        "coding-languange": "Programmiersprache"
     },
     "menus": {
         "configure": "Konfigurieren",
