@@ -77,7 +77,7 @@ def open_settings_panel():
         Settings.Editor.change("lang", lang_file)
         messagebox.showinfo(lang_dict["info-window-title"], lang_dict["settings"]["restart"])
 
-    # 主题设置
+    # Theme
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text=lang_dict["settings"]["theme"]).pack(anchor=W)
     rawdata = os.listdir("./asset/theme/")
@@ -88,22 +88,22 @@ def open_settings_panel():
 
     OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
-    # 字体设置
+    # Font
     font_var = StringVar(value=Settings.Editor.font())
     Label(settings_window, text=lang_dict["settings"]["font"]).pack(anchor=W)
     Entry(settings_window, textvariable=font_var).pack(anchor=W, fill=X)
 
-    # 字体大小设置
+    # Font size
     fontsize_var = IntVar(value=Settings.Editor.font_size())
     Label(settings_window, text=lang_dict["settings"]["font-size"]).pack(anchor=W)
     Spinbox(settings_window, from_=8, to=72, textvariable=fontsize_var).pack(anchor=W, fill=X)
 
-    # 主题设置
+    # Apply settings immediatly
     theme_var.trace_add('write', lambda *args: apply_settings())
     font_var.trace_add('write', lambda *args: apply_settings())
     fontsize_var.trace_add('write', lambda *args: apply_settings())
 
-    # 多语言支持
+    # Multi-languange support
     lang_var = StringVar(value=Settings.Editor.lang)
     Label(settings_window, text=lang_dict["settings"]["languange"]).pack(anchor=W)
     OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
@@ -137,7 +137,7 @@ def open_file():
     try:
         codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
         
-        # 检查主题文件是否存在
+        # Check theme file
         theme_file = "./asset/theme/vscode-dark.json"
         if not os.path.exists(theme_file):
             logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
@@ -152,7 +152,7 @@ def open_file():
                 }
             }
         else:
-            # 加载主题
+            # Load theme
             try:
                 with open(theme_file, "r", encoding="utf-8") as f:
                     theme_data = json.load(f)
@@ -171,22 +171,22 @@ def open_file():
         codehighlighter.set_theme(theme_data)
         codehighlighter.highlight()
 
-        # 对printarea使用相同的设置
+        # Use the same settings for printarea
         codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
         codehighlighter2.set_theme(theme_data)
         codehighlighter2.highlight()
         
         def on_key(event):
-            # 处理自动保存
+            # Handle auto-saving
             autosave()
             return None
         
-        # 移除所有原有的按键绑定
+        # Remove all existing key bindings
         for binding in root.bind_all():
             if binding.startswith('<Key'):
                 root.unbind_all(binding)
         
-        # 添加新的按键绑定
+        # Add new key bindings
         root.bind("<Key>", on_key, add="+")
         
     except Exception as e:
@@ -213,7 +213,7 @@ def save_file():
         try:
             codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
             
-            # 检查主题文件是否存在
+            # Check if the theme file exists
             theme_file = "./asset/theme/vscode-dark.json"
             if not os.path.exists(theme_file):
                 logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
@@ -228,7 +228,7 @@ def save_file():
                     }
                 }
             else:
-                # 加载主题
+                # Load theme
                 try:
                     with open(theme_file, "r", encoding="utf-8") as f:
                         theme_data = json.load(f)
@@ -247,22 +247,22 @@ def save_file():
             codehighlighter.set_theme(theme_data)
             codehighlighter.highlight()
 
-            # 对printarea使用相同的设置
+            # Use the same settings for printarea
             codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
             codehighlighter2.set_theme(theme_data)
             codehighlighter2.highlight()
             
             def on_key(event):
-                # 处理自动保存
+                # Handle auto-saving
                 autosave()
                 return None
             
-            # 移除所有原有的按键绑定
+            # Remove all existing key bindings
             for binding in root.bind_all():
                 if binding.startswith('<Key'):
                     root.unbind_all(binding)
             
-            # 添加新的按键绑定
+            # Add new key bindings
             root.bind("<Key>", on_key, add="+")
             
         except Exception as e:
@@ -342,15 +342,15 @@ def run():
     runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
-    # 获取printarea的内容并转换为字节
+    # Get the content of printarea and convert it to bytes
     input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
     stdout, stderr = runtool.communicate(input=input_data)
 
     printarea.delete(0.0, END)
     printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
     printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
-    printarea.insert(END, stdout.decode(errors="replace"))  # 解码为字符串
-    printarea.insert(END, stderr.decode(errors="replace"))  # 解码为字符串
+    printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
+    printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
 
     printarea.insert(END, "\n>>> ")
 
@@ -365,7 +365,7 @@ def autosave():
         with open("./temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
-        print(f"自动保存失败：{str(e)}")
+        print(f"Auto-saving failed: {str(e)}")
 
 def clear_printarea():
     """Run > Clear Output"""
@@ -382,11 +382,11 @@ def terminal():
                                      text=True)
                 terminal.insert("end", "\n" + result.stdout + result.stderr)
             except Exception as e:
-                terminal.insert("end", "\n错误: " + str(e))
+                terminal.insert("end", "\ERR: " + str(e))
         terminal.insert("end", "\n$ ")
-        return "break"  # 防止默认的回车行为
+        return "break"  # Prevent the default enter behavior
 
-    window = Toplevel()  # 使用Toplevel替代Tk
+    window = Toplevel()  # Use Toplevel instead of Tk
     window.title("终端")
     window.geometry("600x400+100+100")
     terminal = Text(window)
