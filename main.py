@@ -151,64 +151,6 @@ def open_file():
         content = f.read()
     codearea.insert(0.0, content)
 
-    try:
-        codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
-        
-        # Check theme file
-        theme_file = "./asset/theme/vscode-dark.json"
-        if not os.path.exists(theme_file):
-            logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
-            # Use built-in default theme
-            theme_data = {
-                "base": {
-                    "background": "#1E1E1E",
-                    "foreground": "#D4D4D4",
-                    "insertbackground": "#D4D4D4",
-                    "selectbackground": "#264F78",
-                    "selectforeground": "#D4D4D4"
-                }
-            }
-        else:
-            # Load theme
-            try:
-                with open(theme_file, "r", encoding="utf-8") as f:
-                    theme_data = json.load(f)
-            except Exception as e:
-                logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
-                theme_data = {
-                    "base": {
-                        "background": "#1E1E1E",
-                        "foreground": "#D4D4D4",
-                        "insertbackground": "#D4D4D4",
-                        "selectbackground": "#264F78",
-                        "selectforeground": "#D4D4D4"
-                    }
-                }
-        
-        codehighlighter.set_theme(theme_data)
-        codehighlighter.highlight()
-
-        # Use the same settings for printarea
-        codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-        codehighlighter2.set_theme(theme_data)
-        codehighlighter2.highlight()
-        
-        def on_key(event):
-            # Handle auto-saving
-            autosave()
-            return None
-        
-        # Remove all existing key bindings
-        for binding in root.bind_all():
-            if binding.startswith('<Key'):
-                root.unbind_all(binding)
-        
-        # Add new key bindings
-        root.bind("<Key>", on_key, add="+")
-        
-    except Exception as e:
-        logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
-
 def save_file():
     """File > Save File"""
     global file_path
@@ -227,65 +169,6 @@ def save_file():
                         (lang_dict["file-types"][8], "*.*")
                     ]
                 )
-        try:
-            codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
-            
-            # Check if the theme file exists
-            theme_file = "./asset/theme/vscode-dark.json"
-            if not os.path.exists(theme_file):
-                logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
-                # Use built-in default theme
-                theme_data = {
-                    "base": {
-                        "background": "#1E1E1E",
-                        "foreground": "#D4D4D4",
-                        "insertbackground": "#D4D4D4",
-                        "selectbackground": "#264F78",
-                        "selectforeground": "#D4D4D4"
-                    }
-                }
-            else:
-                # Load theme
-                try:
-                    with open(theme_file, "r", encoding="utf-8") as f:
-                        theme_data = json.load(f)
-                except Exception as e:
-                    logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
-                    theme_data = {
-                        "base": {
-                            "background": "#1E1E1E",
-                            "foreground": "#D4D4D4",
-                            "insertbackground": "#D4D4D4",
-                            "selectbackground": "#264F78",
-                            "selectforeground": "#D4D4D4"
-                        }
-                    }
-            
-            codehighlighter.set_theme(theme_data)
-            codehighlighter.highlight()
-
-            # Use the same settings for printarea
-            codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-            codehighlighter2.set_theme(theme_data)
-            codehighlighter2.highlight()
-            
-            def on_key(event):
-                # Handle auto-saving
-                autosave()
-                return None
-            
-            # Remove all existing key bindings
-            for binding in root.bind_all():
-                if binding.startswith('<Key'):
-                    root.unbind_all(binding)
-            
-            # Add new key bindings
-            root.bind("<Key>", on_key, add="+")
-            
-        except Exception as e:
-            logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
-    else:
-        print(file_path)
 
     with open(file_path, "w", encoding="utf-8") as fp:
         fp.write(msg)
