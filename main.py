@@ -11,7 +11,6 @@ import json
 import subprocess
 import sys
 import zipfile
-import tkinter as tk
 
 
 # -------------------- Global Variables --------------------
