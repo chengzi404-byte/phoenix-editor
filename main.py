@@ -4,7 +4,13 @@ from library.api import Settings
 from tkinter import messagebox
 from tkinter import filedialog 
 from tkinter.font import Font
-from tkinter import *
+from tkinter import (
+    Tk, Toplevel, 
+    StringVar, IntVar, 
+    Menu, Text,
+    W, X, E, BOTH, VERTICAL, HORIZONTAL, END
+)
+from tkinter.ttk import *
 from pathlib import Path
 import os
 import json
