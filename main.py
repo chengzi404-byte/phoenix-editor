@@ -75,6 +75,25 @@ def open_settings_panel():
                 theme_data = json.load(f)
             codehighlighter.set_theme(theme_data)
             codearea.configure(font=Font(settings_window, family=font_var.get(), size=fontsize_var.get()))
+
+            with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
+                dark_themes = json.load(fp)
+            
+            with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "dark.json"}", "r", encoding="utf-8") as fp:
+                dark_terminal_theme = json.load(fp)
+            
+            with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", "r", encoding="utf-8") as fp:
+                light_terminal_theme = json.load(fp)
+
+            if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
+            else: codehighlighter2.set_theme(light_terminal_theme)
+
+            if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
+            else: codehighlighter3.set_theme(light_terminal_theme)
+
+            # Write changes
+            Settings.Highlighter.change("theme", theme_name)
+            Settings.Editor.change("font", font_var.get())
         except Exception as e:
             print(f"Use theme failed: {str(e)}")
     
@@ -89,8 +108,8 @@ def open_settings_panel():
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text=lang_dict["settings"]["theme"]).pack(anchor=W)
     rawdata = os.listdir("./asset/theme/")
-    themes = ["vscode-dark"]
-    rawdata.remove("vscode-dark.json")
+    themes = []
+    rawdata.remove("terminalTheme")
     for theme in rawdata:
         themes.append(theme.split('.')[0])
 
@@ -423,9 +442,10 @@ try:
     codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
     
     # Check 
-    theme_file = "./asset/theme/vscode-dark.json"
+    theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
     if not os.path.exists(theme_file):
         logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
+        print(f"Theme file {theme_file} not found, using default theme")
         # Use built-in default theme
         theme_data = {
             "base": {
@@ -457,12 +477,23 @@ try:
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
+    with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
+        dark_themes = json.load(fp)
+    
+    with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "dark.json"}", "r", encoding="utf-8") as fp:
+        dark_terminal_theme = json.load(fp)
+    
+    with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", "r", encoding="utf-8") as fp:
+        light_terminal_theme = json.load(fp)
+
     codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
-    codehighlighter2.set_theme(theme_data)
+    if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
+    else: codehighlighter2.set_theme(light_terminal_theme)
     codehighlighter2.highlight()
 
     codehighlighter3 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), inputarea)
-    codehighlighter3.set_theme(theme_data)
+    if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
+    else: codehighlighter3.set_theme(light_terminal_theme)
     codehighlighter3.highlight()
     
     def on_key(event):

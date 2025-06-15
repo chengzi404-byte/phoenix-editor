@@ -32,7 +32,7 @@ class HighlighterFactory:
         module_name = f"library.highlighter.{highlighter_type}"
         module = importlib.import_module(module_name)
 
-        print(module_name)
+        print(f"Current module: {module_name}")
         
         # Create highlighter
         highlighter_class = getattr(module, 'CodeHighlighter')
