@@ -22,7 +22,7 @@ class Settings:
         def syntax_highlighting():  return settings["highlighter.syntax-highlighting"]
 
         def change(key, value):
-            settings[f"highlighter.syntax-highlighting.{key}"] = value
+            settings[f"highlighter.syntax-highlighting"][f"{key}"] = value
 
             with open("./asset/settings.json", "w", encoding="utf-8") as fp:
                 json.dump(settings, fp)
