@@ -1,62 +1,77 @@
+
+
 # Phoenix Editor
 
-[![](https://shields.io/badge/最新版本-v0.2-blue)](https://gitee.com/chengzi404_admin/phoenix-editor/repository/archive/v0.2.zip)
-[![](https://shields.io/badge/欢迎-orange)](https://gitee.com/chengzi404_admin/phoenix-editor)
+一个轻量级、跨平台的多语言代码编辑器。
 
-# 下载版本
+## 简介
+Phoenix Editor 是一个基于 Python 开发的现代化代码编辑器，支持多种编程语言的语法高亮和基础代码分析。它提供了基础的编辑功能，包括自动保存、撤销/重做、复制/粘贴、新建/打开/保存文件、新建窗口等。
 
-## v0.3
+## 特性
+- 支持多语言语法高亮（Python、C、C++、Java、JavaScript、Ruby、Rust、HTML、CSS、JSON 等）
+- 智能代码高亮和 AST 解析
+- 支持多主题（暗色和亮色模式）
+- 支持多语言界面（包括中文、英文、法语、德语、日语、俄语）
+- 多标签页管理，支持新建、关闭、切换标签页
+- 支持基础代码操作（复制、粘贴、删除、撤销、重做）
+- 自动保存功能
+- 内置终端运行支持
+- 插件下载支持
 
-### v0.3.0
+## 安装
+确保你的系统上安装了 Python 3.x，并将项目代码克隆到本地：
+```bash
+git clone https://gitee.com/your-username/phoenix-editor.git
+```
 
-[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.3)
+然后进入项目目录并运行主程序：
+```bash
+cd phoenix-editor
+python main.py
+```
 
-#### 更新内容
+## 使用方法
+- **新建文件**: 点击菜单栏 `文件 > 新建` 或使用快捷键 `Ctrl+N`
+- **打开文件**: 点击菜单栏 `文件 > 打开` 或使用快捷键 `Ctrl+O`
+- **保存文件**: 点击菜单栏 `文件 > 保存` 或使用快捷键 `Ctrl+S`
+- **另存为**: 点击菜单栏 `文件 > 另存为`
+- **退出编辑器**: 点击菜单栏 `文件 > 退出`
+- **复制**: 点击菜单栏 `编辑 > 复制` 或使用快捷键 `Ctrl+C`
+- **粘贴**: 点击菜单栏 `编辑 > 粘贴` 或使用快捷键 `Ctrl+V`
+- **删除**: 点击菜单栏 `编辑 > 删除`
+- **撤销**: 点击菜单栏 `编辑 > 撤销` 或使用快捷键 `Ctrl+Z`
+- **重做**: 点击菜单栏 `编辑 > 重做` 或使用快捷键 `Ctrl+Y`
+- **运行代码**: 点击菜单栏 `运行 > 运行` 或使用快捷键 `F5`
+- **自动保存**: 点击菜单栏 `运行 > 自动保存`
+- **清空输出区域**: 点击菜单栏 `运行 > 清空输出区域`
+- **下载插件**: 点击菜单栏 `插件 > 下载插件`
+- **设置**: 点击菜单栏 `设置 > 打开设置面板`
 
-**v0.3.0 更新内容**
+## 配置
+你可以通过 `asset/settings.json` 修改编辑器的默认设置，包括：
+- 文件编码
+- 编程语言设置
+- 字体和字号
+- 文件存储路径
+- 高亮配色方案
 
-- 多语言支持
-- 修复了 BUG #ICDSX9 
+## 主要模块
+- `library/api.py`: 编辑器核心配置类，提供设置、高亮器、初始化和运行参数的管理。
+- `library/highlighter/base.py`: 语法高亮基类，定义了通用的高亮逻辑和标签管理。
+- `library/highlighter/{language}.py`: 针对不同编程语言的高亮实现。
+- `library/highlighter_factory.py`: 根据文件扩展名动态创建对应语言的高亮器。
+- `library/tab_manager.py`: 标签页管理器，支持多标签页操作。
+- `library/file_icons.py`: 文件图标管理类，支持根据不同文件路径返回对应图标。
+- `main.py`: 编辑器主入口，包含 UI 控制和文件操作逻辑。
 
-## v0.2
+## 贡献
+欢迎贡献代码，提交 Issue 或 Pull Request。我们鼓励开发者参与改进 Phoenix Editor 的功能、性能和用户体验。
 
-### v0.2.0
+## 许可证
+本项目遵循 MIT 许可证。更多信息请查看 `LICENSE` 文件。
 
-[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.2)
-
-**更新内容**
-
-- 更多主题
-    - dracula
-    - nord
-    - material
-    - solarized-light
-- 加入了输入页面，能够输入数据
-
-## v0.1
-
-### v0.1.1 
-
-[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.1.1)
-
-**更新内容**
-
-加入了更多的语言文件，为后续的多语言开发留下了基础。
-
-修复 [Issue ICA62S](https://gitee.com/chengzi404_admin/phoenix-editor/issues/ICA62S)
-
-**详细更新内容:**
-https://gitee.com/chengzi404_admin/phoenix-editor/commits/v0.1.1
-
-### v0.1.0 
-
-[下载链接](https://gitee.com/chengzi404_admin/phoenix-editor/tree/v0.1)
-
-项目的第一个版本。
-
-**详细更新内容:**
-https://gitee.com/chengzi404_admin/phoenix-editor/commits/v0.1
-
-# 许可证
-
-使用 GPL 开源许可证。
+## 版本历史
+- **v0.3.0**: 新增多语言支持，优化代码结构。
+- **v0.2.0**: 引入多主题支持，重构高亮器逻辑。
+- **v0.1.1**: 修复已知问题，优化标签页管理。
+- **v0.1.0**: 初始版本，基础编辑器功能上线。
