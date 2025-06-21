@@ -17,6 +17,7 @@ import json
 import subprocess
 import sys
 import zipfile
+import shlex
 
 
 # -------------------- Global Variables --------------------
@@ -56,6 +57,15 @@ try:
 
 except Exception as e:
     logger.error(f"Initlaze failed: {str(e)}")
+
+with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
+    dark_themes = json.load(fp)
+
+with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "dark.json"}", "r", encoding="utf-8") as fp:
+    dark_terminal_theme = json.load(fp)
+
+with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", "r", encoding="utf-8") as fp:
+    light_terminal_theme = json.load(fp)
 
 # -------------------- Settings Panel Functions --------------------
 def open_settings_panel():
@@ -338,6 +348,25 @@ def exit_editor():
         root.destroy()
         sys.exit(0)
 
+def execute_commands():
+    """Excute commands in commandarea"""
+    command = commandarea.get()
+    try:
+        # 使用 shlex.split 解析命令字符串
+        args = shlex.split(command)
+        runtool = subprocess.Popen(args, stdin=subprocess.PIPE, 
+                                   stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+                                   shell=True)  # 设置 shell=True 以在系统 shell 中执行命令
+        
+        stdout, stderr = runtool.communicate()
+
+        printarea.delete(0.0, END)
+        printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
+        printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
+    except Exception as e:
+        printarea.insert(END, f"执行命令时出错: {str(e)}\n")
+
+
 # -------------------- Create the window and menus --------------------
 
 # Create the main window
@@ -412,6 +441,19 @@ subpaned.add(inputarea)
 printarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 subpaned.add(printarea)
 
+commandpaned = PanedWindow(paned, orient=HORIZONTAL)
+paned.add(commandpaned, weight=2)
+commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+commandpaned.add(commandarea,weight=18)
+executebutton = Button(text=lang_dict["menus"]["run"], command=execute_commands)
+commandpaned.add(executebutton, weight=1)
+
+# Config commandpaned widgets background color
+if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
+    commandarea.config(background="#2F4F4F")
+else:
+    commandarea.config(background="#F8F8F8")
+
 # Show last edited content
 try:
     with open("./temp_script.txt", "r", encoding="utf-8") as fp:
@@ -477,15 +519,6 @@ try:
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
-    with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
-        dark_themes = json.load(fp)
-    
-    with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "dark.json"}", "r", encoding="utf-8") as fp:
-        dark_terminal_theme = json.load(fp)
-    
-    with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", "r", encoding="utf-8") as fp:
-        light_terminal_theme = json.load(fp)
-
     codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
     else: codehighlighter2.set_theme(light_terminal_theme)
