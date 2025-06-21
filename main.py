@@ -402,14 +402,14 @@ paned = PanedWindow(root, orient=VERTICAL)
 paned.pack(fill=BOTH, expand=True)
 
 # Create the code area
-codearea = Text(paned, font=Font(root, family="Consolas", size=12))
+codearea = Text(paned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 paned.add(codearea)
 
 subpaned = PanedWindow(paned, orient=HORIZONTAL)
 paned.add(subpaned)
-inputarea = Text(subpaned, font=Font(root, family="Consolas", size=12))
+inputarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 subpaned.add(inputarea)
-printarea = Text(subpaned, font=Font(root, family="Consolas", size=12))
+printarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 subpaned.add(printarea)
 
 # Show last edited content
