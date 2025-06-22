@@ -1,94 +1,84 @@
-
-
 # Phoenix Editor
 
-Phoenix Editor 是一个轻量级、多功能的代码编辑器，支持多种编程语言的语法高亮和基础代码分析功能。它具备多标签管理、主题切换、编码设置、以及集成终端等功能，旨在为用户提供流畅和高效的编码体验。
+Phoenix Editor 是一个轻量级的代码编辑器，旨在提供简洁高效的编程体验。它支持多种编程语言的语法高亮，并具备基本的代码编辑功能。
 
 ## 特性
 
-- **多语言支持**：支持包括 Python、C/C++、Java、JavaScript、HTML、CSS、Ruby、Rust 等多种编程语言的语法高亮。
-- **语法高亮**：基于抽象语法树（AST）的智能高亮机制，支持注释、字符串、变量、函数、类、关键字等元素的高亮显示。
-- **主题自定义**：提供多种内置主题（如 Dracula、Material、Solarized 等），并支持自定义终端和编辑器主题。
-- **文件图标支持**：根据文件类型显示相应图标，提升视觉辨识度。
-- **多标签管理**：支持多个文件在独立标签页中打开、编辑和切换。
-- **自动保存**：支持定时自动保存功能，避免数据丢失。
-- **基础代码分析**：提供简单的语法检查和代码结构分析。
-- **插件下载**：支持通过插件扩展功能，提供灵活的扩展机制。
+- 支持多语言语法高亮（Python、C/C++、Java、JavaScript、HTML、CSS 等）
+- 多标签页管理
+- 自动保存功能
+- 基本的代码高亮与语法分析
+- 可扩展的主题和语言包
+- 支持文件图标显示
 
 ## 安装
 
-1. 确保系统已安装 Python 3.x。
-2. 克隆项目到本地：
+1. 确保你已经安装了 Python 3.x。
+2. 克隆本仓库到本地：
    ```bash
    git clone https://gitee.com/your-repo/phoenix-editor.git
    ```
-3. 安装依赖：
+3. 进入项目目录并运行主程序：
    ```bash
-   pip install -r requirements.txt
-   ```
-4. 启动编辑器：
-   ```bash
+   cd phoenix-editor
    python main.py
    ```
 
 ## 使用方法
 
-- **新建文件**：点击菜单栏的“文件” > “新建”或使用快捷键 `Ctrl+N`。
-- **打开文件**：点击“文件” > “打开”或使用快捷键 `Ctrl+O`。
-- **保存文件**：点击“文件” > “保存”或使用快捷键 `Ctrl+S`。
-- **运行代码**：点击“运行” > “运行文件”来执行当前打开的代码。
-- **切换语言**：通过设置菜单，选择不同的语言包（中文、英文等）。
-- **切换主题**：在“设置” > “主题”中选择喜欢的编辑器主题。
-- **多标签编辑**：通过“文件” > “新建窗口”或 `Ctrl+Shift+N` 打开多个编辑窗口。
+- **新建文件/窗口**：点击菜单栏 `File > New File / New Window`
+- **打开文件**：点击菜单栏 `File > Open`
+- **保存文件**：点击菜单栏 `File > Save`
+- **运行代码**：点击菜单栏 `Run > Run`
+- **设置**：点击菜单栏 `Settings > Open Settings Panel` 可调整字体、编码、语言等
 
 ## 配置
 
-Phoenix Editor 的配置信息可以通过 `asset/settings.json` 文件进行修改，包括：
-- 文件编码格式
-- 默认字体和字号
-- 主题配置路径
-- 插件路径
-- 高亮规则
+所有配置信息存储在 `asset/settings.json` 文件中，你可以手动修改该文件来调整以下设置：
 
-配置支持多语言切换，语言文件位于 `asset/packages/lang/` 目录下。
+- 字体与字号
+- 默认编码格式
+- 默认语言
+- 主题样式（支持深色/浅色模式）
+- 自动保存间隔
 
 ## 主要模块
 
-- **library/api.py**：提供编辑器全局设置和路径管理。
-- **library/highlighter/**：每个语言的语法高亮实现，继承自 `BaseHighlighter`。
-- **library/highlighter_factory.py**：根据文件扩展名创建对应语言的高亮器。
-- **library/tab_manager.py**：实现标签页管理功能，包括新建、关闭、切换等。
-- **library/file_icons.py**：提供文件图标的加载和获取功能。
-- **main.py**：编辑器主程序，提供 GUI 界面和功能绑定。
+- `library/highlighter/`: 各种语言的语法高亮实现
+- `library/tab_manager.py`: 标签页管理逻辑
+- `library/api.py`: 编辑器核心配置与初始化接口
+- `main.py`: 主程序入口及基础功能实现
+- `asset/settings.json`: 存储用户配置
+- `asset/theme/`: 主题样式文件
+- `asset/packages/lang/`: 多语言支持文件
 
 ## 贡献
 
-欢迎参与项目贡献！请遵循以下步骤：
-1. Fork 仓库。
-2. 创建新分支并进行修改。
-3. 提交 PR 并说明修改内容。
-4. 等待审核与合并。
+欢迎贡献代码或提出建议！请遵循以下步骤：
 
-提交 Issue 时请使用模板文件，以确保问题描述清晰。
+1. Fork 本仓库
+2. 创建新分支 (`git checkout -b feature/new-feature`)
+3. 提交更改 (`git commit -m 'Add new feature'`)
+4. 推送分支 (`git push origin feature/new-feature`)
+5. 创建 Pull Request
 
 ## 许可证
 
-本项目使用 MIT 许可证。详情请参考 [LICENSE](LICENSE) 文件。
+本项目采用 MIT License，请参阅 [LICENSE](LICENSE) 文件了解详细信息。
 
 ## 版本历史
 
-- **v0.3.0**：新增插件下载功能，优化主题切换逻辑。
-- **v0.2.0**：引入多标签管理器，支持多窗口编辑。
-- **v0.1.1**：修复部分语法高亮逻辑，增强对多语言的支持。
-- **v0.1.0**：初始版本，实现基本编辑器框架和语法高亮功能。
+- **v0.3.0**：新增多语言支持与主题切换功能
+- **v0.2.0**：实现多标签页与自动保存功能
+- **v0.1.1**：优化语法高亮逻辑
+- **v0.1.0**：初始版本，实现基础编辑与运行功能
 
 ## 下载
 
-您可以从 Gitee 项目页面下载最新版本，或通过克隆仓库获取源码运行。
+你可以从 [Releases](README.md#下载) 页面下载最新版本的 Phoenix Editor。
 
 ## 相关链接
 
-- [GitHub](https://github.com/your-repo/phoenix-editor)
-- [Gitee](https://gitee.com/your-repo/phoenix-editor)
-
-如需帮助，请参考对应 [Issue 模板](.gitee/ISSUE_TEMPLATE.en.md) 提交问题。
+- [Gitee 项目主页](https://gitee.com/your-repo/phoenix-editor)
+- [Issue 跟踪](https://gitee.com/your-repo/phoenix-editor/issues)
+- [Pull Request 提交指南](.gitee/PULL_REQUEST_TEMPLATE.zh-CN.md)
