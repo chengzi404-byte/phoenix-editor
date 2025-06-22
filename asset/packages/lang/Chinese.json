@@ -23,6 +23,7 @@
         "open-file": "打开文件",
         "save-file": "保存文件",
         "save-as-file": "另存为",
+        "show-file-dir": "显示文件路径",
         "exit": "退出",
 
         "edit": "编辑",

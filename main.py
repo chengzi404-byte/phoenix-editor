@@ -365,6 +365,9 @@ def execute_commands():
     except Exception as e:
         printarea.insert(END, f"执行命令时出错: {str(e)}\n")
 
+def show_current_file_dir():
+    """show current file dir(absoult)"""
+    messagebox.showinfo(file_path, file_path)
 
 # -------------------- Create the window and menus --------------------
 
@@ -415,6 +418,14 @@ menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=clear_printarea, label=lang_dict["menus"]["clear-output"])
 runmenu.add_command(command=terminal, label=lang_dict["menus"]["terminal"])
+
+# Pop menu
+popmenu = Menu(root, tearoff=0)
+popmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
+popmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
+popmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
+popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
+popmenu.add_command(label=lang_dict[""])
 
 # Plugin menu (comming soon)
 pluginmenu = Menu(tearoff=0)
@@ -475,6 +486,12 @@ settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["
 
 # Enable autosave
 schedule_autosave()
+
+# Bind popup event
+def show_popup(event):
+    popmenu.post(event.x_root, event.y_root)
+
+codearea.bind("<Button-3>", show_popup)
 
 # Initialization
 try:

@@ -1,11 +1,11 @@
 {
     "plugin": {
-        "download-success": ["Plugin", "Téléchargement du plugin réussi. Veuillez redémarrer le logiciel."],
-        "download-failture": ["Plugin", "Échec de l'installation du plugin : {}"]
+        "download-success": [ "Extension", "L'extension a été téléchargée avec succès. Veuillez redémarrer le logiciel." ],
+        "download-failture": [ "Extension", "L'installation de l'extension a échoué : {}" ]
     }, 
     "settings": {
         "font": "Police",
-        "font-size": "Taille de police",
+        "font-size": "Taille de la police",
         "theme": "Thème",
         "languange": "Langue",
         "restart": "Veuillez redémarrer le logiciel pour appliquer les paramètres",
@@ -14,7 +14,7 @@
         "coding-languange": "Langage de programmation"
     },
     "menus": {
-        "configure": "Configurer",
+        "configure": "Paramètres",
         "open-settings": "Paramètres",
 
         "file": "Fichier",
@@ -23,6 +23,7 @@
         "open-file": "Ouvrir un fichier",
         "save-file": "Enregistrer le fichier",
         "save-as-file": "Enregistrer sous",
+        "show-file-dir": "Afficher le chemin du fichier",
         "exit": "Quitter",
 
         "edit": "Édition",
@@ -32,13 +33,13 @@
         "paste": "Coller",
         "delete": "Supprimer",
         
-        "plugin": "Plugin",
+        "plugin": "Extension",
 
         "run": "Exécuter",
         "clear-output": "Effacer la sortie",
         "terminal": "Terminal"
     },
-    "file-types" : [
+    "file-types": [
         "Fichier Python",
         "Fichier HTML",
         "Fichier CSS",
@@ -46,14 +47,14 @@
         "Fichier JSON",
         "Fichier Ruby",
         "Fichier C/C++",
-        "Fichier Objective - C",
+        "Fichier Objective-C",
         "Tous les fichiers"
     ],
     "plugin-types": [
-        "fichiers de plugin",
-        "tous les fichiers"
+        "Fichier d'extension",
+        "Tous les fichiers"
     ],
-    "info-window-title": "Notification",
-    "title": "Éditeur Phénix",
-    "help": "Éditeur Phénix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
+    "info-window-title": "Avertissement",
+    "title": "Éditeur Fire Phoenix",
+    "help": "Éditeur Fire Phoenix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
 }

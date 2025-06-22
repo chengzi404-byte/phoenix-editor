@@ -1,20 +1,20 @@
 {
     "plugin": {
-        "download-success": ["Plugin", "Plugin downloaded successfully. Please restart the software."],
-        "download-failture": ["Plugin", "Plugin installation failed: {}"]
+        "download-success": [ "Plugin", "Plugin downloaded successfully. Please restart the software." ],
+        "download-failture": [ "Plugin", "Plugin installation failed: {}" ]
     }, 
     "settings": {
         "font": "Font",
         "font-size": "Font Size",
         "theme": "Theme",
         "languange": "Language",
-        "restart": "Please restart the software to apply settings",
+        "restart": "Please restart the software to apply the settings",
         "close": "Close",
         "title": "Settings",
         "coding-languange": "Programming Language"
     },
     "menus": {
-        "configure": "Configure",
+        "configure": "Settings",
         "open-settings": "Settings",
 
         "file": "File",
@@ -23,6 +23,7 @@
         "open-file": "Open File",
         "save-file": "Save File",
         "save-as-file": "Save As",
+        "show-file-dir": "Show File Path",
         "exit": "Exit",
 
         "edit": "Edit",
@@ -39,21 +40,21 @@
         "terminal": "Terminal"
     },
     "file-types": [
-        "Python files",
-        "HTML files",
-        "CSS files",
-        "JavaScript files",
-        "JSON files",
-        "Ruby files",
-        "C/C++ files",
-        "Objective-C files",
-        "All files"
+        "Python File",
+        "HTML File",
+        "CSS File",
+        "JavaScript File",
+        "JSON File",
+        "Ruby File",
+        "C/C++ File",
+        "Objective-C File",
+        "All Files"
     ],
     "plugin-types": [
-        "Plugin files",
-        "All files"
+        "Plugin File",
+        "All Files"
     ],
-    "info-window-title": "Notification",
-    "title": "Phoenix Editor",
-    "help": "Phoenix Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
+    "info-window-title": "Prompt",
+    "title": "Fire Phoenix Editor",
+    "help": "Fire Phoenix Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
 }
