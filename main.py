@@ -371,14 +371,12 @@ def execute_commands():
 # Create the main window
 root = Tk()
 root.title(lang_dict["title"])
-root.geometry("800x600+100+100")
+root.geometry("1800x1600+100+100")
 root.configure(bg='black')
 # root.iconbitmap(default="./asset/icon.ico")
 root.resizable(width=True, height=True)
 
 # Binding
-root.bind("<Control-c>", lambda event: copy())
-root.bind("<Control-v>", lambda event: paste())
 root.bind("<Control-x>", lambda event: delete())
 root.bind("<Control-z>", lambda event: undo())
 root.bind("<Control-y>", lambda event: redo())
