@@ -371,7 +371,7 @@ def execute_commands():
 # Create the main window
 root = Tk()
 root.title(lang_dict["title"])
-root.geometry("1800x1600+100+100")
+root.geometry("1920x980+0+0")
 root.configure(bg='black')
 # root.iconbitmap(default="./asset/icon.ico")
 root.resizable(width=True, height=True)
