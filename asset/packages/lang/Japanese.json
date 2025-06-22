@@ -1,14 +1,14 @@
 {
     "plugin": {
-        "download-success": ["プラグイン", "プラグインのダウンロードに成功しました。ソフトウェアを再起動してください。"],
-        "download-failture": ["プラグイン", "プラグインのインストールに失敗しました: {}"]
+        "download-success": [ "プラグイン", "プラグインのダウンロードに成功しました。ソフトウェアを再起動してください。" ],
+        "download-failture": [ "プラグイン", "プラグインのインストールに失敗しました: {}" ]
     }, 
     "settings": {
         "font": "フォント",
         "font-size": "フォントサイズ",
         "theme": "テーマ",
         "languange": "言語",
-        "restart": "設定を適用するにはソフトウェアを再起動してください",
+        "restart": "設定を適用するには、ソフトウェアを再起動してください",
         "close": "閉じる",
         "title": "設定",
         "coding-languange": "プログラミング言語"
@@ -23,6 +23,7 @@
         "open-file": "ファイルを開く",
         "save-file": "ファイルを保存",
         "save-as-file": "名前を付けて保存",
+        "show-file-dir": "ファイルのパスを表示",
         "exit": "終了",
 
         "edit": "編集",
@@ -39,21 +40,21 @@
         "terminal": "ターミナル"
     },
     "file-types": [
-        "Pythonファイル",
-        "HTMLファイル",
-        "CSSファイル",
-        "JavaScriptファイル",
-        "JSONファイル",
-        "Rubyファイル",
-        "C/C++ファイル",
-        "Objective-Cファイル",
+        "Python ファイル",
+        "HTML ファイル",
+        "CSS ファイル",
+        "JavaScript ファイル",
+        "JSON ファイル",
+        "Ruby ファイル",
+        "C/C++ ファイル",
+        "Objective-C ファイル",
         "すべてのファイル"
     ],
     "plugin-types": [
-        "プラグイン ファイル",
+        "プラグインファイル",
         "すべてのファイル"
     ],
-    "info-window-title": "通知",
+    "info-window-title": "ヒント",
     "title": "火鳳エディタ",
     "help": "火鳳エディタ\nバージョン：v0.3.1\n\n作者：chengzi404(gitee) remain(github)"
 }

@@ -1,20 +1,20 @@
 {
     "plugin": {
-        "download-success": ["Plugin", "Plugin erfolgreich heruntergeladen. Bitte starten Sie die Software neu."],
-        "download-failture": ["Plugin", "Plugin-Installation fehlgeschlagen: {}"]
+        "download-success": [ "Plugin", "Das Plugin wurde erfolgreich heruntergeladen. Bitte starten Sie die Software neu." ],
+        "download-failture": [ "Plugin", "Die Installation des Plugins ist fehlgeschlagen: {}" ]
     }, 
     "settings": {
         "font": "Schriftart",
         "font-size": "Schriftgröße",
-        "theme": "Design",
+        "theme": "Thema",
         "languange": "Sprache",
-        "restart": "Bitte starten Sie die Software neu, um die Einstellungen zu übernehmen",
+        "restart": "Bitte starten Sie die Software neu, um die Einstellungen anzuwenden",
         "close": "Schließen",
         "title": "Einstellungen",
         "coding-languange": "Programmiersprache"
     },
     "menus": {
-        "configure": "Konfigurieren",
+        "configure": "Einstellungen",
         "open-settings": "Einstellungen",
 
         "file": "Datei",
@@ -23,6 +23,7 @@
         "open-file": "Datei öffnen",
         "save-file": "Datei speichern",
         "save-as-file": "Speichern unter",
+        "show-file-dir": "Dateipfad anzeigen",
         "exit": "Beenden",
 
         "edit": "Bearbeiten",
@@ -50,10 +51,10 @@
         "Alle Dateien"
     ],
     "plugin-types": [
-        "Plugin-Dateien",
+        "Plugin-Datei",
         "Alle Dateien"
     ],
     "info-window-title": "Hinweis",
-    "title": "Feuerphoenix-Editor",
-    "help": "Feuerphoenix-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
+    "title": "Huofeng-Editor",
+    "help": "Huofeng-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
 }

@@ -1,4 +1,3 @@
-
 {
     "plugin": {
         "download-success": [ "Плагин", "Плагин успешно загружен. Пожалуйста, перезапустите программу." ],
@@ -12,21 +11,22 @@
         "restart": "Пожалуйста, перезапустите программу, чтобы применить настройки",
         "close": "Закрыть",
         "title": "Настройки",
-        "coding-languange": "Программный язык"
+        "coding-languange": "Язык программирования"
     },
     "menus": {
         "configure": "Настройки",
         "open-settings": "Настройки",
 
         "file": "Файл",
-        "new-file": "Создать новый файл",
-        "new-window": "Открыть новое окно",
+        "new-file": "Новый файл",
+        "new-window": "Новое окно",
         "open-file": "Открыть файл",
         "save-file": "Сохранить файл",
         "save-as-file": "Сохранить как",
-        "exit": "Выйти",
+        "show-file-dir": "Показать путь к файлу",
+        "exit": "Выход",
 
-        "edit": "Редактировать",
+        "edit": "Правка",
         "undo": "Отменить",
         "redo": "Повторить",
         "copy": "Копировать",
@@ -35,26 +35,26 @@
         
         "plugin": "Плагин",
 
-        "run": "Запустить",
+        "run": "Запуск",
         "clear-output": "Очистить вывод",
         "terminal": "Терминал"
     },
     "file-types": [
-        "Python файл",
-        "HTML файл",
-        "CSS файл",
-        "JavaScript файл",
-        "JSON файл",
-        "Ruby файл",
-        "C/C++ файл",
-        "Objective-C файл",
+        "Python-файл",
+        "HTML-файл",
+        "CSS-файл",
+        "JavaScript-файл",
+        "JSON-файл",
+        "Ruby-файл",
+        "C/C++-файл",
+        "Objective-C-файл",
         "Все файлы"
     ],
     "plugin-types": [
-        "Плагинный файл",
+        "Плагин-файл",
         "Все файлы"
     ],
     "info-window-title": "Подсказка",
-    "title": "Редактор Горелый Феникс",
-    "help": "Редактор Горелый Феникс\nВерсия: v0.3.1\n\nАвторы: chengzi404(gitee) remain(github)"
+    "title": "Редактор Fire Phoenix",
+    "help": "Редактор Fire Phoenix\nВерсия: v0.3.1\n\nАвтор: chengzi404(gitee) remain(github)"
 }
