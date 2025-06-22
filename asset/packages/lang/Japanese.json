@@ -49,6 +49,10 @@
         "Objective-Cファイル",
         "すべてのファイル"
     ],
+    "plugin-types": [
+        "プラグイン ファイル",
+        "すべてのファイル"
+    ],
     "info-window-title": "通知",
     "title": "火鳳エディタ",
     "help": "火鳳エディタ\nバージョン：v0.3.1\n\n作者：chengzi404(gitee) remain(github)"

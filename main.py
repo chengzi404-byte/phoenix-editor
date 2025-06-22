@@ -329,9 +329,8 @@ def download_plugin():
         plugin_path = filedialog.askopenfilename(
             title="打开插件",
             filetypes=[
-                ("插件执行文件", "*.zip"),
-                ("插件安装文件", "*.json"),
-                ("所有文件", "*.*")
+                (lang_dict["plugin-types"][0], "*.zip"),
+                (lang_dict["plugin-types"][1], "*.*")
             ]
         )
         if plugin_path:

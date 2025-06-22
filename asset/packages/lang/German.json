@@ -49,6 +49,10 @@
         "Objective-C-Datei",
         "Alle Dateien"
     ],
+    "plugin-types": [
+        "Plugin-Dateien",
+        "Alle Dateien"
+    ],
     "info-window-title": "Hinweis",
     "title": "Feuerphoenix-Editor",
     "help": "Feuerphoenix-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"

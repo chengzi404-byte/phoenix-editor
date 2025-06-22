@@ -49,6 +49,10 @@
         "Objective-C files",
         "All files"
     ],
+    "plugin-types": [
+        "Plugin files",
+        "All files"
+    ],
     "info-window-title": "Notification",
     "title": "Phoenix Editor",
     "help": "Phoenix Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"

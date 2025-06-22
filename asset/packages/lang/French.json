@@ -49,6 +49,10 @@
         "Fichier Objective - C",
         "Tous les fichiers"
     ],
+    "plugin-types": [
+        "fichiers de plugin",
+        "tous les fichiers"
+    ],
     "info-window-title": "Notification",
     "title": "Éditeur Phénix",
     "help": "Éditeur Phénix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
