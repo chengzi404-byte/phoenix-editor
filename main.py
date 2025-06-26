@@ -18,6 +18,7 @@ import subprocess
 import sys
 import zipfile
 import shlex
+import shutil
 
 
 # -------------------- Global Variables --------------------
@@ -114,6 +115,9 @@ def open_settings_panel():
         Settings.Highlighter.change("code", code_type)
         messagebox.showinfo(lang_dict["info-window-title"], lang_dict["settings"]["restart"])
 
+    def clear_cache():
+        shutil.rmtree(f"{Path.cwd() / "library/__pycache__/"}")
+
     # Theme
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text=lang_dict["settings"]["theme"]).pack(anchor=W)
@@ -155,6 +159,9 @@ def open_settings_panel():
     OptionMenu(settings_window, code_var, *support_code_type).pack(anchor=W, fill=X)
 
     code_var.trace_add('write', lambda *args: apply_restart_settings())
+
+    # Clear cache
+    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache).pack(anchor=E)
 
     Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
 
@@ -425,7 +432,6 @@ popmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
 popmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
 popmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
 popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
-popmenu.add_command(label=lang_dict[""])
 
 # Plugin menu (comming soon)
 pluginmenu = Menu(tearoff=0)

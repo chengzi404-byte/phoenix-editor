@@ -1,7 +1,7 @@
 {
     "plugin": {
-        "download-success": [ "Extension", "L'extension a été téléchargée avec succès. Veuillez redémarrer le logiciel." ],
-        "download-failture": [ "Extension", "L'installation de l'extension a échoué : {}" ]
+        "download-success": [ "Extension", "Téléchargement de l'extension réussi. Veuillez redémarrer le logiciel." ],
+        "download-failture": [ "Extension", "Échec de l'installation de l'extension : {}" ]
     }, 
     "settings": {
         "font": "Police",
@@ -11,7 +11,8 @@
         "restart": "Veuillez redémarrer le logiciel pour appliquer les paramètres",
         "close": "Fermer",
         "title": "Paramètres",
-        "coding-languange": "Langage de programmation"
+        "coding-languange": "Langage de programmation",
+        "clear-cache": "Vider le cache"
     },
     "menus": {
         "configure": "Paramètres",

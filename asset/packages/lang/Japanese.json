@@ -11,7 +11,8 @@
         "restart": "設定を適用するには、ソフトウェアを再起動してください",
         "close": "閉じる",
         "title": "設定",
-        "coding-languange": "プログラミング言語"
+        "coding-languange": "プログラミング言語",
+        "clear-cache": "キャッシュをクリアする"
     },
     "menus": {
         "configure": "設定",
@@ -21,9 +22,9 @@
         "new-file": "新規ファイル",
         "new-window": "新規ウィンドウ",
         "open-file": "ファイルを開く",
-        "save-file": "ファイルを保存",
+        "save-file": "ファイルを保存する",
         "save-as-file": "名前を付けて保存",
-        "show-file-dir": "ファイルのパスを表示",
+        "show-file-dir": "ファイルのパスを表示する",
         "exit": "終了",
 
         "edit": "編集",
@@ -36,7 +37,7 @@
         "plugin": "プラグイン",
 
         "run": "実行",
-        "clear-output": "出力をクリア",
+        "clear-output": "出力をクリアする",
         "terminal": "ターミナル"
     },
     "file-types": [
@@ -54,7 +55,7 @@
         "プラグインファイル",
         "すべてのファイル"
     ],
-    "info-window-title": "ヒント",
+    "info-window-title": "メッセージ",
     "title": "火鳳エディタ",
     "help": "火鳳エディタ\nバージョン：v0.3.1\n\n作者：chengzi404(gitee) remain(github)"
 }

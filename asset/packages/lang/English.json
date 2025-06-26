@@ -11,7 +11,8 @@
         "restart": "Please restart the software to apply the settings",
         "close": "Close",
         "title": "Settings",
-        "coding-languange": "Programming Language"
+        "coding-languange": "Programming Language",
+        "clear-cache": "Clear Cache"
     },
     "menus": {
         "configure": "Settings",
@@ -55,6 +56,6 @@
         "All Files"
     ],
     "info-window-title": "Prompt",
-    "title": "Fire Phoenix Editor",
-    "help": "Fire Phoenix Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
+    "title": "Huofeng Editor",
+    "help": "Huofeng Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
 }
