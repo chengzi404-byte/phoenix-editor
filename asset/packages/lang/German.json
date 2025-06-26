@@ -8,10 +8,11 @@
         "font-size": "Schriftgröße",
         "theme": "Thema",
         "languange": "Sprache",
-        "restart": "Bitte starten Sie die Software neu, um die Einstellungen anzuwenden",
+        "restart": "Bitte starten Sie die Software neu, um die Einstellungen anzuwenden.",
         "close": "Schließen",
         "title": "Einstellungen",
-        "coding-languange": "Programmiersprache"
+        "coding-languange": "Programmiersprache",
+        "clear-cache": "Cache leeren"
     },
     "menus": {
         "configure": "Einstellungen",
