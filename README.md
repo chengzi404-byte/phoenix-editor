@@ -15,10 +15,12 @@ Phoenix Editor 是一个轻量级的代码编辑器，旨在提供简洁高效�
 
 1. 确保你已经安装了 Python 3.x。
 2. 克隆本仓库到本地：
+   
    ```bash
    git clone https://gitee.com/your-repo/phoenix-editor.git
    ```
 3. 进入项目目录并运行主程序：
+   
    ```bash
    cd phoenix-editor
    python main.py
@@ -79,6 +81,8 @@ Phoenix Editor 是一个轻量级的代码编辑器，旨在提供简洁高效�
 
 ## 相关链接
 
-- [Gitee 项目主页](https://gitee.com/your-repo/phoenix-editor)
-- [Issue 跟踪](https://gitee.com/your-repo/phoenix-editor/issues)
+- [Gitee 项目主页](https://gitee.com/creative-and-dream/phoenix-editor)
+- [Issue 跟踪](https://gitee.com/creative-and-dream/phoenix-editor/issues)
 - [Pull Request 提交指南](.gitee/PULL_REQUEST_TEMPLATE.zh-CN.md)
+
+
