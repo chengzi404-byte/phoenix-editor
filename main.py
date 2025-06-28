@@ -26,8 +26,9 @@ global settings, highlighter_factory, file_path, logger
 global codehighlighter2, codehighlighter
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
+file_path = "temp_script.txt"
 
-with open("./asset/settings.json", "r", encoding="utf-8") as fp:
+with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
 
 # Load language settings
@@ -40,7 +41,7 @@ try:
             os.makedirs(directory)
             
     # Check and create the normal files
-    if not os.path.exists("./asset/settings.json"):
+    if not os.path.exists(f"{Path.cwd() / "asset" / "settings.json"}"):
         default_settings = {
             "file-encoding": "utf-8",
             "lang": "zh-cn",
@@ -53,7 +54,7 @@ try:
                 "enable-docstrings": True
             }
         }
-        with open("./asset/settings.json", "w", encoding="utf-8") as f:
+        with open(f"{Path.cwd() / "asset" / "settings.json"}", "w", encoding="utf-8") as f:
             json.dump(default_settings, f, indent=4, ensure_ascii=False)
 
 except Exception as e:
@@ -79,7 +80,7 @@ def open_settings_panel():
         """Apply settings immediately"""
         theme_name = theme_var.get()
         # Load theme file
-        theme_file = f"./asset/theme/{theme_name}.json"
+        theme_file = f"{Path.cwd() / "asset" / "theme" / theme_name}.json"
         try:
             # Apply changes
             with open(theme_file, "r", encoding="utf-8") as f:
@@ -121,7 +122,7 @@ def open_settings_panel():
     # Theme
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text=lang_dict["settings"]["theme"]).pack(anchor=W)
-    rawdata = os.listdir("./asset/theme/")
+    rawdata = os.listdir(f"{Path.cwd() / "theme"}")
     themes = []
     rawdata.remove("terminalTheme")
     for theme in rawdata:
@@ -191,7 +192,7 @@ def save_file():
     """File > Save File"""
     global file_path
     msg = codearea.get(0.0, END)
-    if file_path == "./temp_script.txt":
+    if file_path == "temp_script.txt":
         file_path = filedialog.asksaveasfilename(
                     filetypes=[
                         (lang_dict["file-types"][0], "*.py"),
@@ -284,6 +285,7 @@ def run():
 
     printarea.delete(0.0, END)
     printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
+    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
     printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
     printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
     printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
@@ -294,11 +296,11 @@ def autosave():
     """File > Auto Save"""
     try:
         content = codearea.get("1.0", END)
-        if Settings.Editor.file_path() != "./temp_script.txt":
+        if Settings.Editor.file_path() != "temp_script.txt":
             with open(Settings.Editor.file_path(), "w", encoding=Settings.Editor.file_encoding()) as f:
                 f.write(content)
         
-        with open("./temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
+        with open("temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
         print(f"Auto-saving failed: {str(e)}")
@@ -342,7 +344,7 @@ def download_plugin():
         )
         if plugin_path:
             plugin_zip = zipfile.ZipFile(plugin_path, "r")
-            plugin_zip.extractall("./asset/plugins/")
+            plugin_zip.extractall(f"{Path.cwd() / "asset" / "plugins"}")
             plugin_zip.close()
             messagebox.showinfo("Plugin", "Plugin installation successful, please restart the software")
     except Exception as e:
@@ -383,7 +385,6 @@ root = Tk()
 root.title(lang_dict["title"])
 root.geometry("1920x980+0+0")
 root.configure(bg='black')
-# root.iconbitmap(default="./asset/icon.ico")
 root.resizable(width=True, height=True)
 
 # Binding
@@ -470,11 +471,11 @@ else:
 
 # Show last edited content
 try:
-    with open("./temp_script.txt", "r", encoding="utf-8") as fp:
+    with open("temp_script.txt", "r", encoding="utf-8") as fp:
         codearea.insert("1.0", fp.read())
 except FileNotFoundError:
     # If temp file doesn't exist, create an empty one
-    with open("./temp_script.txt", "w", encoding="utf-8") as fp:
+    with open("temp_script.txt", "w", encoding="utf-8") as fp:
         fp.write("")
 
 # Setup auto-save timer
