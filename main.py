@@ -122,7 +122,7 @@ def open_settings_panel():
     # Theme
     theme_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["theme"])
     Label(settings_window, text=lang_dict["settings"]["theme"]).pack(anchor=W)
-    rawdata = os.listdir(f"{Path.cwd() / "theme"}")
+    rawdata = os.listdir(f"{Path.cwd() / "asset" / "theme"}")
     themes = []
     rawdata.remove("terminalTheme")
     for theme in rawdata:
@@ -567,10 +567,4 @@ except Exception as e:
     logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
 
 
-if __name__ == "__main__":
-    n = 0
-else:
-    n = 1
-
-# Start main loop
-root.mainloop(n)
+root.mainloop()
