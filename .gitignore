@@ -160,3 +160,4 @@ main.spec
 
 # Pyinstaller build folders
 .dist
+build
