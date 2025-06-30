@@ -1,14 +1,14 @@
 {
     "plugin": {
-        "download-success": [ "Plugin", "Das Plugin wurde erfolgreich heruntergeladen. Bitte starten Sie die Software neu." ],
-        "download-failture": [ "Plugin", "Die Installation des Plugins ist fehlgeschlagen: {}" ]
+        "download-success": ["Plugin", "Plugin erfolgreich heruntergeladen. Bitte starten Sie das Programm neu."],
+        "download-failture": ["Plugin", "Fehler bei der Plugininstallation: {}"]
     }, 
     "settings": {
         "font": "Schriftart",
         "font-size": "Schriftgröße",
         "theme": "Thema",
         "languange": "Sprache",
-        "restart": "Bitte starten Sie die Software neu, um die Einstellungen anzuwenden.",
+        "restart": "Bitte starten Sie das Programm neu, um die Einstellungen anzuwenden",
         "close": "Schließen",
         "title": "Einstellungen",
         "coding-languange": "Programmiersprache",
@@ -23,12 +23,12 @@
         "new-window": "Neues Fenster",
         "open-file": "Datei öffnen",
         "save-file": "Datei speichern",
-        "save-as-file": "Speichern unter",
+        "save-as-file": "Datei speichern unter",
         "show-file-dir": "Dateipfad anzeigen",
         "exit": "Beenden",
 
         "edit": "Bearbeiten",
-        "undo": "Rückgängig",
+        "undo": "Rückgängig machen",
         "redo": "Wiederholen",
         "copy": "Kopieren",
         "paste": "Einfügen",
@@ -55,7 +55,13 @@
         "Plugin-Datei",
         "Alle Dateien"
     ],
-    "info-window-title": "Hinweis",
-    "title": "Huofeng-Editor",
-    "help": "Huofeng-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
+    "ai": {
+        "title": "AI-Assistent",
+        "send": "Senden",
+        "show-sidebar": "AI-Seitenleiste anzeigen",
+        "hide-sidebar": "AI-Seitenleiste ausblenden"
+    },
+    "info-window-title": "Information",
+    "title": "Phoenix-Editor",
+    "help": "Phoenix-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
 }

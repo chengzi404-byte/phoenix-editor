@@ -1,17 +1,17 @@
 {
     "plugin": {
-        "download-success": [ "Plugin", "Plugin downloaded successfully. Please restart the software." ],
-        "download-failture": [ "Plugin", "Plugin installation failed: {}" ]
+        "download-success": ["Plugin", "Plugin downloaded successfully. Please restart the software."],
+        "download-failture": ["Plugin", "Plugin installation failed: {}"]
     }, 
     "settings": {
         "font": "Font",
         "font-size": "Font Size",
         "theme": "Theme",
         "languange": "Language",
-        "restart": "Please restart the software to apply the settings",
+        "restart": "Please restart the software to apply settings",
         "close": "Close",
         "title": "Settings",
-        "coding-languange": "Programming Language",
+        "coding-languange": "Coding Language",
         "clear-cache": "Clear Cache"
     },
     "menus": {
@@ -55,7 +55,13 @@
         "Plugin File",
         "All Files"
     ],
-    "info-window-title": "Prompt",
-    "title": "Huofeng Editor",
-    "help": "Huofeng Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
+    "ai": {
+        "title": "AI Assistant",
+        "send": "Send",
+        "show-sidebar": "Show AI Sidebar",
+        "hide-sidebar": "Hide AI Sidebar"
+    },
+    "info-window-title": "Info",
+    "title": "Phoenix Editor",
+    "help": "Phoenix Editor\nVersion: v0.3.1\n\nAuthor: chengzi404(gitee) remain(github)"
 }
