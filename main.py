@@ -408,6 +408,8 @@ filemenu.add_command(command=open_file, label=lang_dict["menus"]["open-file"])
 filemenu.add_command(command=save_file, label=lang_dict["menus"]["save-file"])
 filemenu.add_command(command=save_as_file, label=lang_dict["menus"]["save-as-file"])
 filemenu.add_separator()
+filemenu.add_command(command=show_current_file_dir, label=lang_dict["menus"]["show-file-dir"])
+filemenu.add_separator()
 filemenu.add_command(command=exit_editor, label=lang_dict["menus"]["exit"])
 
 # Edit menu
