@@ -55,6 +55,12 @@
         "插件文件",
         "所有文件"
     ],
+    "ai": {
+        "title": "AI 助手",
+        "send": "发送",
+        "show": "显示 AI 侧边栏",
+        "hide": "隐藏 AI 侧边栏"
+    },
     "info-window-title": "提示",
     "title": "火凤编辑器",
     "help": "火凤编辑器\n版本：v0.3.1\n\n作者：chengzi404(gitee) remain(github)"
