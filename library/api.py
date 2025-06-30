@@ -49,3 +49,12 @@ class Settings:
 
     class Path:
         def main_dir():                  return pathlib.Path.cwd().parent()
+
+    class AI:
+        def get_api_key():          return settings["apikey"]
+        
+        def change(apikey):
+            settings["apikey"] = apikey
+
+            with open("./asset/settings.json", "w", encoding="utf-8") as fp:
+                json.dump(settings, fp)

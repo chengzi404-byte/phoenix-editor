@@ -1,17 +1,17 @@
 {
     "plugin": {
-        "download-success": [ "Extension", "Téléchargement de l'extension réussi. Veuillez redémarrer le logiciel." ],
-        "download-failture": [ "Extension", "Échec de l'installation de l'extension : {}" ]
+        "download-success": ["Plugin", "Le plugin a été téléchargé avec succès. Veuillez redémarrer le logiciel."],
+        "download-failture": ["Plugin", "Échec de l'installation du plugin : {}"]
     }, 
     "settings": {
         "font": "Police",
-        "font-size": "Taille de la police",
+        "font-size": "Taille de police",
         "theme": "Thème",
         "languange": "Langue",
         "restart": "Veuillez redémarrer le logiciel pour appliquer les paramètres",
         "close": "Fermer",
         "title": "Paramètres",
-        "coding-languange": "Langage de programmation",
+        "coding-languange": "Langue de programmation",
         "clear-cache": "Vider le cache"
     },
     "menus": {
@@ -27,14 +27,14 @@
         "show-file-dir": "Afficher le chemin du fichier",
         "exit": "Quitter",
 
-        "edit": "Édition",
+        "edit": "Éditer",
         "undo": "Annuler",
-        "redo": "Rétablir",
+        "redo": "Réduire",
         "copy": "Copier",
         "paste": "Coller",
         "delete": "Supprimer",
         
-        "plugin": "Extension",
+        "plugin": "Plugin",
 
         "run": "Exécuter",
         "clear-output": "Effacer la sortie",
@@ -52,10 +52,16 @@
         "Tous les fichiers"
     ],
     "plugin-types": [
-        "Fichier d'extension",
+        "Fichier plugin",
         "Tous les fichiers"
     ],
-    "info-window-title": "Avertissement",
-    "title": "Éditeur Fire Phoenix",
-    "help": "Éditeur Fire Phoenix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
+    "ai": {
+        "title": "Assistant AI",
+        "send": "Envoyer",
+        "show-sidebar": "Afficher la barre latérale AI",
+        "hide-sidebar": "Masquer la barre latérale AI"
+    },
+    "info-window-title": "Information",
+    "title": "Éditeur Phoenix",
+    "help": "Éditeur Phoenix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
 }

@@ -8,7 +8,8 @@ from tkinter import (
     Tk, Toplevel, 
     StringVar, IntVar, 
     Menu, Text,
-    W, X, E, BOTH, VERTICAL, HORIZONTAL, END
+    W, X, E, BOTH, VERTICAL, HORIZONTAL, END,
+    Frame, Label, Button, Scrollbar, DISABLED, NORMAL
 )
 from tkinter.ttk import *
 from pathlib import Path
@@ -19,17 +20,30 @@ import sys
 import zipfile
 import shlex
 import shutil
-
+import openai
+import easygui
+import threading
+import time
+from queue import Queue
 
 # -------------------- Global Variables --------------------
 global settings, highlighter_factory, file_path, logger
-global codehighlighter2, codehighlighter
+global codehighlighter2, codehighlighter, APIKEY
+global ai_sidebar, ai_display, ai_input, ai_queue, ai_loading
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
 file_path = "temp_script.txt"
+ai_queue = Queue()  # 用于AI响应的队列
+ai_loading = False  # 加载状态标志
 
 with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
+
+if settings["apikey"] == None or settings["apikey"] == "none":
+    APIKEY = easygui.enterbox("AI 模块", "请输入 APIKEY")
+    Settings.AI.change(APIKEY)
+else:
+    APIKEY = Settings.AI.get_api_key()
 
 # Load language settings
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
@@ -69,6 +83,91 @@ with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "dark.json"}", "
 with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", "r", encoding="utf-8") as fp:
     light_terminal_theme = json.load(fp)
 
+# -------------------- AI Functions --------------------
+def initialize_openai():
+    """初始化OpenAI API客户端"""
+    try:
+        openai.api_key = APIKEY
+        # 测试连接
+        models = openai.Model.list()
+        logger.info(f"OpenAI API Initlazed!: {len(models.data)}")
+        return True
+    except Exception as e:
+        logger.error(f"OpenAI API Init Error: {str(e)}")
+        messagebox.showerror("AI配置错误", f"无法连接到OpenAI API: {str(e)}")
+        return False
+
+def send_ai_request(prompt):
+    """发送AI请求到OpenAI API"""
+    global ai_loading
+    ai_loading = True
+    update_ai_loading()
+    
+    try:
+        # 使用openai库发送聊天完成请求
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=1000
+        )
+        
+        # 提取回复内容
+        ai_response = response.choices[0].message.content
+        ai_queue.put(ai_response)
+            
+    except Exception as e:
+        error_msg = f"AI请求异常: {str(e)}"
+        logger.error(error_msg)
+        ai_queue.put(error_msg)
+    finally:
+        ai_loading = False
+        update_ai_loading()
+
+def process_ai_responses():
+    """处理AI响应队列"""
+    while not ai_queue.empty():
+        response = ai_queue.get()
+        display_ai_response(response)
+        ai_queue.task_done()
+    root.after(100, process_ai_responses)  # 继续检查队列
+
+def display_ai_response(response):
+    """在AI显示区域显示响应"""
+    current_time = time.strftime("%H:%M:%S")
+    ai_display.config(state=NORMAL)
+    ai_display.insert(END, f"AI [{current_time}]:\n{response}\n\n")
+    ai_display.see(END)
+    ai_display.config(state=DISABLED)
+
+def update_ai_loading():
+    """更新AI加载状态"""
+    if ai_loading:
+        ai_send_button.config(text="发送中...", state=DISABLED)
+    else:
+        ai_send_button.config(text=lang_dict["ai"]["send"], state=NORMAL)
+
+def on_ai_input_enter(event):
+    """处理AI输入框的回车事件"""
+    send_ai_request()
+
+def send_ai_request():
+    """获取输入并发送AI请求"""
+    prompt = ai_input.get()
+    if not prompt:
+        return
+        
+    current_time = time.strftime("%H:%M:%S")
+    ai_display.config(state=NORMAL)
+    ai_display.insert(END, f"用户 [{current_time}]:\n{prompt}\n\n")
+    ai_display.see(END)
+    ai_display.config(state=DISABLED)
+    
+    ai_input.delete(0, END)
+    
+    # 在新线程中发送请求，避免阻塞UI
+    threading.Thread(target=send_ai_request, args=(prompt,), daemon=True).start()
+
 # -------------------- Settings Panel Functions --------------------
 def open_settings_panel():
     """Open Settings Panel"""
@@ -106,6 +205,10 @@ def open_settings_panel():
             # Write changes
             Settings.Highlighter.change("theme", theme_name)
             Settings.Editor.change("font", font_var.get())
+            
+            # 更新AI侧边栏主题
+            update_ai_sidebar_theme()
+
         except Exception as e:
             print(f"Use theme failed: {str(e)}")
     
@@ -440,26 +543,36 @@ popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
 pluginmenu = Menu(tearoff=0)
 menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
 
+# AI menu
+aimenu = Menu(tearoff=0)
+menu.add_cascade(menu=aimenu, label="AI")
+aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), label=lang_dict["ai"]["show"])
+aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
+
 # Help menu
 menu.add_command(label="帮助", command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
 
-# Create the paned window
-paned = PanedWindow(root, orient=VERTICAL)
-paned.pack(fill=BOTH, expand=True)
+# Create the main paned window
+main_paned = PanedWindow(root, orient=HORIZONTAL)
+main_paned.pack(fill=BOTH, expand=True)
+
+# Create the code area paned window
+code_paned = PanedWindow(main_paned, orient=VERTICAL)
+main_paned.add(code_paned)
 
 # Create the code area
-codearea = Text(paned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-paned.add(codearea)
+codearea = Text(code_paned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+code_paned.add(codearea)
 
-subpaned = PanedWindow(paned, orient=HORIZONTAL)
-paned.add(subpaned)
+subpaned = PanedWindow(code_paned, orient=HORIZONTAL)
+code_paned.add(subpaned)
 inputarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 subpaned.add(inputarea)
 printarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 subpaned.add(printarea)
 
-commandpaned = PanedWindow(paned, orient=HORIZONTAL)
-paned.add(commandpaned, weight=2)
+commandpaned = PanedWindow(code_paned, orient=HORIZONTAL)
+code_paned.add(commandpaned, weight=2)
 commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
 commandpaned.add(commandarea,weight=18)
 executebutton = Button(text=lang_dict["menus"]["run"], command=execute_commands)
@@ -480,8 +593,76 @@ except FileNotFoundError:
     with open("temp_script.txt", "w", encoding="utf-8") as fp:
         fp.write("")
 
+# -------------------- AI Sidebar Implementation --------------------
+def update_ai_sidebar_theme():
+    """更新AI侧边栏的主题"""
+    if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
+        # ai_sidebar.config(bg="#1E1E1E")
+        ai_display.config(bg="#1E1E1E", fg="#D4D4D4", insertbackground="#D4D4D4")
+        # ai_input.config(bg="#2F4F4F", fg="#D4D4D4")
+        # ai_send_button.config(bg="#2F4F4F", fg="#D4D4D4", activebackground="#406060")
+    else:
+        # ai_sidebar.config(bg="#F8F8F8")
+        ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
+        # ai_input.config(bg="#FFFFFF", fg="#000000")
+        # ai_send_button.config(bg="#E0E0E0", fg="#000000", activebackground="#D0D0D0")
+
+# 创建AI侧边栏
+ai_sidebar = Frame(main_paned, width=300)
+main_paned.add(ai_sidebar)
+
+# 在窗口加载后设置分隔条位置
+def set_sash_position():
+    try:
+        main_paned.sashpos(1, 1600)
+    except Exception as e:
+        print(f"设置侧边栏位置失败: {e}")
+
+root.after(100, set_sash_position)  # 延迟100毫秒执行
+
+# AI标题
+ai_title = Label(ai_sidebar, text=lang_dict["ai"]["title"], font=Font(ai_sidebar, size=14, weight="bold"))
+ai_title.pack(pady=10)
+
+# AI显示区域
+ai_display_frame = Frame(ai_sidebar)
+ai_display_frame.pack(fill=BOTH, expand=True, padx=10, pady=(0, 10))
+
+ai_display_scroll = Scrollbar(ai_display_frame)
+ai_display_scroll.pack(side="right", fill="y")
+
+ai_display = Text(ai_display_frame, wrap="word", height=20, 
+                  font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+ai_display.pack(side="left", fill=BOTH, expand=True)
+ai_display.config(state=DISABLED)
+
+ai_display_scroll.config(command=ai_display.yview)
+ai_display.config(yscrollcommand=ai_display_scroll.set)
+
+# AI输入区域
+ai_input_frame = Frame(ai_sidebar)
+ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
+
+ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+ai_input.pack(side="left", fill=X, expand=True, padx=(0, 10))
+ai_input.bind("<Return>", on_ai_input_enter)
+
+ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
+ai_send_button.pack(side="right")
+
+# 初始化AI侧边栏主题
+update_ai_sidebar_theme()
+
+# -------------------- 初始化AI功能 --------------------
+# 启动AI响应处理线程
+if not initialize_openai():
+    messagebox.showerror("AI配置错误", "无法初始化AI功能，请检查API密钥设置")
+
+process_ai_responses()
+
 # Setup auto-save timer
 def schedule_autosave():
+    """自动保存定时器"""
     autosave()
     root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
 
@@ -498,6 +679,7 @@ schedule_autosave()
 
 # Bind popup event
 def show_popup(event):
+    """显示右键菜单"""
     popmenu.post(event.x_root, event.y_root)
 
 codearea.bind("<Button-3>", show_popup)
