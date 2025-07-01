@@ -120,16 +120,19 @@ def send_ai_request_to_api(prompt):
             logger.error(error_msg)
             ai_queue.put(error_msg)
             
-    except Exception as e:
-        error_msg = f"AI请求异常: {str(e)}"
+    except TimeoutError as e:
+        error_msg = f"AI请求异常: {str(e)}, 试着换一个短一点的问题吧！"
         logger.error(error_msg)
         ai_queue.put(error_msg)
+
+    except Exception as e:
+        error_msg = f"AI请求错误: "
     finally:
         ai_loading = False
         update_ai_loading()
 
 def process_ai_responses():
-    """处理AI响应队列"""
+    """Process ai responces"""
     while not ai_queue.empty():
         response = ai_queue.get()
         display_ai_response(response)
@@ -137,7 +140,7 @@ def process_ai_responses():
     root.after(100, process_ai_responses)  # 继续检查队列
 
 def display_ai_response(response):
-    """在AI显示区域显示响应"""
+    """Display ai responce"""
     current_time = time.strftime("%H:%M:%S")
     ai_display.config(state=NORMAL)
     ai_display.insert(END, f"AI [{current_time}]:\n{response}\n\n")
@@ -145,7 +148,7 @@ def display_ai_response(response):
     ai_display.config(state=DISABLED)
 
 def update_ai_loading():
-    """更新AI加载状态"""
+    """Update ai loading status"""
     if ai_loading:
         ai_send_button.config(text="发送中...", state=DISABLED)
     else:
@@ -156,7 +159,7 @@ def on_ai_input_enter(event):
     send_ai_request()
 
 def send_ai_request():
-    """获取输入并发送AI请求"""
+    """Get prompt and send"""
     prompt = ai_input.get()
     if not prompt:
         return
@@ -169,7 +172,7 @@ def send_ai_request():
     
     ai_input.delete(0, END)
     
-    # 在新线程中发送请求，避免阻塞UI
+    # Send in a new thread
     threading.Thread(target=send_ai_request_to_api, args=(prompt,), daemon=True).start()
 
 # -------------------- Settings Panel Functions --------------------
@@ -210,7 +213,7 @@ def open_settings_panel():
             Settings.Highlighter.change("theme", theme_name)
             Settings.Editor.change("font", font_var.get())
             
-            # 更新AI侧边栏主题
+            # Update ai sidebar theme
             update_ai_sidebar_theme()
 
         except Exception as e:
@@ -605,24 +608,24 @@ def update_ai_sidebar_theme():
     else:
         ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
 
-# 创建AI侧边栏
+# Create ai sidebar
 ai_sidebar = Frame(main_paned, width=300)
 main_paned.add(ai_sidebar)
 
-# 在窗口加载后设置分隔条位置
+# Delay set
 def set_sash_position():
     try:
         main_paned.sashpos(1, 1600)
     except Exception as e:
         print(f"设置侧边栏位置失败: {e}")
 
-root.after(100, set_sash_position)  # 延迟100毫秒执行
+root.after(100, set_sash_position)
 
-# AI标题
-ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
+# AI Title
+ai_title = Label(ai_sidebar, text=lang_dict["ai"]["title"], font=Font(ai_sidebar, size=14, weight="bold"))
 ai_title.pack(pady=10)
 
-# AI显示区域
+# AI Display area
 ai_display_frame = Frame(ai_sidebar)
 ai_display_frame.pack(fill=BOTH, expand=True, padx=10, pady=(0, 10))
 
@@ -637,7 +640,7 @@ ai_display.config(state=DISABLED)
 ai_display_scroll.config(command=ai_display.yview)
 ai_display.config(yscrollcommand=ai_display_scroll.set)
 
-# AI输入区域
+# AI Input area
 ai_input_frame = Frame(ai_sidebar)
 ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
 
@@ -648,16 +651,16 @@ ai_input.bind("<Return>", on_ai_input_enter)
 ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
 ai_send_button.pack(side="right")
 
-# 初始化AI侧边栏主题
+# Update theme
 update_ai_sidebar_theme()
 
-# -------------------- 初始化AI功能 --------------------
-# 启动AI响应处理线程
+# -------------------- Init ai --------------------
+# Process starting...
 process_ai_responses()
 
 # Setup auto-save timer
 def schedule_autosave():
-    """自动保存定时器"""
+    """Auto-save"""
     autosave()
     root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
 
@@ -674,7 +677,7 @@ schedule_autosave()
 
 # Bind popup event
 def show_popup(event):
-    """显示右键菜单"""
+    """Show popup menu"""
     popmenu.post(event.x_root, event.y_root)
 
 codearea.bind("<Button-3>", show_popup)
