@@ -20,10 +20,10 @@ import sys
 import zipfile
 import shlex
 import shutil
-import openai
-import easygui
+import requests
 import threading
 import time
+import easygui
 from queue import Queue
 
 # -------------------- Global Variables --------------------
@@ -39,15 +39,14 @@ ai_loading = False  # 加载状态标志
 with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
 
-if settings["apikey"] == None or settings["apikey"] == "none":
-    APIKEY = easygui.enterbox("AI 模块", "请输入 APIKEY")
-    Settings.AI.change(APIKEY)
-else:
-    APIKEY = Settings.AI.get_api_key()
-
 # Load language settings
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
     lang_dict = json.load(fp)
+
+try:
+    APIKEY = Settings.AI.get_api_key()
+except KeyError:
+    APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
 
 try:
     for directory in Settings.Init.required_dirs():
@@ -84,37 +83,42 @@ with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", 
     light_terminal_theme = json.load(fp)
 
 # -------------------- AI Functions --------------------
-def initialize_openai():
-    """初始化OpenAI API客户端"""
-    try:
-        openai.api_key = APIKEY
-        # 测试连接
-        models = openai.Model.list()
-        logger.info(f"OpenAI API Initlazed!: {len(models.data)}")
-        return True
-    except Exception as e:
-        logger.error(f"OpenAI API Init Error: {str(e)}")
-        messagebox.showerror("AI配置错误", f"无法连接到OpenAI API: {str(e)}")
-        return False
-
-def send_ai_request(prompt):
-    """发送AI请求到OpenAI API"""
+def send_ai_request_to_api(prompt):
+    """发送AI请求到API"""
     global ai_loading
     ai_loading = True
     update_ai_loading()
     
     try:
-        # 使用openai库发送聊天完成请求
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=1000
+        headers = {
+            "Authorization": f"Bearer {APIKEY}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        }
+        
+        response = requests.post(
+            "https://api.siliconflow.cn/v1/chat/completions",
+            headers=headers,
+            json=data,
+            timeout=30
         )
         
-        # 提取回复内容
-        ai_response = response.choices[0].message.content
-        ai_queue.put(ai_response)
+        if response.status_code == 200:
+            result = response.json()
+            ai_response = result["choices"][0]["message"]["content"]
+            ai_queue.put(ai_response)
+        else:
+            error_msg = f"AI请求错误: {response.status_code}, {response.text}"
+            logger.error(error_msg)
+            ai_queue.put(error_msg)
             
     except Exception as e:
         error_msg = f"AI请求异常: {str(e)}"
@@ -166,7 +170,7 @@ def send_ai_request():
     ai_input.delete(0, END)
     
     # 在新线程中发送请求，避免阻塞UI
-    threading.Thread(target=send_ai_request, args=(prompt,), daemon=True).start()
+    threading.Thread(target=send_ai_request_to_api, args=(prompt,), daemon=True).start()
 
 # -------------------- Settings Panel Functions --------------------
 def open_settings_panel():
@@ -597,15 +601,9 @@ except FileNotFoundError:
 def update_ai_sidebar_theme():
     """更新AI侧边栏的主题"""
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
-        # ai_sidebar.config(bg="#1E1E1E")
         ai_display.config(bg="#1E1E1E", fg="#D4D4D4", insertbackground="#D4D4D4")
-        # ai_input.config(bg="#2F4F4F", fg="#D4D4D4")
-        # ai_send_button.config(bg="#2F4F4F", fg="#D4D4D4", activebackground="#406060")
     else:
-        # ai_sidebar.config(bg="#F8F8F8")
         ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
-        # ai_input.config(bg="#FFFFFF", fg="#000000")
-        # ai_send_button.config(bg="#E0E0E0", fg="#000000", activebackground="#D0D0D0")
 
 # 创建AI侧边栏
 ai_sidebar = Frame(main_paned, width=300)
@@ -621,7 +619,7 @@ def set_sash_position():
 root.after(100, set_sash_position)  # 延迟100毫秒执行
 
 # AI标题
-ai_title = Label(ai_sidebar, text=lang_dict["ai"]["title"], font=Font(ai_sidebar, size=14, weight="bold"))
+ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
 ai_title.pack(pady=10)
 
 # AI显示区域
@@ -655,9 +653,6 @@ update_ai_sidebar_theme()
 
 # -------------------- 初始化AI功能 --------------------
 # 启动AI响应处理线程
-if not initialize_openai():
-    messagebox.showerror("AI配置错误", "无法初始化AI功能，请检查API密钥设置")
-
 process_ai_responses()
 
 # Setup auto-save timer
