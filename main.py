@@ -47,6 +47,7 @@ try:
     APIKEY = Settings.AI.get_api_key()
 except KeyError:
     APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
+    Settings.AI.change(APIKEY)
 
 try:
     for directory in Settings.Init.required_dirs():
