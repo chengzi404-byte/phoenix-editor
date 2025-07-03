@@ -33,8 +33,8 @@ global ai_sidebar, ai_display, ai_input, ai_queue, ai_loading
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
 file_path = "temp_script.txt"
-ai_queue = Queue()  # 用于AI响应的队列
-ai_loading = False  # 加载状态标志
+ai_queue = Queue()  # Make use of ai-prompt-process
+ai_loading = False  # Ai load status
 
 with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
@@ -85,7 +85,7 @@ with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", 
 
 # -------------------- AI Functions --------------------
 def send_ai_request_to_api(prompt):
-    """发送AI请求到API"""
+    """Send ai request to api"""
     global ai_loading
     ai_loading = True
     update_ai_loading()
@@ -137,7 +137,7 @@ def process_ai_responses():
         response = ai_queue.get()
         display_ai_response(response)
         ai_queue.task_done()
-    root.after(100, process_ai_responses)  # 继续检查队列
+    root.after(100, process_ai_responses)  # Check
 
 def display_ai_response(response):
     """Display ai responce"""
@@ -155,7 +155,7 @@ def update_ai_loading():
         ai_send_button.config(text=lang_dict["ai"]["send"], state=NORMAL)
 
 def on_ai_input_enter(event):
-    """处理AI输入框的回车事件"""
+    """Process ai prompt enter"""
     send_ai_request()
 
 def send_ai_request():
@@ -217,7 +217,7 @@ def open_settings_panel():
             update_ai_sidebar_theme()
 
         except Exception as e:
-            print(f"Use theme failed: {str(e)}")
+            logger.error(f"Use theme failed: {str(e)}")
     
     def apply_restart_settings():
         lang_file = lang_var.get()
@@ -390,7 +390,7 @@ def run():
                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
     # Get the content of printarea and convert it to bytes
-    input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
+    input_data = inputarea.get(0.0, END).encode('utf-8') 
     stdout, stderr = runtool.communicate(input=input_data)
 
     printarea.delete(0.0, END)
@@ -410,7 +410,7 @@ def autosave():
         with open("temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
-        print(f"Auto-saving failed: {str(e)}")
+        logger.error(f"Auto-saving failed: {str(e)}")
 
 def clear_printarea():
     """Run > Clear Output"""
@@ -467,11 +467,10 @@ def execute_commands():
     """Excute commands in commandarea"""
     command = commandarea.get()
     try:
-        # 使用 shlex.split 解析命令字符串
         args = shlex.split(command)
         runtool = subprocess.Popen(args, stdin=subprocess.PIPE, 
                                    stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   shell=True)  # 设置 shell=True 以在系统 shell 中执行命令
+                                   shell=True)
         
         stdout, stderr = runtool.communicate()
 
@@ -479,7 +478,7 @@ def execute_commands():
         printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
         printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
     except Exception as e:
-        printarea.insert(END, f"执行命令时出错: {str(e)}\n")
+        logger.error(f"Execute command error: {str(e)}")
 
 def show_current_file_dir():
     """show current file dir(absoult)"""
@@ -614,7 +613,7 @@ def set_sash_position():
     try:
         main_paned.sashpos(1, 1600)
     except Exception as e:
-        print(f"设置侧边栏位置失败: {e}")
+        logger.warning(f"Sidebar position reset failure: {e}")
 
 root.after(100, set_sash_position)
 
@@ -686,8 +685,7 @@ try:
     # Check 
     theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
     if not os.path.exists(theme_file):
-        logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
-        print(f"Theme file {theme_file} not found, using default theme")
+        logger.warning(f"Theme file {theme_file} not found, using default theme")
         # Use built-in default theme
         theme_data = {
             "base": {
