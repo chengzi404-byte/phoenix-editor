@@ -37,8 +37,7 @@
         "plugin": "Плагин",
 
         "run": "Запустить",
-        "clear-output": "Очистить вывод",
-        "terminal": "Терминал"
+        "clear-output": "Очистить вывод"
     },
     "file-types": [
         "Файл Python",

@@ -37,8 +37,7 @@
         "plugin": "プラグイン",
 
         "run": "実行",
-        "clear-output": "出力をクリア",
-        "terminal": "ターミナル"
+        "clear-output": "出力をクリア"
     },
     "file-types": [
         "Pythonファイル",

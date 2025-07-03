@@ -37,8 +37,7 @@
         "plugin": "Plugin",
 
         "run": "Exécuter",
-        "clear-output": "Effacer la sortie",
-        "terminal": "Terminal"
+        "clear-output": "Effacer la sortie"
     },
     "file-types": [
         "Fichier Python",

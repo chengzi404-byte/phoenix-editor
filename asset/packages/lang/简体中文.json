@@ -37,8 +37,7 @@
         "plugin": "插件",
 
         "run": "运行",
-        "clear-output": "清除输出",
-        "terminal": "终端"
+        "clear-output": "清除输出"
     },
     "file-types": [
         "Python 文件",

@@ -37,8 +37,7 @@
         "plugin": "Plugin",
 
         "run": "Run",
-        "clear-output": "Clear Output",
-        "terminal": "Terminal"
+        "clear-output": "Clear Output"
     },
     "file-types": [
         "Python File",
