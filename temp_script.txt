@@ -1,15 +1,4 @@
-
-
-
-
-
-
-
-
-
-
-
-
+print("Hello, World!")
 
 
 

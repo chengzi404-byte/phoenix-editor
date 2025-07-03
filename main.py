@@ -107,8 +107,7 @@ def send_ai_request_to_api(prompt):
         response = requests.post(
             "https://api.siliconflow.cn/v1/chat/completions",
             headers=headers,
-            json=data,
-            timeout=30
+            json=data
         )
         
         if response.status_code == 200:
@@ -394,9 +393,6 @@ def run():
     stdout, stderr = runtool.communicate(input=input_data)
 
     printarea.delete(0.0, END)
-    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
-    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
-    printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
     printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
     printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
 
