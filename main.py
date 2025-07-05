@@ -237,8 +237,8 @@ def open_settings_panel():
     rawdata.remove("terminalTheme")
     for theme in rawdata:
         themes.append(theme.split('.')[0])
-
-    OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
+    themes.remove(theme_var.get())
+    OptionMenu(settings_window, theme_var, theme_var.get(), *themes).pack(anchor=W, fill=X)
 
     # Font
     font_var = StringVar(value=Settings.Editor.font())
