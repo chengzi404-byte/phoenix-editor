@@ -658,7 +658,7 @@ codearea.bind("<Button-3>", show_popup)
 
 # Initialization
 try:
-    codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
+    codehighlighter = highlighter_factory.create_highlighter(codearea)
     
     # Check 
     theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
@@ -695,12 +695,12 @@ try:
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
-    codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
+    codehighlighter2 = highlighter_factory.create_highlighter(printarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
     else: codehighlighter2.set_theme(light_terminal_theme)
     codehighlighter2.highlight()
 
-    codehighlighter3 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), inputarea)
+    codehighlighter3 = highlighter_factory.create_highlighter(inputarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
     else: codehighlighter3.set_theme(light_terminal_theme)
     codehighlighter3.highlight()
