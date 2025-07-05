@@ -57,8 +57,8 @@
     "ai": {
         "title": "AI Assistant",
         "send": "Send",
-        "show-sidebar": "Show AI Sidebar",
-        "hide-sidebar": "Hide AI Sidebar"
+        "show": "Show AI Sidebar",
+        "hide": "Hide AI Sidebar"
     },
     "info-window-title": "Info",
     "title": "Phoenix Editor",

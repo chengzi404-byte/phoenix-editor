@@ -57,8 +57,8 @@
     "ai": {
         "title": "Assistant AI",
         "send": "Envoyer",
-        "show-sidebar": "Afficher la barre latérale AI",
-        "hide-sidebar": "Masquer la barre latérale AI"
+        "show": "Afficher la barre latérale AI",
+        "hide": "Masquer la barre latérale AI"
     },
     "info-window-title": "Information",
     "title": "Éditeur Phoenix",

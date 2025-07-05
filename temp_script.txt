@@ -1,4 +1,23 @@
-print("Hello, World!")
+"""
+Phoenix Editor (!4.0.1)
+"""
+from tkinter import *
+from os import system as execute
+
+root = Tk()
+root.title("Phoenix Editor demo")
+
+root.mainloop()
+
+
+
+
+
+
+
+
+
+
 
 
 

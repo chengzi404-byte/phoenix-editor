@@ -57,8 +57,8 @@
     "ai": {
         "title": "AIアシスタント",
         "send": "送信",
-        "show-sidebar": "AIサイドバーを表示",
-        "hide-sidebar": "AIサイドバーを非表示"
+        "show": "AIサイドバーを表示",
+        "hide": "AIサイドバーを非表示"
     },
     "info-window-title": "情報",
     "title": "鳳凰エディタ",

@@ -57,8 +57,8 @@
     "ai": {
         "title": "AI-Assistent",
         "send": "Senden",
-        "show-sidebar": "AI-Seitenleiste anzeigen",
-        "hide-sidebar": "AI-Seitenleiste ausblenden"
+        "show": "AI-Seitenleiste anzeigen",
+        "hide": "AI-Seitenleiste ausblenden"
     },
     "info-window-title": "Information",
     "title": "Phoenix-Editor",

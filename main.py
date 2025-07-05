@@ -274,6 +274,7 @@ def open_settings_panel():
     # Clear cache
     Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache).pack(anchor=E)
 
+    # Apply changes
     Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
 
 # -------------------- File Operations --------------------
