@@ -3,27 +3,7 @@ import importlib
 
 class HighlighterFactory:
     """Code highlighter factory class"""
-    
-    def __init__(self):
-        # File extenision map
-        self.highlighter_map = {
-            ".py": "python",
-            ".js": "javascript",
-            ".html": "html",
-            ".css": "css",
-            ".json": "json",
-            ".rb": "ruby",
-            ".c": "c",
-            ".cpp": "cpp",
-            ".h": "cpp",
-            ".m": "objc",
-            ".java": "java",
-            ".rs": "rust",
-            ".sh": "bash",
-            ".txt": "text"
-        }
-        
-    def create_highlighter(self, file_extension, text_widget):
+    def create_highlighter(self, text_widget):
         """Create appropriate highlighter based on file extension"""
         # Get highlighter type
         highlighter_type = api.Settings.Highlighter.syntax_highlighting()["code"]
