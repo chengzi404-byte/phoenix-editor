@@ -1,3 +1,12 @@
+from subprocess import run
+from tkinter import messagebox
+from pathlib import Path
+import shutil
+
+
+messagebox.showinfo("", "要求使用管理员权限运行")
+
+build_spec = """
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
@@ -41,3 +50,25 @@ exe = EXE(pyz,
           upx_exclude=[],
           runtime_tmpdir=None,
           console=True )
+"""
+
+
+print("[INFO] Generating build.spec")
+with open("./cache/build_file.spec", "w", encoding="utf-8") as fp:
+    fp.write(build_spec)
+
+print("[INFO] Copying required files")
+shutil.copytree("asset", f"{Path.cwd() / "asset"}")
+shutil.copytree("library", f"{Path.cwd() / "library"}")
+
+try:
+    print("[JUMP] Compling main.py...")
+    run("pyinstaller cache/build_file.spec")
+except Exception as e:
+    print(f"ERROR: {e}")
+    run("pip install pyinstaller")
+    try:
+        run("pyinstaller cache/build_file.spec")
+    except:
+        messagebox.showerror("ERR", "PLEASE RESTART THE SOFTWARE")
+
