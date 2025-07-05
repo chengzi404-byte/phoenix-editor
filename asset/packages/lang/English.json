@@ -17,7 +17,6 @@
     "menus": {
         "configure": "Settings",
         "open-settings": "Settings",
-
         "file": "File",
         "new-file": "New File",
         "new-window": "New Window",
@@ -26,18 +25,16 @@
         "save-as-file": "Save As",
         "show-file-dir": "Show File Path",
         "exit": "Exit",
-
         "edit": "Edit",
         "undo": "Undo",
         "redo": "Redo",
         "copy": "Copy",
         "paste": "Paste",
         "delete": "Delete",
-        
         "plugin": "Plugin",
-
         "run": "Run",
-        "clear-output": "Clear Output"
+        "clear-output": "Clear Output",
+        "help": "Help"
     },
     "file-types": [
         "Python File",

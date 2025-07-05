@@ -33,7 +33,8 @@
         "delete": "刪除",
         "plugin": "插件",
         "run": "運行",
-        "clear-output": "清除輸出"
+        "clear-output": "清除輸出",
+        "help": "幫助"
     },
     "file-types": [
         "Python 文件",

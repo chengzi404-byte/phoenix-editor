@@ -1,7 +1,7 @@
 {
     "plugin": {
-        "download-success": ["Plugin", "Le plugin a été téléchargé avec succès. Veuillez redémarrer le logiciel."],
-        "download-failture": ["Plugin", "Échec de l'installation du plugin : {}"]
+        "download-success": ["插件", "Le plug-in a été téléchargé avec succès. Veuillez redémarrer le logiciel."],
+        "download-failture": ["插件", "Échec de l'installation du plug-in : {}"]
     }, 
     "settings": {
         "font": "Police",
@@ -11,13 +11,12 @@
         "restart": "Veuillez redémarrer le logiciel pour appliquer les paramètres",
         "close": "Fermer",
         "title": "Paramètres",
-        "coding-languange": "Langue de programmation",
+        "coding-languange": "Langage de programmation",
         "clear-cache": "Vider le cache"
     },
     "menus": {
         "configure": "Paramètres",
         "open-settings": "Paramètres",
-
         "file": "Fichier",
         "new-file": "Nouveau fichier",
         "new-window": "Nouvelle fenêtre",
@@ -26,18 +25,16 @@
         "save-as-file": "Enregistrer sous",
         "show-file-dir": "Afficher le chemin du fichier",
         "exit": "Quitter",
-
         "edit": "Éditer",
         "undo": "Annuler",
         "redo": "Réduire",
         "copy": "Copier",
         "paste": "Coller",
         "delete": "Supprimer",
-        
-        "plugin": "Plugin",
-
+        "plugin": "Plug-in",
         "run": "Exécuter",
-        "clear-output": "Effacer la sortie"
+        "clear-output": "Effacer la sortie",
+        "help": "Aide"
     },
     "file-types": [
         "Fichier Python",
@@ -51,7 +48,7 @@
         "Tous les fichiers"
     ],
     "plugin-types": [
-        "Fichier plugin",
+        "Fichier de plug-in",
         "Tous les fichiers"
     ],
     "ai": {
@@ -60,7 +57,7 @@
         "show": "Afficher la barre latérale AI",
         "hide": "Masquer la barre latérale AI"
     },
-    "info-window-title": "Information",
-    "title": "Éditeur Phoenix",
-    "help": "Éditeur Phoenix\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
+    "info-window-title": "Avertissement",
+    "title": "Éditeur Huofeng",
+    "help": "Éditeur Huofeng\nVersion : v0.3.1\n\nAuteur : chengzi404(gitee) remain(github)"
 }

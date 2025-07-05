@@ -1,7 +1,7 @@
 {
     "plugin": {
         "download-success": ["Plugin", "Plugin erfolgreich heruntergeladen. Bitte starten Sie das Programm neu."],
-        "download-failture": ["Plugin", "Fehler bei der Plugininstallation: {}"]
+        "download-failture": ["Plugin", "Fehler beim Installieren des Plugins: {}"]
     }, 
     "settings": {
         "font": "Schriftart",
@@ -17,7 +17,6 @@
     "menus": {
         "configure": "Einstellungen",
         "open-settings": "Einstellungen",
-
         "file": "Datei",
         "new-file": "Neue Datei",
         "new-window": "Neues Fenster",
@@ -26,18 +25,16 @@
         "save-as-file": "Datei speichern unter",
         "show-file-dir": "Dateipfad anzeigen",
         "exit": "Beenden",
-
         "edit": "Bearbeiten",
         "undo": "Rückgängig machen",
         "redo": "Wiederholen",
         "copy": "Kopieren",
         "paste": "Einfügen",
         "delete": "Löschen",
-        
         "plugin": "Plugin",
-
         "run": "Ausführen",
-        "clear-output": "Ausgabe löschen"
+        "clear-output": "Ausgabe löschen",
+        "help": "Hilfe"
     },
     "file-types": [
         "Python-Datei",
@@ -60,7 +57,7 @@
         "show": "AI-Seitenleiste anzeigen",
         "hide": "AI-Seitenleiste ausblenden"
     },
-    "info-window-title": "Information",
-    "title": "Phoenix-Editor",
-    "help": "Phoenix-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
+    "info-window-title": "Hinweis",
+    "title": "Huofeng-Editor",
+    "help": "Huofeng-Editor\nVersion: v0.3.1\n\nAutor: chengzi404(gitee) remain(github)"
 }

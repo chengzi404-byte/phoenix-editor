@@ -531,7 +531,7 @@ aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), labe
 aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
 
 # Help menu
-menu.add_command(label="帮助", command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
+menu.add_command(label=lang_dict["menus"]["help"], command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
 
 # Create the main paned window
 main_paned = PanedWindow(root, orient=HORIZONTAL)
