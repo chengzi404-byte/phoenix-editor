@@ -1,0 +1,12 @@
+from libs import *
+
+
+def check_complie():
+    main_path = Path(__file__).parent.parent.parent / "main.py"
+
+    runtool = Popen([executable, main_path], stdin=PIPE, 
+                            stderr=PIPE, stdout=PIPE)
+
+    stdout, stderr = runtool.communicate()
+
+    if stderr == b'': return True
