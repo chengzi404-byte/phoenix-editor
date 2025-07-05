@@ -155,9 +155,6 @@ cython_debug/
 # Repo log
 editor.log
 
-# Pyinstaller build exe files
-main.spec
-
 # Pyinstaller build folders
 .dist
 build
