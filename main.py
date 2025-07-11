@@ -13,6 +13,7 @@ from tkinter import (
 )
 from tkinter.ttk import *
 from pathlib import Path
+from library import directory
 import os
 import json
 import subprocess
@@ -49,30 +50,8 @@ except KeyError:
     APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
     Settings.AI.change(APIKEY)
 
-try:
-    for directory in Settings.Init.required_dirs():
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            
-    # Check and create the normal files
-    if not os.path.exists(f"{Path.cwd() / "asset" / "settings.json"}"):
-        default_settings = {
-            "file-encoding": "utf-8",
-            "lang": "zh-cn",
-            "font": "Consolas",
-            "fontsize": 12,
-            "code": "python",  # Use the python highlighter as normal
-            "syntax-highlighting": {
-                "theme": "vscode-dark",
-                "enable-type-hints": True,
-                "enable-docstrings": True
-            }
-        }
-        with open(f"{Path.cwd() / "asset" / "settings.json"}", "w", encoding="utf-8") as f:
-            json.dump(default_settings, f, indent=4, ensure_ascii=False)
-
-except Exception as e:
-    logger.error(f"Initlaze failed: {str(e)}")
+if not directory.test():
+    directory.initlaze()
 
 with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
     dark_themes = json.load(fp)
