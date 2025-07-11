@@ -1,4 +1,6 @@
-from libs import *
+from pathlib import Path
+from subprocess import Popen, PIPE
+from sys import executable
 
 
 def check_complie():
