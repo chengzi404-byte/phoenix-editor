@@ -9,6 +9,6 @@ def check_complie():
     runtool = Popen([executable, main_path], stdin=PIPE, 
                             stderr=PIPE, stdout=PIPE)
 
-    stdout, stderr = runtool.communicate()
+    _, stderr = runtool.communicate()
 
     if stderr == b'': return True

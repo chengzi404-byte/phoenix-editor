@@ -1,4 +1,4 @@
-from build_libs import *
+from buildLibs import *
 
 def init():
     try: mkdir(f"{Path(__file__).parent / "build"}")

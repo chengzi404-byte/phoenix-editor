@@ -13,9 +13,9 @@ Phoenix building tool chain
 This tool is made by chengzi404@gitee
 """
 
-from build_info import *
-from build_libs import *
-from build_init import *
+from buildInfo import *
+from buildLibs import *
+from buildInit import *
 
 
 version = input("Press the version of this package: s")
