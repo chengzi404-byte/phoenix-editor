@@ -27,10 +27,6 @@ class Settings:
             with open("./asset/settings.json", "w", encoding="utf-8") as fp:
                 json.dump(settings, fp)
     
-    class Init:
-        def required_dirs():        return settings["init.required-dirs"]
-        def required_packages():    return settings["init.required-packages"]
-    
     class Run:
         def timeout():
             if settings["race-mode"]: 
