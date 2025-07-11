@@ -33,8 +33,8 @@ global ai_sidebar, ai_display, ai_input, ai_queue, ai_loading
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
 file_path = "temp_script.txt"
-ai_queue = Queue()  # Make use of ai-prompt-process
-ai_loading = False  # Ai load status
+ai_queue = Queue()  # 用于AI响应的队列
+ai_loading = False  # 加载状态标志
 
 with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
@@ -47,7 +47,6 @@ try:
     APIKEY = Settings.AI.get_api_key()
 except KeyError:
     APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
-    Settings.AI.change(APIKEY)
 
 try:
     for directory in Settings.Init.required_dirs():
@@ -85,7 +84,7 @@ with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", 
 
 # -------------------- AI Functions --------------------
 def send_ai_request_to_api(prompt):
-    """Send ai request to api"""
+    """发送AI请求到API"""
     global ai_loading
     ai_loading = True
     update_ai_loading()
@@ -108,7 +107,8 @@ def send_ai_request_to_api(prompt):
         response = requests.post(
             "https://api.siliconflow.cn/v1/chat/completions",
             headers=headers,
-            json=data
+            json=data,
+            timeout=30
         )
         
         if response.status_code == 200:
@@ -120,27 +120,24 @@ def send_ai_request_to_api(prompt):
             logger.error(error_msg)
             ai_queue.put(error_msg)
             
-    except TimeoutError as e:
-        error_msg = f"AI请求异常: {str(e)}, 试着换一个短一点的问题吧！"
+    except Exception as e:
+        error_msg = f"AI请求异常: {str(e)}"
         logger.error(error_msg)
         ai_queue.put(error_msg)
-
-    except Exception as e:
-        error_msg = f"AI请求错误: "
     finally:
         ai_loading = False
         update_ai_loading()
 
 def process_ai_responses():
-    """Process ai responces"""
+    """处理AI响应队列"""
     while not ai_queue.empty():
         response = ai_queue.get()
         display_ai_response(response)
         ai_queue.task_done()
-    root.after(100, process_ai_responses)  # Check
+    root.after(100, process_ai_responses)  # 继续检查队列
 
 def display_ai_response(response):
-    """Display ai responce"""
+    """在AI显示区域显示响应"""
     current_time = time.strftime("%H:%M:%S")
     ai_display.config(state=NORMAL)
     ai_display.insert(END, f"AI [{current_time}]:\n{response}\n\n")
@@ -148,18 +145,18 @@ def display_ai_response(response):
     ai_display.config(state=DISABLED)
 
 def update_ai_loading():
-    """Update ai loading status"""
+    """更新AI加载状态"""
     if ai_loading:
         ai_send_button.config(text="发送中...", state=DISABLED)
     else:
         ai_send_button.config(text=lang_dict["ai"]["send"], state=NORMAL)
 
 def on_ai_input_enter(event):
-    """Process ai prompt enter"""
+    """处理AI输入框的回车事件"""
     send_ai_request()
 
 def send_ai_request():
-    """Get prompt and send"""
+    """获取输入并发送AI请求"""
     prompt = ai_input.get()
     if not prompt:
         return
@@ -172,7 +169,7 @@ def send_ai_request():
     
     ai_input.delete(0, END)
     
-    # Send in a new thread
+    # 在新线程中发送请求，避免阻塞UI
     threading.Thread(target=send_ai_request_to_api, args=(prompt,), daemon=True).start()
 
 # -------------------- Settings Panel Functions --------------------
@@ -213,11 +210,11 @@ def open_settings_panel():
             Settings.Highlighter.change("theme", theme_name)
             Settings.Editor.change("font", font_var.get())
             
-            # Update ai sidebar theme
+            # 更新AI侧边栏主题
             update_ai_sidebar_theme()
 
         except Exception as e:
-            logger.error(f"Use theme failed: {str(e)}")
+            print(f"Use theme failed: {str(e)}")
     
     def apply_restart_settings():
         lang_file = lang_var.get()
@@ -237,8 +234,8 @@ def open_settings_panel():
     rawdata.remove("terminalTheme")
     for theme in rawdata:
         themes.append(theme.split('.')[0])
-    themes.remove(theme_var.get())
-    OptionMenu(settings_window, theme_var, theme_var.get(), *themes).pack(anchor=W, fill=X)
+
+    OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
 
     # Font
     font_var = StringVar(value=Settings.Editor.font())
@@ -266,16 +263,14 @@ def open_settings_panel():
     code_var = StringVar(value=Settings.Highlighter.syntax_highlighting()["code"])
     with open(f"{Path.cwd() / "asset" / "packages" / "code_support.json"}", "r", encoding="utf-8") as fp:
         support_code_type = json.load(fp)
-    support_code_type.remove(code_var.get())
     Label(settings_window, text=lang_dict["settings"]["coding-languange"]).pack(anchor=W)
-    OptionMenu(settings_window, code_var, code_var.get(), *support_code_type).pack(anchor=W, fill=X)
+    OptionMenu(settings_window, code_var, *support_code_type).pack(anchor=W, fill=X)
 
     code_var.trace_add('write', lambda *args: apply_restart_settings())
 
     # Clear cache
     Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache).pack(anchor=E)
 
-    # Apply changes
     Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
 
 # -------------------- File Operations --------------------
@@ -392,10 +387,13 @@ def run():
                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
     # Get the content of printarea and convert it to bytes
-    input_data = inputarea.get(0.0, END).encode('utf-8') 
+    input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
     stdout, stderr = runtool.communicate(input=input_data)
 
     printarea.delete(0.0, END)
+    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
+    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
+    printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
     printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
     printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
 
@@ -412,11 +410,34 @@ def autosave():
         with open("temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
-        logger.error(f"Auto-saving failed: {str(e)}")
+        print(f"Auto-saving failed: {str(e)}")
 
 def clear_printarea():
     """Run > Clear Output"""
     printarea.delete(0.0, END)
+
+def terminal():
+    """Run > Open Terminal"""
+    def execute(event=None):
+        cmd = terminal.get("2.0", "end-1c").strip()
+        if cmd:
+            try:
+                result = subprocess.run(cmd.split(), 
+                                     capture_output=True, 
+                                     text=True)
+                terminal.insert("end", "\n" + result.stdout + result.stderr)
+            except Exception as e:
+                terminal.insert("end", "ERR: " + str(e))
+        terminal.insert("end", "\n$ ")
+        return "break"  # Prevent the default enter behavior
+
+    window = Toplevel()  # Use Toplevel instead of Tk
+    window.title("终端")
+    window.geometry("600x400+100+100")
+    terminal = Text(window)
+    terminal.pack(fill=BOTH, expand=True)
+    terminal.insert("end", "$ ")
+    terminal.bind("<Return>", execute)
 
 def download_plugin():
     """Plugin > Download plugin"""
@@ -446,10 +467,11 @@ def execute_commands():
     """Excute commands in commandarea"""
     command = commandarea.get()
     try:
+        # 使用 shlex.split 解析命令字符串
         args = shlex.split(command)
         runtool = subprocess.Popen(args, stdin=subprocess.PIPE, 
                                    stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   shell=True)
+                                   shell=True)  # 设置 shell=True 以在系统 shell 中执行命令
         
         stdout, stderr = runtool.communicate()
 
@@ -457,7 +479,7 @@ def execute_commands():
         printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
         printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
     except Exception as e:
-        logger.error(f"Execute command error: {str(e)}")
+        printarea.insert(END, f"执行命令时出错: {str(e)}\n")
 
 def show_current_file_dir():
     """show current file dir(absoult)"""
@@ -512,6 +534,7 @@ runmenu = Menu(tearoff=0)
 menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=clear_printarea, label=lang_dict["menus"]["clear-output"])
+runmenu.add_command(command=terminal, label=lang_dict["menus"]["terminal"])
 
 # Pop menu
 popmenu = Menu(root, tearoff=0)
@@ -531,7 +554,7 @@ aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), labe
 aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
 
 # Help menu
-menu.add_command(label=lang_dict["menus"]["help"], command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
+menu.add_command(label="帮助", command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
 
 # Create the main paned window
 main_paned = PanedWindow(root, orient=HORIZONTAL)
@@ -582,24 +605,24 @@ def update_ai_sidebar_theme():
     else:
         ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
 
-# Create ai sidebar
+# 创建AI侧边栏
 ai_sidebar = Frame(main_paned, width=300)
 main_paned.add(ai_sidebar)
 
-# Delay set
+# 在窗口加载后设置分隔条位置
 def set_sash_position():
     try:
         main_paned.sashpos(1, 1600)
     except Exception as e:
-        logger.warning(f"Sidebar position reset failure: {e}")
+        print(f"设置侧边栏位置失败: {e}")
 
-root.after(100, set_sash_position)
+root.after(100, set_sash_position)  # 延迟100毫秒执行
 
-# AI Title
-ai_title = Label(ai_sidebar, text=lang_dict["ai"]["title"], font=Font(ai_sidebar, size=14, weight="bold"))
+# AI标题
+ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
 ai_title.pack(pady=10)
 
-# AI Display area
+# AI显示区域
 ai_display_frame = Frame(ai_sidebar)
 ai_display_frame.pack(fill=BOTH, expand=True, padx=10, pady=(0, 10))
 
@@ -614,7 +637,7 @@ ai_display.config(state=DISABLED)
 ai_display_scroll.config(command=ai_display.yview)
 ai_display.config(yscrollcommand=ai_display_scroll.set)
 
-# AI Input area
+# AI输入区域
 ai_input_frame = Frame(ai_sidebar)
 ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
 
@@ -625,16 +648,16 @@ ai_input.bind("<Return>", on_ai_input_enter)
 ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
 ai_send_button.pack(side="right")
 
-# Update theme
+# 初始化AI侧边栏主题
 update_ai_sidebar_theme()
 
-# -------------------- Init ai --------------------
-# Process starting...
+# -------------------- 初始化AI功能 --------------------
+# 启动AI响应处理线程
 process_ai_responses()
 
 # Setup auto-save timer
 def schedule_autosave():
-    """Auto-save"""
+    """自动保存定时器"""
     autosave()
     root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
 
@@ -651,19 +674,20 @@ schedule_autosave()
 
 # Bind popup event
 def show_popup(event):
-    """Show popup menu"""
+    """显示右键菜单"""
     popmenu.post(event.x_root, event.y_root)
 
 codearea.bind("<Button-3>", show_popup)
 
 # Initialization
 try:
-    codehighlighter = highlighter_factory.create_highlighter(codearea)
+    codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
     
     # Check 
     theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
     if not os.path.exists(theme_file):
-        logger.warning(f"Theme file {theme_file} not found, using default theme")
+        logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
+        print(f"Theme file {theme_file} not found, using default theme")
         # Use built-in default theme
         theme_data = {
             "base": {
@@ -695,12 +719,12 @@ try:
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
-    codehighlighter2 = highlighter_factory.create_highlighter(printarea)
+    codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
     else: codehighlighter2.set_theme(light_terminal_theme)
     codehighlighter2.highlight()
 
-    codehighlighter3 = highlighter_factory.create_highlighter(inputarea)
+    codehighlighter3 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), inputarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
     else: codehighlighter3.set_theme(light_terminal_theme)
     codehighlighter3.highlight()
