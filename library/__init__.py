@@ -1,4 +1,3 @@
-from api import *
 from highlighter_factory import *
 from highlighter import *
 from logger import *
