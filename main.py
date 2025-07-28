@@ -94,7 +94,7 @@ def send_ai_request_to_api(prompt):
             ai_response = result["choices"][0]["message"]["content"]
             ai_queue.put(ai_response)
         else:
-            error_msg = f"AI请求错误: {response.status_code}, {response.text}"
+            error_msg = f"AI Error: {response.status_code}, {response.text}"
             logger.error(error_msg)
             ai_queue.put(error_msg)
             
@@ -111,10 +111,9 @@ def process_ai_responses():
         response = ai_queue.get()
         display_ai_response(response)
         ai_queue.task_done()
-    root.after(100, process_ai_responses)  # 继续检查队列
+    root.after(100, process_ai_responses)
 
 def display_ai_response(response):
-    """在AI显示区域显示响应"""
     current_time = time.strftime("%H:%M:%S")
     ai_display.config(state=NORMAL)
     ai_display.insert(END, f"AI [{current_time}]:\n{response}\n\n")
@@ -122,18 +121,15 @@ def display_ai_response(response):
     ai_display.config(state=DISABLED)
 
 def update_ai_loading():
-    """更新AI加载状态"""
     if ai_loading:
         ai_send_button.config(text=lang_dict["ai"]["sending"], state=DISABLED)
     else:
         ai_send_button.config(text=lang_dict["ai"]["send"], state=NORMAL)
 
 def on_ai_input_enter(event):
-    """处理AI输入框的回车事件"""
     send_ai_request()
 
 def send_ai_request():
-    """获取输入并发送AI请求"""
     prompt = ai_input.get()
     if not prompt:
         return
@@ -146,7 +142,6 @@ def send_ai_request():
     
     ai_input.delete(0, END)
     
-    # 在新线程中发送请求，避免阻塞UI
     threading.Thread(target=send_ai_request_to_api, args=(prompt,), daemon=True).start()
 
 # -------------------- Settings Panel Functions --------------------
@@ -187,7 +182,7 @@ def open_settings_panel():
             Settings.Highlighter.change("theme", theme_name)
             Settings.Editor.change("font", font_var.get())
             
-            # 更新AI侧边栏主题
+            # Update
             update_ai_sidebar_theme()
 
         except Exception as e:
