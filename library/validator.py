@@ -7,8 +7,6 @@ def validate_settings(settings):
         "editor.fontsize",
         "editor.file-path",
         "highlighter.syntax-highlighting",
-        "init.required-dirs",
-        "init.required-packages",
         "run.timeout",
         "run.racemode"
     ]
