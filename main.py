@@ -355,21 +355,31 @@ def redo():
 # -------------------- Run Operations --------------------
 def run():
     """Run > Run Python File"""
-    runtool = subprocess.Popen([sys.executable, Settings.Editor.file_path()], stdin=subprocess.PIPE, 
-                           stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    
-    # Get the content of printarea and convert it to bytes
-    input_data = inputarea.get(0.0, END).encode('utf-8')  # 转换为字节
-    stdout, stderr = runtool.communicate(input=input_data)
+    def execute_in_thread():
+        try:
+            runtool = subprocess.Popen(
+                [sys.executable, Settings.Editor.file_path()],
+                stdin=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE
+            )
 
-    printarea.delete(0.0, END)
-    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
-    printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
-    printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
-    printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
-    printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
+            input_data = inputarea.get(0.0, END).encode('utf-8')
+            stdout, stderr = runtool.communicate(input=input_data)
 
-    printarea.insert(END, "\n>>> ")
+            root.after(0, lambda: update_printarea(stdout, stderr))
+        except Exception as e:
+            root.after(0, lambda: printarea.insert(END, f"执行错误: {str(e)}\n"))
+
+    def update_printarea(stdout, stderr):
+        printarea.delete(0.0, END)
+        printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
+        printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
+        printarea.insert(END, stdout.decode(errors="replace"))
+        printarea.insert(END, stderr.decode(errors="replace"))
+        printarea.insert(END, "\n>>> ")
+
+    threading.Thread(target=execute_in_thread, daemon=True).start()
 
 def autosave():
     """File > Auto Save"""
