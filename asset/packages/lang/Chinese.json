@@ -55,7 +55,8 @@
         "title": "AI 助手",
         "send": "发送",
         "show": "显示 AI 侧边栏",
-        "hide": "隐藏 AI 侧边栏"
+        "hide": "隐藏 AI 侧边栏",
+        "sending": "发送中"
     },
     "info-window-title": "提示",
     "title": "火凤编辑器",

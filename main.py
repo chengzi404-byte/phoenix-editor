@@ -63,7 +63,6 @@ with open(f"{Path.cwd() / "asset" / "theme" / "terminalTheme" / "light.json"}", 
 
 # -------------------- AI Functions --------------------
 def send_ai_request_to_api(prompt):
-    """发送AI请求到API"""
     global ai_loading
     ai_loading = True
     update_ai_loading()
@@ -100,7 +99,7 @@ def send_ai_request_to_api(prompt):
             ai_queue.put(error_msg)
             
     except Exception as e:
-        error_msg = f"AI请求异常: {str(e)}"
+        error_msg = f"AI Responce Error: {str(e)}"
         logger.error(error_msg)
         ai_queue.put(error_msg)
     finally:
@@ -108,7 +107,6 @@ def send_ai_request_to_api(prompt):
         update_ai_loading()
 
 def process_ai_responses():
-    """处理AI响应队列"""
     while not ai_queue.empty():
         response = ai_queue.get()
         display_ai_response(response)
@@ -126,7 +124,7 @@ def display_ai_response(response):
 def update_ai_loading():
     """更新AI加载状态"""
     if ai_loading:
-        ai_send_button.config(text="发送中...", state=DISABLED)
+        ai_send_button.config(text=lang_dict["ai"]["sending"], state=DISABLED)
     else:
         ai_send_button.config(text=lang_dict["ai"]["send"], state=NORMAL)
 

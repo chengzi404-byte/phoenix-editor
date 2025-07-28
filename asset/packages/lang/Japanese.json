@@ -1,25 +1,25 @@
 {
     "plugin": {
-        "download-success": ["プラグイン", "プラグインのダウンロードに成功しました。ソフトウェアを再起動してください。"],
+        "download-success": ["プラグイン", "プラグインが正常にダウンロードされました。ソフトウェアを再起動してください。"],
         "download-failture": ["プラグイン", "プラグインのインストールに失敗しました: {}"]
-    }, 
+    },
     "settings": {
         "font": "フォント",
         "font-size": "フォントサイズ",
         "theme": "テーマ",
         "languange": "言語",
-        "restart": "設定を適用するには、ソフトウェアを再起動してください",
+        "restart": "設定を適用するにはソフトウェアを再起動してください",
         "close": "閉じる",
         "title": "設定",
-        "coding-languange": "プログラミング言語",
+        "coding-languange": "コーディング言語",
         "clear-cache": "キャッシュをクリア"
     },
     "menus": {
         "configure": "設定",
         "open-settings": "設定",
         "file": "ファイル",
-        "new-file": "新規ファイル",
-        "new-window": "新規ウィンドウ",
+        "new-file": "新しいファイル",
+        "new-window": "新しいウィンドウ",
         "open-file": "ファイルを開く",
         "save-file": "ファイルを保存",
         "save-as-file": "名前を付けて保存",
@@ -37,14 +37,14 @@
         "help": "ヘルプ"
     },
     "file-types": [
-        "Python ファイル",
-        "HTML ファイル",
-        "CSS ファイル",
-        "JavaScript ファイル",
-        "JSON ファイル",
-        "Ruby ファイル",
-        "C/C++ ファイル",
-        "Objective-C ファイル",
+        "Pythonファイル",
+        "HTMLファイル",
+        "CSSファイル",
+        "JavaScriptファイル",
+        "JSONファイル",
+        "Rubyファイル",
+        "C/C++ファイル",
+        "Objective-Cファイル",
         "すべてのファイル"
     ],
     "plugin-types": [
@@ -52,12 +52,13 @@
         "すべてのファイル"
     ],
     "ai": {
-        "title": "AI アシスタント",
+        "title": "AIアシスタント",
         "send": "送信",
-        "show": "AI サイドバーを表示",
-        "hide": "AI サイドバーを非表示"
+        "show": "AIサイドバーを表示",
+        "hide": "AIサイドバーを非表示",
+        "sending": "送信中"
     },
-    "info-window-title": "お知らせ",
-    "title": "火鳳エディタ",
-    "help": "火鳳エディタ\nバージョン：v0.4.2\n\n作者：chengzi404(gitee) remain(github)"
+    "info-window-title": "情報",
+    "title": "Phoenix Editor（フェニックスエディタ）",
+    "help": "Phoenix Editor（フェニックスエディタ）\nバージョン: v0.4.2\n\n作者: chengzi404(gitee) remain(github)"
 }

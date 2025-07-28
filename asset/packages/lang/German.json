@@ -1,14 +1,14 @@
 {
     "plugin": {
-        "download-success": ["Plugin", "Plugin erfolgreich heruntergeladen. Bitte starten Sie das Programm neu."],
-        "download-failture": ["Plugin", "Fehler beim Installieren des Plugins: {}"]
-    }, 
+        "download-success": ["Plugin", "Plugin wurde erfolgreich heruntergeladen. Bitte starten Sie die Software neu."],
+        "download-failture": ["Plugin", "Plugin-Installation fehlgeschlagen: {}"]
+    },
     "settings": {
         "font": "Schriftart",
         "font-size": "Schriftgröße",
-        "theme": "Thema",
+        "theme": "Design",
         "languange": "Sprache",
-        "restart": "Bitte starten Sie das Programm neu, um die Einstellungen anzuwenden",
+        "restart": "Bitte starten Sie die Software neu, um die Einstellungen anzuwenden",
         "close": "Schließen",
         "title": "Einstellungen",
         "coding-languange": "Programmiersprache",
@@ -22,11 +22,11 @@
         "new-window": "Neues Fenster",
         "open-file": "Datei öffnen",
         "save-file": "Datei speichern",
-        "save-as-file": "Datei speichern unter",
+        "save-as-file": "Speichern unter",
         "show-file-dir": "Dateipfad anzeigen",
         "exit": "Beenden",
         "edit": "Bearbeiten",
-        "undo": "Rückgängig machen",
+        "undo": "Rückgängig",
         "redo": "Wiederholen",
         "copy": "Kopieren",
         "paste": "Einfügen",
@@ -52,12 +52,13 @@
         "Alle Dateien"
     ],
     "ai": {
-        "title": "AI-Assistent",
+        "title": "KI-Assistent",
         "send": "Senden",
-        "show": "AI-Seitenleiste anzeigen",
-        "hide": "AI-Seitenleiste ausblenden"
+        "show": "KI-Seitenleiste anzeigen",
+        "hide": "KI-Seitenleiste ausblenden",
+        "sending": "Senden"
     },
-    "info-window-title": "Hinweis",
-    "title": "Huofeng-Editor",
-    "help": "Huofeng-Editor\nVersion: v0.4.2\n\nAutor: chengzi404(gitee) remain(github)"
+    "info-window-title": "Info",
+    "title": "Phoenix Editor",
+    "help": "Phoenix Editor\nVersion: v0.4.2\n\nAutor: chengzi404(gitee) remain(github)"
 }
