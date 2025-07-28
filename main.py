@@ -388,29 +388,6 @@ def clear_printarea():
     """Run > Clear Output"""
     printarea.delete(0.0, END)
 
-def terminal():
-    """Run > Open Terminal"""
-    def execute(event=None):
-        cmd = terminal.get("2.0", "end-1c").strip()
-        if cmd:
-            try:
-                result = subprocess.run(cmd.split(), 
-                                     capture_output=True, 
-                                     text=True)
-                terminal.insert("end", "\n" + result.stdout + result.stderr)
-            except Exception as e:
-                terminal.insert("end", "ERR: " + str(e))
-        terminal.insert("end", "\n$ ")
-        return "break"  # Prevent the default enter behavior
-
-    window = Toplevel()  # Use Toplevel instead of Tk
-    window.title("终端")
-    window.geometry("600x400+100+100")
-    terminal = Text(window)
-    terminal.pack(fill=BOTH, expand=True)
-    terminal.insert("end", "$ ")
-    terminal.bind("<Return>", execute)
-
 def download_plugin():
     """Plugin > Download plugin"""
     try:
@@ -506,7 +483,6 @@ runmenu = Menu(tearoff=0)
 menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=clear_printarea, label=lang_dict["menus"]["clear-output"])
-runmenu.add_command(command=terminal, label=lang_dict["menus"]["terminal"])
 
 # Pop menu
 popmenu = Menu(root, tearoff=0)
