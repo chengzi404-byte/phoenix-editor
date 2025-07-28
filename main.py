@@ -547,7 +547,6 @@ except FileNotFoundError:
 
 # -------------------- AI Sidebar Implementation --------------------
 def update_ai_sidebar_theme():
-    """更新AI侧边栏的主题"""
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
         ai_display.config(bg="#1E1E1E", fg="#D4D4D4", insertbackground="#D4D4D4")
     else:
