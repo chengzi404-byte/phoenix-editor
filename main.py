@@ -1,3 +1,5 @@
+debug = True # Debug
+
 from library.highlighter_factory import HighlighterFactory
 from library.logger import setup_logger
 from library.api import Settings
@@ -44,10 +46,11 @@ with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
     lang_dict = json.load(fp)
 
-try:
-    APIKEY = Settings.AI.get_api_key()
-except KeyError:
-    APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
+if not debug:
+    try:
+        APIKEY = Settings.AI.get_api_key()
+    except KeyError:
+        APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
 
 if not directory.test():
     directory.initlaze()
@@ -426,11 +429,10 @@ def execute_commands():
     """Excute commands in commandarea"""
     command = commandarea.get()
     try:
-        # 使用 shlex.split 解析命令字符串
         args = shlex.split(command)
         runtool = subprocess.Popen(args, stdin=subprocess.PIPE, 
                                    stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   shell=True)  # 设置 shell=True 以在系统 shell 中执行命令
+                                   shell=True)
         
         stdout, stderr = runtool.communicate()
 
@@ -562,7 +564,7 @@ def update_ai_sidebar_theme():
     else:
         ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
 
-# 创建AI侧边栏
+# Ai sidebar
 ai_sidebar = Frame(main_paned, width=300)
 main_paned.add(ai_sidebar)
 
