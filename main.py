@@ -34,8 +34,8 @@ global ai_sidebar, ai_display, ai_input, ai_queue, ai_loading
 logger = setup_logger()
 highlighter_factory = HighlighterFactory()
 file_path = "temp_script.txt"
-ai_queue = Queue()  # 用于AI响应的队列
-ai_loading = False  # 加载状态标志
+ai_queue = Queue()  # AI QUEUE
+ai_loading = False  # AI LOAD
 
 with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
@@ -571,7 +571,7 @@ def set_sash_position():
     try:
         main_paned.sashpos(1, 1600)
     except Exception as e:
-        print(f"设置侧边栏位置失败: {e}")
+        logger.warning("Sash position loading failed!")
 
 root.after(100, set_sash_position)  # 延迟100毫秒执行
 
@@ -638,7 +638,7 @@ codearea.bind("<Button-3>", show_popup)
 
 # Initialization
 try:
-    codehighlighter = highlighter_factory.create_highlighter(Settings.Editor.file_path(), codearea)
+    codehighlighter = highlighter_factory.create_highlighter(codearea)
     
     # Check 
     theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
@@ -676,12 +676,12 @@ try:
     codehighlighter.highlight()
 
     # Use the same configure to the terminal
-    codehighlighter2 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), printarea)
+    codehighlighter2 = highlighter_factory.create_highlighter(printarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
     else: codehighlighter2.set_theme(light_terminal_theme)
     codehighlighter2.highlight()
 
-    codehighlighter3 = highlighter_factory.create_highlighter(Settings.Editor.file_path(), inputarea)
+    codehighlighter3 = highlighter_factory.create_highlighter(inputarea)
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
     else: codehighlighter3.set_theme(light_terminal_theme)
     codehighlighter3.highlight()
