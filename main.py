@@ -446,6 +446,13 @@ def show_current_file_dir():
     """show current file dir(absoult)"""
     messagebox.showinfo(file_path, file_path)
 
+def helpFunction():
+    """Help"""
+    from library.thridPartyLicense import show
+    window = Toplevel()
+    Label(window, text=lang_dict["help"]).grid(column=0, row=0)
+    Button(window, text="LICENSE..", command=show).grid(column=0, row=1)
+
 # -------------------- Create the window and menus --------------------
 
 # Create the main window
@@ -514,7 +521,7 @@ aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), labe
 aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
 
 # Help menu
-menu.add_command(label="帮助", command=lambda: messagebox.showinfo(lang_dict["info-window-title"], lang_dict["help"]))
+menu.add_command(label="帮助", command=helpFunction)
 
 # Create the main paned window
 main_paned = PanedWindow(root, orient=HORIZONTAL)
@@ -568,16 +575,16 @@ def update_ai_sidebar_theme():
 ai_sidebar = Frame(main_paned, width=300)
 main_paned.add(ai_sidebar)
 
-# 在窗口加载后设置分隔条位置
+# Set position
 def set_sash_position():
     try:
         main_paned.sashpos(1, 1600)
     except Exception as e:
         logger.warning("Sash position loading failed!")
 
-root.after(100, set_sash_position)  # 延迟100毫秒执行
+root.after(100, set_sash_position)  # Delay
 
-# AI标题
+# AI Title
 ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
 ai_title.pack(pady=10)
 
