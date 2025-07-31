@@ -16,6 +16,7 @@ from tkinter import (
 from tkinter.ttk import *
 from pathlib import Path
 from library import directory
+from library.thridPartyLicense import show as tplshow
 import os
 import json
 import subprocess
@@ -520,8 +521,12 @@ menu.add_cascade(menu=aimenu, label="AI")
 aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), label=lang_dict["ai"]["show"])
 aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
 
-# Help menu
-menu.add_command(label="帮助", command=helpFunction)
+# Settings menu
+settingsmenu = Menu(tearoff=0)
+menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["help"])
+settingsmenu.add_command(label=lang_dict["menus"]["help"], command=helpFunction)
+settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
+settingsmenu.add_command(command=tplshow, label="TPL")
 
 # Create the main paned window
 main_paned = PanedWindow(root, orient=HORIZONTAL)
@@ -588,7 +593,7 @@ root.after(100, set_sash_position)  # Delay
 ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
 ai_title.pack(pady=10)
 
-# AI显示区域
+# AI Display area
 ai_display_frame = Frame(ai_sidebar)
 ai_display_frame.pack(fill=BOTH, expand=True, padx=10, pady=(0, 10))
 
@@ -603,7 +608,7 @@ ai_display.config(state=DISABLED)
 ai_display_scroll.config(command=ai_display.yview)
 ai_display.config(yscrollcommand=ai_display_scroll.set)
 
-# AI输入区域
+# AI Input area
 ai_input_frame = Frame(ai_sidebar)
 ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
 
@@ -614,7 +619,6 @@ ai_input.bind("<Return>", on_ai_input_enter)
 ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
 ai_send_button.pack(side="right")
 
-# 初始化AI侧边栏主题
 update_ai_sidebar_theme()
 
 # -------------------- 初始化AI功能 --------------------
@@ -630,17 +634,12 @@ def schedule_autosave():
 # Start auto-save
 schedule_autosave()
 
-# Configure menu
-settingsmenu = Menu(tearoff=0)
-menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["configure"])
-settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
-
 # Enable autosave
 schedule_autosave()
 
 # Bind popup event
 def show_popup(event):
-    """显示右键菜单"""
+    """Show popup"""
     popmenu.post(event.x_root, event.y_root)
 
 codearea.bind("<Button-3>", show_popup)
