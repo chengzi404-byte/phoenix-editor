@@ -7,5 +7,6 @@ __all__ = [
     "highlighter",
     "api",
     "logger",
-    "validator"
+    "validator",
+    "io"
 ]

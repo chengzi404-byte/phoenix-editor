@@ -15,7 +15,7 @@ from tkinter import (
 )
 from tkinter.ttk import *
 from pathlib import Path
-from library import directory
+from library import io
 from library.thridPartyLicense import show as tplshow
 import os
 import json
@@ -52,9 +52,6 @@ if not debug:
         APIKEY = Settings.AI.get_api_key()
     except KeyError:
         APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
-
-if not directory.test():
-    directory.initlaze()
 
 with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
     dark_themes = json.load(fp)
@@ -190,7 +187,7 @@ def open_settings_panel():
             update_ai_sidebar_theme()
 
         except Exception as e:
-            print(f"Use theme failed: {str(e)}")
+            logger.info(f"Use theme failed: {str(e)}")
     
     def apply_restart_settings():
         lang_file = lang_var.get()
@@ -396,9 +393,9 @@ def autosave():
         with open("temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
-        print(f"Auto-saving failed: {str(e)}")
+        logger.info(f"Auto-saving failed: {str(e)}")
 
-def clear_printarea():
+def clear():
     """Run > Clear Output"""
     printarea.delete(0.0, END)
 
@@ -502,7 +499,7 @@ editmenu.add_command(command=delete, label=lang_dict["menus"]["delete"])
 runmenu = Menu(tearoff=0)
 menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
 runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
-runmenu.add_command(command=clear_printarea, label=lang_dict["menus"]["clear-output"])
+runmenu.add_command(command=clear, label=lang_dict["menus"]["clear-output"])
 
 # Pop menu
 popmenu = Menu(root, tearoff=0)
@@ -652,7 +649,6 @@ try:
     theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
     if not os.path.exists(theme_file):
         logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
-        print(f"Theme file {theme_file} not found, using default theme")
         # Use built-in default theme
         theme_data = {
             "base": {
