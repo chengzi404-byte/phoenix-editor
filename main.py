@@ -15,7 +15,6 @@ from tkinter import (
 )
 from tkinter.ttk import *
 from pathlib import Path
-from library import io
 from library.thridPartyLicense import show as tplshow
 import os
 import json
