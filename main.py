@@ -374,27 +374,21 @@ def run():
     """Run > Run Python File"""
     def execute_in_thread():
         try:
-            runtool = subprocess.Popen(
-                [sys.executable, Settings.Editor.file_path()],
-                stdin=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                stdout=subprocess.PIPE
-            )
-
-            input_data = inputarea.get(0.0, END).encode('utf-8')
-            stdout, stderr = runtool.communicate(input=input_data)
-
-            root.after(0, lambda: update_printarea(stdout, stderr))
+            exec(f"import asset.packages.run.{Settings.Highlighter.syntax_highlighting()['code']}", globals())
+            stdout, stderr, returncode = runFile()
+            update_printarea(stdout, stderr, returncode=returncode)
+        except FileNotFoundError:
+            root.after(0, lambda: printarea.insert(END, "Error: File not found.\n"))
+            messagebox.showerror("Error", "File not found. Please check the file path.")
         except Exception as e:
-            root.after(0, lambda: printarea.insert(END, f"执行错误: {str(e)}\n"))
+            root.after(0, lambda: printarea.insert(END, f"Exec error: {str(e)}\n"))
+            messagebox.showerror("Error", f"Execution error: {str(e)}")
 
-    def update_printarea(stdout, stderr):
+    def update_printarea(stdout, stderr, returncode=0):
         printarea.delete(0.0, END)
-        printarea.insert(END, f"%Run {Settings.Editor.file_path()}\n")
-        printarea.insert(END, f"------------------Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}------------------\n")
-        printarea.insert(END, stdout.decode(errors="replace"))
-        printarea.insert(END, stderr.decode(errors="replace"))
-        printarea.insert(END, "\n>>> ")
+        printarea.insert(END, stdout.decode(errors="replace")+'\n')
+        printarea.insert(END, stderr.decode(errors="replace")+'\n')
+        printarea.insert(END, f"\nReturn code: {returncode}\n")
 
     threading.Thread(target=execute_in_thread, daemon=True).start()
 
@@ -419,7 +413,7 @@ def download_plugin():
     """Plugin > Download plugin"""
     try:
         plugin_path = filedialog.askopenfilename(
-            title="打开插件",
+            title="Open",
             filetypes=[
                 (lang_dict["plugin-types"][0], "*.zip"),
                 (lang_dict["plugin-types"][1], "*.*")
@@ -454,7 +448,8 @@ def execute_commands():
         printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
         printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
     except Exception as e:
-        printarea.insert(END, f"执行命令时出错: {str(e)}\n")
+        printarea.insert(END, f"Execution error: {str(e)}\n")
+        messagebox.showerror("Error", f"Execution error: {str(e)}")
 
 def show_current_file_dir():
     """show current file dir(absoult)"""
