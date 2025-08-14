@@ -1,1 +1,14 @@
+from turtle import *
+
+"""
+Demo 0
+"""
+
+done()
+
+
+
+
+
+
 

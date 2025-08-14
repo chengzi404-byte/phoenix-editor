@@ -20,15 +20,19 @@ import os
 import json
 import subprocess
 import sys
-import zipfile
-import shlex
 import shutil
 import requests
 import threading
 import time
 import easygui
+import zipfile
+import shlex
 from queue import Queue
 import locale
+import importlib
+
+if debug:
+    import traceback
 
 # -------------------- Global Variables --------------------
 global settings, highlighter_factory, file_path, logger
@@ -374,14 +378,15 @@ def run():
     """Run > Run Python File"""
     def execute_in_thread():
         try:
-            exec(f"import asset.packages.run.{Settings.Highlighter.syntax_highlighting()['code']}", globals())
-            stdout, stderr, returncode = runFile()
+            # Dymanic import
+            module = importlib.import_module(f"asset.packages.run.{Settings.Highlighter.syntax_highlighting()['code']}")
+            stdout, stderr, returncode = module.runFile(file_path)
             update_printarea(stdout, stderr, returncode=returncode)
         except FileNotFoundError:
             root.after(0, lambda: printarea.insert(END, "Error: File not found.\n"))
             messagebox.showerror("Error", "File not found. Please check the file path.")
         except Exception as e:
-            root.after(0, lambda: printarea.insert(END, f"Exec error: {str(e)}\n"))
+            root.after(0, lambda: printarea.insert(END, f"Execution error: {str(e)}\n"))
             messagebox.showerror("Error", f"Execution error: {str(e)}")
 
     def update_printarea(stdout, stderr, returncode=0):
@@ -629,8 +634,8 @@ ai_send_button.pack(side="right")
 
 update_ai_sidebar_theme()
 
-# -------------------- 初始化AI功能 --------------------
-# 启动AI响应处理线程
+# -------------------- Initlaze Ai Module --------------------
+# Start ai response processing
 process_ai_responses()
 
 # Setup auto-save timer
@@ -719,3 +724,9 @@ except Exception as e:
 
 
 root.mainloop()
+
+print("Traceback (most recent call last):") if debug else None
+traceback.print_exc() if debug else None
+
+print("Traceback (stack):") if debug else None
+traceback.print_stack() if debug else None
