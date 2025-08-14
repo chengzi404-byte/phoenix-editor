@@ -28,6 +28,7 @@ import threading
 import time
 import easygui
 from queue import Queue
+import locale
 
 # -------------------- Global Variables --------------------
 global settings, highlighter_factory, file_path, logger
@@ -43,6 +44,22 @@ with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as
     settings = json.load(fp)
 
 # Load language settings
+lang = locale.getdefaultlocale()[0]
+if lang == "zh_CN":
+    lang = "Chinese"
+elif lang == "en_US":
+    lang = "English"
+elif lang == "fr_FR":
+    lang = "French"
+elif lang == "de_DE":
+    lang = "German"
+elif lang == "ja_JP":
+    lang = "Japanese"
+elif lang == "ru_RU":
+    lang = "Russian"
+else: # Default setting
+    lang = "English"
+Settings.Editor.change("lang", lang)
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
     lang_dict = json.load(fp)
 
@@ -587,11 +604,11 @@ root.after(100, set_sash_position)  # Delay
 
 # AI Title
 ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
-ai_title.pack(pady=10)
+ai_title.pack()
 
 # AI Display area
 ai_display_frame = Frame(ai_sidebar)
-ai_display_frame.pack(fill=BOTH, expand=True, padx=10, pady=(0, 10))
+ai_display_frame.pack(fill=BOTH, expand=True)
 
 ai_display_scroll = Scrollbar(ai_display_frame)
 ai_display_scroll.pack(side="right", fill="y")
