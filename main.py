@@ -1,5 +1,3 @@
-debug = True # Debug
-
 from library.highlighter_factory import HighlighterFactory
 from library.logger import setup_logger
 from library.api import Settings
@@ -63,12 +61,11 @@ else: # Default setting
 Settings.Editor.change("lang", lang)
 with open(Settings.Editor.langfile(), "r", encoding="utf-8") as fp:
     lang_dict = json.load(fp)
-
-if not debug:
-    try:
-        APIKEY = Settings.AI.get_api_key()
-    except KeyError:
-        APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
+    
+try:
+    APIKEY = Settings.AI.get_api_key()
+except KeyError:
+    APIKEY = easygui.enterbox("API KEY: ", "API KEY:")
 
 with open(f"{Path.cwd() / "asset" / "packages" / "themes.dark.json"}", "r", encoding="utf-8") as fp:
     dark_themes = json.load(fp)
@@ -634,6 +631,8 @@ try:
     ai_send_button.pack(side="right")
 
     update_ai_sidebar_theme()
+
+    logger.info("AI sidebar theme: avalible")
 
     # -------------------- 初始化AI功能 --------------------
     # 启动AI响应处理线程
