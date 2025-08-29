@@ -29,6 +29,7 @@ import time
 import easygui
 from queue import Queue
 import locale
+import traceback
 
 # -------------------- Global Variables --------------------
 global settings, highlighter_factory, file_path, logger
@@ -203,7 +204,7 @@ def open_settings_panel():
             update_ai_sidebar_theme()
 
         except Exception as e:
-            logger.info(f"Use theme failed: {str(e)}")
+            logger.error(f"Use theme failed: {str(e)}")
     
     def apply_restart_settings():
         lang_file = lang_var.get()
@@ -403,7 +404,7 @@ def autosave():
         with open("temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
     except Exception as e:
-        logger.info(f"Auto-saving failed: {str(e)}")
+        logger.error(f"Auto-saving failed: {str(e)}")
 
 def clear():
     """Run > Clear Output"""
@@ -464,219 +465,209 @@ def helpFunction():
 
 # -------------------- Create the window and menus --------------------
 
-# Create the main window
-root = Tk()
-root.title(lang_dict["title"])
-root.geometry("1920x980+0+0")
-root.configure(bg='black')
-root.resizable(width=True, height=True)
-
-# Binding
-root.bind("<Control-x>", lambda event: delete())
-root.bind("<Control-z>", lambda event: undo())
-root.bind("<Control-y>", lambda event: redo())
-root.bind("<F5>", lambda event: run())
-root.bind("<Key>", lambda event: autosave())
-
-# Create all the menus
-menu = Menu()
-root.config(menu=menu)
-
-# File menu
-filemenu = Menu(tearoff=0)
-menu.add_cascade(menu=filemenu, label=lang_dict["menus"]["file"])
-filemenu.add_command(command=new_file, label=lang_dict["menus"]["new-file"])
-filemenu.add_command(command=new_window, label=lang_dict["menus"]["new-window"])
-filemenu.add_separator()
-filemenu.add_command(command=open_file, label=lang_dict["menus"]["open-file"])
-filemenu.add_command(command=save_file, label=lang_dict["menus"]["save-file"])
-filemenu.add_command(command=save_as_file, label=lang_dict["menus"]["save-as-file"])
-filemenu.add_separator()
-filemenu.add_command(command=show_current_file_dir, label=lang_dict["menus"]["show-file-dir"])
-filemenu.add_separator()
-filemenu.add_command(command=exit_editor, label=lang_dict["menus"]["exit"])
-
-# Edit menu
-editmenu = Menu(tearoff=0)
-menu.add_cascade(menu=editmenu, label=lang_dict["menus"]["edit"])
-editmenu.add_command(command=undo, label=lang_dict["menus"]["undo"])
-editmenu.add_command(command=redo, label=lang_dict["menus"]["redo"])
-editmenu.add_separator()
-editmenu.add_command(command=copy, label=lang_dict["menus"]["copy"])
-editmenu.add_command(command=paste, label=lang_dict["menus"]["paste"])
-editmenu.add_command(command=delete, label=lang_dict["menus"]["delete"])
-
-# Run menu
-runmenu = Menu(tearoff=0)
-menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
-runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
-runmenu.add_command(command=clear, label=lang_dict["menus"]["clear-output"])
-
-# Pop menu
-popmenu = Menu(root, tearoff=0)
-popmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
-popmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
-popmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
-popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
-
-# Plugin menu (comming soon)
-pluginmenu = Menu(tearoff=0)
-menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
-
-# AI menu
-aimenu = Menu(tearoff=0)
-menu.add_cascade(menu=aimenu, label="AI")
-aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), label=lang_dict["ai"]["show"])
-aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
-
-# Settings menu
-settingsmenu = Menu(tearoff=0)
-menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["help"])
-settingsmenu.add_command(label=lang_dict["menus"]["help"], command=helpFunction)
-settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
-settingsmenu.add_command(command=tplshow, label="TPL")
-
-# Create the main paned window
-main_paned = PanedWindow(root, orient=HORIZONTAL)
-main_paned.pack(fill=BOTH, expand=True)
-
-# Create the code area paned window
-code_paned = PanedWindow(main_paned, orient=VERTICAL)
-main_paned.add(code_paned)
-
-# Create the code area
-codearea = Text(code_paned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-code_paned.add(codearea)
-
-subpaned = PanedWindow(code_paned, orient=HORIZONTAL)
-code_paned.add(subpaned)
-inputarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-subpaned.add(inputarea)
-printarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-subpaned.add(printarea)
-
-commandpaned = PanedWindow(code_paned, orient=HORIZONTAL)
-code_paned.add(commandpaned, weight=2)
-commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-commandpaned.add(commandarea,weight=18)
-executebutton = Button(text=lang_dict["menus"]["run"], command=execute_commands)
-commandpaned.add(executebutton, weight=1)
-
-# Config commandpaned widgets background color
-if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
-    commandarea.config(background="#2F4F4F")
-else:
-    commandarea.config(background="#F8F8F8")
-
-# Show last edited content
 try:
-    with open("temp_script.txt", "r", encoding="utf-8") as fp:
-        codearea.insert("1.0", fp.read())
-except FileNotFoundError:
-    # If temp file doesn't exist, create an empty one
-    with open("temp_script.txt", "w", encoding="utf-8") as fp:
-        fp.write("")
+    # Create the main window
+    root = Tk()
+    root.title(lang_dict["title"])
+    root.geometry("1920x980+0+0")
+    root.configure(bg='black')
+    root.resizable(width=True, height=True)
 
-# -------------------- AI Sidebar Implementation --------------------
-def update_ai_sidebar_theme():
+    # Binding
+    root.bind("<Control-x>", lambda event: delete())
+    root.bind("<Control-z>", lambda event: undo())
+    root.bind("<Control-y>", lambda event: redo())
+    root.bind("<F5>", lambda event: run())
+    root.bind("<Key>", lambda event: autosave())
+
+    logger.info("Window Starting - Bind keys successfully")
+
+    # Create all the menus
+    menu = Menu()
+    root.config(menu=menu)
+
+    # File menu
+    filemenu = Menu(tearoff=0)
+    menu.add_cascade(menu=filemenu, label=lang_dict["menus"]["file"])
+    filemenu.add_command(command=new_file, label=lang_dict["menus"]["new-file"])
+    filemenu.add_command(command=new_window, label=lang_dict["menus"]["new-window"])
+    filemenu.add_separator()
+    filemenu.add_command(command=open_file, label=lang_dict["menus"]["open-file"])
+    filemenu.add_command(command=save_file, label=lang_dict["menus"]["save-file"])
+    filemenu.add_command(command=save_as_file, label=lang_dict["menus"]["save-as-file"])
+    filemenu.add_separator()
+    filemenu.add_command(command=show_current_file_dir, label=lang_dict["menus"]["show-file-dir"])
+    filemenu.add_separator()
+    filemenu.add_command(command=exit_editor, label=lang_dict["menus"]["exit"])
+
+    # Edit menu
+    editmenu = Menu(tearoff=0)
+    menu.add_cascade(menu=editmenu, label=lang_dict["menus"]["edit"])
+    editmenu.add_command(command=undo, label=lang_dict["menus"]["undo"])
+    editmenu.add_command(command=redo, label=lang_dict["menus"]["redo"])
+    editmenu.add_separator()
+    editmenu.add_command(command=copy, label=lang_dict["menus"]["copy"])
+    editmenu.add_command(command=paste, label=lang_dict["menus"]["paste"])
+    editmenu.add_command(command=delete, label=lang_dict["menus"]["delete"])
+
+    # Run menu
+    runmenu = Menu(tearoff=0)
+    menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
+    runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
+    runmenu.add_command(command=clear, label=lang_dict["menus"]["clear-output"])
+
+    # Pop menu
+    popmenu = Menu(root, tearoff=0)
+    popmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
+    popmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
+    popmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
+    popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
+
+    # Plugin menu (comming soon)
+    pluginmenu = Menu(tearoff=0)
+    menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
+
+    # AI menu
+    aimenu = Menu(tearoff=0)
+    menu.add_cascade(menu=aimenu, label="AI")
+    aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), label=lang_dict["ai"]["show"])
+    aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
+
+    # Settings menu
+    settingsmenu = Menu(tearoff=0)
+    menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["help"])
+    settingsmenu.add_command(label=lang_dict["menus"]["help"], command=helpFunction)
+    settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
+    settingsmenu.add_command(command=tplshow, label="TPL")
+
+    logger.info("Window Starting - Menu-set successfully")
+
+    # Create the main paned window
+    main_paned = PanedWindow(root, orient=HORIZONTAL)
+    main_paned.pack(fill=BOTH, expand=True)
+
+    # Create the code area paned window
+    code_paned = PanedWindow(main_paned, orient=VERTICAL)
+    main_paned.add(code_paned)
+
+    # Create the code area
+    codearea = Text(code_paned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    code_paned.add(codearea)
+
+    subpaned = PanedWindow(code_paned, orient=HORIZONTAL)
+    code_paned.add(subpaned)
+    inputarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    subpaned.add(inputarea)
+    printarea = Text(subpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    subpaned.add(printarea)
+
+    commandpaned = PanedWindow(code_paned, orient=HORIZONTAL)
+    code_paned.add(commandpaned, weight=2)
+    commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    commandpaned.add(commandarea,weight=18)
+    executebutton = Button(text=lang_dict["menus"]["run"], command=execute_commands)
+    commandpaned.add(executebutton, weight=1)
+
+    # Config commandpaned widgets background color
     if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
-        ai_display.config(bg="#1E1E1E", fg="#D4D4D4", insertbackground="#D4D4D4")
+        commandarea.config(background="#2F4F4F")
     else:
-        ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
+        commandarea.config(background="#F8F8F8")
 
-# Ai sidebar
-ai_sidebar = Frame(main_paned, width=300)
-main_paned.add(ai_sidebar)
-
-# Set position
-def set_sash_position():
+    # Show last edited content
     try:
-        main_paned.sashpos(1, 1600)
-    except Exception as e:
-        logger.warning("Sash position loading failed!")
+        with open("temp_script.txt", "r", encoding="utf-8") as fp:
+            codearea.insert("1.0", fp.read())
+    except FileNotFoundError:
+        # If temp file doesn't exist, create an empty one
+        with open("temp_script.txt", "w", encoding="utf-8") as fp:
+            fp.write("")
 
-root.after(100, set_sash_position)  # Delay
+    # -------------------- AI Sidebar Implementation --------------------
+    def update_ai_sidebar_theme():
+        if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes:
+            ai_display.config(bg="#1E1E1E", fg="#D4D4D4", insertbackground="#D4D4D4")
+        else:
+            ai_display.config(bg="#F8F8F8", fg="#000000", insertbackground="#000000")
 
-# AI Title
-ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
-ai_title.pack()
+    # Ai sidebar
+    ai_sidebar = Frame(main_paned, width=300)
+    main_paned.add(ai_sidebar)
 
-# AI Display area
-ai_display_frame = Frame(ai_sidebar)
-ai_display_frame.pack(fill=BOTH, expand=True)
-
-ai_display_scroll = Scrollbar(ai_display_frame)
-ai_display_scroll.pack(side="right", fill="y")
-
-ai_display = Text(ai_display_frame, wrap="word", height=20, 
-                  font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-ai_display.pack(side="left", fill=BOTH, expand=True)
-ai_display.config(state=DISABLED)
-
-ai_display_scroll.config(command=ai_display.yview)
-ai_display.config(yscrollcommand=ai_display_scroll.set)
-
-# AI Input area
-ai_input_frame = Frame(ai_sidebar)
-ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
-
-ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
-ai_input.pack(side="left", fill=X, expand=True, padx=(0, 10))
-ai_input.bind("<Return>", on_ai_input_enter)
-
-ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
-ai_send_button.pack(side="right")
-
-update_ai_sidebar_theme()
-
-# -------------------- 初始化AI功能 --------------------
-# 启动AI响应处理线程
-process_ai_responses()
-
-# Setup auto-save timer
-def schedule_autosave():
-    """自动保存定时器"""
-    autosave()
-    root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
-
-# Start auto-save
-schedule_autosave()
-
-# Enable autosave
-schedule_autosave()
-
-# Bind popup event
-def show_popup(event):
-    """Show popup"""
-    popmenu.post(event.x_root, event.y_root)
-
-codearea.bind("<Button-3>", show_popup)
-
-# Initialization
-try:
-    codehighlighter = highlighter_factory.create_highlighter(codearea)
-    
-    # Check 
-    theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
-    if not os.path.exists(theme_file):
-        logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
-        # Use built-in default theme
-        theme_data = {
-            "base": {
-                "background": "#1E1E1E",
-                "foreground": "#D4D4D4",
-                "insertbackground": "#D4D4D4",
-                "selectbackground": "#264F78",
-                "selectforeground": "#D4D4D4"
-            }
-        }
-    else:
-        # Load theme
+    # Set position
+    def set_sash_position():
         try:
-            with open(theme_file, "r", encoding="utf-8") as f:
-                theme_data = json.load(f)
+            main_paned.sashpos(1, 1600)
         except Exception as e:
-            logger.warning(f"Warning: Failed to load theme file: {str(e)}, using default theme")
+            logger.error("Sash position loading failed!")
+
+    root.after(100, set_sash_position)  # Delay
+
+    # AI Title
+    ai_title = Label(ai_sidebar, text="AI助手", font=Font(ai_sidebar, size=14, weight="bold"))
+    ai_title.pack()
+
+    # AI Display area
+    ai_display_frame = Frame(ai_sidebar)
+    ai_display_frame.pack(fill=BOTH, expand=True)
+
+    ai_display_scroll = Scrollbar(ai_display_frame)
+    ai_display_scroll.pack(side="right", fill="y")
+
+    ai_display = Text(ai_display_frame, wrap="word", height=20, 
+                    font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    ai_display.pack(side="left", fill=BOTH, expand=True)
+    ai_display.config(state=DISABLED)
+
+    ai_display_scroll.config(command=ai_display.yview)
+    ai_display.config(yscrollcommand=ai_display_scroll.set)
+
+    # AI Input area
+    ai_input_frame = Frame(ai_sidebar)
+    ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
+
+    ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    ai_input.pack(side="left", fill=X, expand=True, padx=(0, 10))
+    ai_input.bind("<Return>", on_ai_input_enter)
+
+    ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
+    ai_send_button.pack(side="right")
+
+    update_ai_sidebar_theme()
+
+    # -------------------- 初始化AI功能 --------------------
+    # 启动AI响应处理线程
+    process_ai_responses()
+
+    # Setup auto-save timer
+    def schedule_autosave():
+        """自动保存定时器"""
+        autosave()
+        root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
+
+    # Start auto-save
+    schedule_autosave()
+
+    # Enable autosave
+    schedule_autosave()
+    logger.info("Auto-save: avalible")
+
+    # Bind popup event
+    def show_popup(event):
+        """Show popup"""
+        popmenu.post(event.x_root, event.y_root)
+
+    codearea.bind("<Button-3>", show_popup)
+
+    # Initialization
+    try:
+        codehighlighter = highlighter_factory.create_highlighter(codearea)
+        
+        # Check 
+        theme_file = f"{Path.cwd() / "asset" / "theme" / Settings.Highlighter.syntax_highlighting()["theme"]}.json"
+        if not os.path.exists(theme_file):
+            logger.warning(f"Warning: Theme file {theme_file} not found, using default theme")
+            # Use built-in default theme
             theme_data = {
                 "base": {
                     "background": "#1E1E1E",
@@ -686,36 +677,55 @@ try:
                     "selectforeground": "#D4D4D4"
                 }
             }
-    
-    codehighlighter.set_theme(theme_data)
-    codehighlighter.highlight()
+        else:
+            # Load theme
+            try:
+                with open(theme_file, "r", encoding="utf-8") as f:
+                    theme_data = json.load(f)
+            except Exception as e:
+                logger.error(f"Failed to load theme file: {str(e)}, using default theme")
+                theme_data = {
+                    "base": {
+                        "background": "#1E1E1E",
+                        "foreground": "#D4D4D4",
+                        "insertbackground": "#D4D4D4",
+                        "selectbackground": "#264F78",
+                        "selectforeground": "#D4D4D4"
+                    }
+                }
+        
+        codehighlighter.set_theme(theme_data)
+        codehighlighter.highlight()
 
-    # Use the same configure to the terminal
-    codehighlighter2 = highlighter_factory.create_highlighter(printarea)
-    if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
-    else: codehighlighter2.set_theme(light_terminal_theme)
-    codehighlighter2.highlight()
+        # Use the same configure to the terminal
+        codehighlighter2 = highlighter_factory.create_highlighter(printarea)
+        if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter2.set_theme(dark_terminal_theme)
+        else: codehighlighter2.set_theme(light_terminal_theme)
+        codehighlighter2.highlight()
 
-    codehighlighter3 = highlighter_factory.create_highlighter(inputarea)
-    if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
-    else: codehighlighter3.set_theme(light_terminal_theme)
-    codehighlighter3.highlight()
-    
-    def on_key(event):
-        # Process auto-save
-        autosave()
-        return None
-    
-    # Remove all the key binds
-    for binding in root.bind_all():
-        if binding.startswith('<Key'):
-            root.unbind_all(binding)
-    
-    # Add new key bind
-    root.bind("<Key>", on_key, add="+")
-    
+        codehighlighter3 = highlighter_factory.create_highlighter(inputarea)
+        if Settings.Highlighter.syntax_highlighting()["theme"] in dark_themes: codehighlighter3.set_theme(dark_terminal_theme)
+        else: codehighlighter3.set_theme(light_terminal_theme)
+        codehighlighter3.highlight()
+        
+        def on_key(event):
+            # Process auto-save
+            autosave()
+            return None
+        
+        # Remove all the key binds
+        for binding in root.bind_all():
+            if binding.startswith('<Key'):
+                root.unbind_all(binding)
+        
+        # Add new key bind
+        root.bind("<Key>", on_key, add="+")
+        
+    except Exception as e:
+        logger.warning(f"Code highlighter initialization failed: {str(e)}")
+
+
+    root.mainloop()
+
 except Exception as e:
-    logger.warning(f"Warning: Code highlighter initialization failed: {str(e)}")
-
-
-root.mainloop()
+    logger.critical(f"Crashed! {e} \n Traceback: {traceback.print_last()}")
