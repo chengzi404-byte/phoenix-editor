@@ -1,6 +1,6 @@
-import logging
+from loguru import logger
 import os
-import pathlib
+import time
 from logging.handlers import RotatingFileHandler
 
 def setup_logger(log_dir="./logs"):
@@ -9,17 +9,9 @@ def setup_logger(log_dir="./logs"):
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
-        log_file = pathlib.Path(log_dir) / "editor.log"
-        logger = logging.getLogger('Phoenix Editor')
-        logger.setLevel(logging.DEBUG)
+        log_dir = f"{log_dir}/Logfile-{int(time.time())}.log"
 
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-        handler = RotatingFileHandler(str(log_file), maxBytes=1024 * 1024, backupCount=5)
-        handler.setLevel(logging.DEBUG)
-        handler.setFormatter(formatter)
-
-        logger.addHandler(handler)
+        logger.add(log_dir)
 
         return logger
     except Exception as e:
