@@ -3,10 +3,10 @@ import importlib
 
 class HighlighterFactory:
     """Code highlighter factory class"""
-    def create_highlighter(self, text_widget):
+    def create_highlighter(self, text_widget, type=None):
         """Create appropriate highlighter based on file extension"""
         # Get highlighter type
-        highlighter_type = api.Settings.Highlighter.syntax_highlighting()["code"]
+        if type == None: highlighter_type = api.Settings.Highlighter.syntax_highlighting()["code"]
         
         # Import module
         module_name = f"library.highlighter.{highlighter_type}"

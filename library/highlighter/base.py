@@ -505,4 +505,9 @@ class BaseHighlighter:
             
         except Exception as e:
             print(f"Theme error: {str(e)}")
-
+    
+    def get_theme(self):
+        """
+        Get current theme
+        """
+        return self.syntax_colors

@@ -28,7 +28,6 @@ import shlex
 from queue import Queue
 import locale
 import traceback
-import importlib
 
 # -------------------- Global Variables --------------------
 global settings, highlighter_factory, file_path, logger
@@ -39,6 +38,20 @@ highlighter_factory = HighlighterFactory()
 file_path = "temp_script.txt"
 ai_queue = Queue()  # AI QUEUE
 ai_loading = False  # AI LOAD
+
+ext = {
+    "python": ".py",
+    "cpp": ".cpp",
+    "c": ".c",
+    "bash": "",
+    "powershell": ".ps1",
+    "css": ".css",
+    "html": ".html",
+    "java": ".java",
+    "javascript": ".js",
+    "json": ".json",
+    "rust": ".rs"
+}
 
 with open(f"{Path.cwd() / "asset" / "settings.json"}", "r", encoding="utf-8") as fp:
     settings = json.load(fp)
@@ -264,7 +277,6 @@ def open_settings_panel():
 # -------------------- File Operations --------------------
 def open_file():
     """File > Open File"""
-    global file_path
     file_path = filedialog.askopenfilename(
         filetypes=[
             (lang_dict["file-types"][0], "*.py"),
@@ -282,6 +294,31 @@ def open_file():
     with open(file_path, encoding=Settings.Editor.file_encoding()) as f:
         content = f.read()
     codearea.insert(0.0, content)
+
+    cur_ext = None
+    for e in ext:
+        if e == file_path.split('.')[-1]:
+            cur_ext = e
+            
+    # Get theme data
+    theme1 = codehighlighter.get_theme()
+    theme2 = codehighlighter2.get_theme()
+    theme3 = codehighlighter3.get_theme()
+
+    del codehighlighter, codehighlighter2, codehighlighter3 # Delete
+
+    # Update
+    codehighlighter = highlighter_factory.create_highlighter(codearea, cur_ext)
+    codehighlighter.set_theme(theme1)
+    codehighlighter.highlight()
+
+    codehighlighter2 = highlighter_factory.create_highlighter(inputarea, cur_ext)
+    codehighlighter2.set_theme(theme2)
+    codehighlighter2.highlight()
+
+    codehighlighter3 = highlighter_factory.create_highlighter(printarea, cur_ext)
+    codehighlighter3.set_theme(theme3)
+    codehighlighter3.highlight()
 
 def save_file():
     """File > Save File"""
@@ -372,17 +409,26 @@ def redo():
 def run():
     """Run > Run Python File"""
     def execute_in_thread():
-        try:
-            # Dymanic import
-            module = importlib.import_module(f"asset.packages.run.{Settings.Highlighter.syntax_highlighting()['code']}")
-            stdout, stderr, returncode = module.runFile(file_path)
-            update_printarea(stdout, stderr, returncode=returncode)
-        except FileNotFoundError:
-            root.after(0, lambda: printarea.insert(END, "Error: File not found.\n"))
-            messagebox.showerror("Error", "File not found. Please check the file path.")
-        except Exception as e:
-            root.after(0, lambda: printarea.insert(END, f"Execution error: {str(e)}\n"))
-            messagebox.showerror("Error", f"Execution error: {str(e)}")
+        # Python
+        with open(f"Run.{ext[Settings.Highlighter.syntax_highlighting()["code"]]}", "w", encoding="utf-8") as fp: # Writing object
+            with open("temp_script.txt", "r", encoding="utf-8") as fp2:
+                data = fp2.read()
+            fp.write(data)
+        
+        runtool = subprocess.Popen (
+            ["python", "Run.py"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        stdout, stderr = runtool.communicate(inputarea.get())
+        stdout = stdout.decode(errors="replace")
+        stderr = stderr.decode(errors="replace")
+
+        returncode = runtool.returncode
+
+        update_printarea(stdout, stderr, returncode)
 
     def update_printarea(stdout, stderr, returncode=0):
         printarea.delete(0.0, END)

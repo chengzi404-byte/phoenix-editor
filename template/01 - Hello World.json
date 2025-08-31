@@ -1,0 +1,10 @@
+{
+    "name": "Hello World!",
+
+    "code": [
+        "# Template 01 - Hello World!\n",
+        "print(\"Hello, World!\")\n"
+    ],
+
+    "type": "python"
+}
