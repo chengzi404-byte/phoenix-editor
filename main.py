@@ -34,7 +34,7 @@ global settings, highlighter_factory, file_path, logger
 global codehighlighter2, codehighlighter, APIKEY
 global ai_sidebar, ai_display, ai_input, ai_queue, ai_loading
 logger = setup_logger()
-highlighter_factory = HighlighterFactory()
+highlighter_factory = HighlighterFactory(logger=logger)
 file_path = "temp_script.txt"
 ai_queue = Queue()  # AI QUEUE
 ai_loading = False  # AI LOAD
@@ -290,6 +290,8 @@ def open_file():
             (lang_dict["file-types"][8], "*.*")
         ]
     )
+    logger.info(f"Open file: {file_path}")
+    
     codearea.delete(0.0, END)
     with open(file_path, encoding=Settings.Editor.file_encoding()) as f:
         content = f.read()
@@ -301,22 +303,21 @@ def open_file():
             cur_ext = e
             
     # Get theme data
+    global codehighlighter, codehighlighter2, codehighlighter3
     theme1 = codehighlighter.get_theme()
     theme2 = codehighlighter2.get_theme()
     theme3 = codehighlighter3.get_theme()
 
-    del codehighlighter, codehighlighter2, codehighlighter3 # Delete
-
     # Update
-    codehighlighter = highlighter_factory.create_highlighter(codearea, cur_ext)
+    codehighlighter = highlighter_factory.create_highlighter(codearea, type=cur_ext)
     codehighlighter.set_theme(theme1)
     codehighlighter.highlight()
 
-    codehighlighter2 = highlighter_factory.create_highlighter(inputarea, cur_ext)
+    codehighlighter2 = highlighter_factory.create_highlighter(inputarea, type=cur_ext)
     codehighlighter2.set_theme(theme2)
     codehighlighter2.highlight()
 
-    codehighlighter3 = highlighter_factory.create_highlighter(printarea, cur_ext)
+    codehighlighter3 = highlighter_factory.create_highlighter(printarea, type=cur_ext)
     codehighlighter3.set_theme(theme3)
     codehighlighter3.highlight()
 
@@ -325,19 +326,7 @@ def save_file():
     global file_path
     msg = codearea.get(0.0, END)
     if file_path == "temp_script.txt":
-        file_path = filedialog.asksaveasfilename(
-                    filetypes=[
-                        (lang_dict["file-types"][0], "*.py"),
-                        (lang_dict["file-types"][1], "*.html"),
-                        (lang_dict["file-types"][2], "*.css"),
-                        (lang_dict["file-types"][3], "*.js"),
-                        (lang_dict["file-types"][4], "*.json"),
-                        (lang_dict["file-types"][5], "*.rb"),
-                        (lang_dict["file-types"][6], "*.c;*.cpp;*.h"),
-                        (lang_dict["file-types"][7], "*.m"),
-                        (lang_dict["file-types"][8], "*.*")
-                    ]
-                )
+        save_as_file()
 
     with open(file_path, "w", encoding="utf-8") as fp:
         fp.write(msg)
@@ -362,6 +351,32 @@ def save_as_file():
     
     with open(file_path, "w", encoding="utf-8") as fp:
         fp.write(msg)
+
+    cur_ext = None
+
+    # Matching extenision
+    for i in ext:
+        if i == file_path.split('.')[-1]:
+            cur_ext = i
+
+    # Get theme data
+    global codehighlighter, codehighlighter2, codehighlighter3
+    theme1 = codehighlighter.get_theme()
+    theme2 = codehighlighter2.get_theme()
+    theme3 = codehighlighter3.get_theme()
+
+    # Update
+    codehighlighter = highlighter_factory.create_highlighter(codearea, type=cur_ext)
+    codehighlighter.set_theme(theme1)
+    codehighlighter.highlight()
+
+    codehighlighter2 = highlighter_factory.create_highlighter(inputarea, type=cur_ext)
+    codehighlighter2.set_theme(theme2)
+    codehighlighter2.highlight()
+
+    codehighlighter3 = highlighter_factory.create_highlighter(printarea, type=cur_ext)
+    codehighlighter3.set_theme(theme3)
+    codehighlighter3.highlight()
 
 def new_file():
     """File > New File"""
@@ -448,6 +463,8 @@ def autosave():
         
         with open("temp_script.txt", "w", encoding=Settings.Editor.file_encoding()) as f:
             f.write(content)
+
+        logger.info(f"Auto-save in file {file_path} time stamp: {int(time.time())}")
     except Exception as e:
         logger.error(f"Auto-saving failed: {str(e)}")
 
@@ -691,6 +708,7 @@ try:
         """自动保存定时器"""
         autosave()
         root.after(5000, schedule_autosave)  # Auto-save every 5 seconds
+        
 
     # Start auto-save
     schedule_autosave()
