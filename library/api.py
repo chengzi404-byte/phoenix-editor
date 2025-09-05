@@ -54,3 +54,9 @@ class Settings:
 
             with open("./asset/settings.json", "w", encoding="utf-8") as fp:
                 json.dump(settings, fp)
+
+    class Debug:
+        def debug():                return settings["debug"]
+
+        def change(apikey):
+            raise PermissionError("Settings deny your request.")

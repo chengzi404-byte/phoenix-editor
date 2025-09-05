@@ -33,7 +33,7 @@ import traceback
 global settings, highlighter_factory, file_path, logger
 global codehighlighter2, codehighlighter, APIKEY
 global ai_sidebar, ai_display, ai_input, ai_queue, ai_loading
-logger = setup_logger()
+logger = setup_logger(Settings.Debug.debug())
 highlighter_factory = HighlighterFactory(logger=logger)
 file_path = "temp_script.txt"
 ai_queue = Queue()  # AI QUEUE
