@@ -1,8 +1,7 @@
-from subprocess import Popen, PIPE
-import os
+from subprocess import Popen, PIPE, run
 
 def runFile(path:str) -> list:
-    os.system(f"gcc {path} -o {path.split('.')[0]}.exe -O2 -Wall -std=c99")
+    run(f"gcc {path} -o {path.split('.')[0]}.exe -O2 -Wall -std=c99")
 
     runtool = Popen(
         [path.split('.')[0] + '.exe'],
