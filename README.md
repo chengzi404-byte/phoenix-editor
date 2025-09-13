@@ -53,8 +53,9 @@ Phoenix Editor 是一个轻量级的代码编辑器，旨在提供简洁高效�
 - `asset/settings.json`: 存储用户配置
 - `asset/theme/`: 主题样式文件
 - `asset/packages/lang/`: 多语言支持文件
+- `asset/packages/runner`: 运行模块
 
-## 问答
+## 问答板块
 
 **Q1: 这个作品是采用什么进行编写的？**
 
@@ -114,6 +115,7 @@ Phoenix Editor 是一个轻量级的代码编辑器，旨在提供简洁高效�
 
 ## 版本历史
 
+- **v1.0.0**：正式版本
 - **v0.4.0**：加入 AI 对话功能
 - **v0.3.0**：新增多语言支持与主题切换功能
 - **v0.2.0**：实现多标签页与自动保存功能
@@ -129,5 +131,3 @@ Phoenix Editor 是一个轻量级的代码编辑器，旨在提供简洁高效�
 - [Gitee 项目主页](https://gitee.com/creative-and-dream/phoenix-editor)
 - [Issue 跟踪](https://gitee.com/creative-and-dream/phoenix-editor/issues)
 - [Pull Request 提交指南](.gitee/PULL_REQUEST_TEMPLATE.zh-CN.md)
-
-
