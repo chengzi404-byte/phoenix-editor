@@ -422,22 +422,30 @@ def redo():
 
 # -------------------- Run Operations --------------------
 def run():
-    """Run > Run Python File"""
+    """Run > Run File"""
     def execute_in_thread():
-        # Python
+        # Save current code to temp file
         with open(f"Run.{ext[Settings.Highlighter.syntax_highlighting()["code"]]}", "w", encoding="utf-8") as fp: # Writing object
             with open("temp_script.txt", "r", encoding="utf-8") as fp2:
                 data = fp2.read()
             fp.write(data)
         
+        # Open runner executing file
+        with open(f"asset/packages/runner/{Settings.Highlighter.syntax_highlighting()['code']}.json", "r", encoding="utf-8") as fp:
+            command = json.load(fp)
+
+        # Cpp
+        if Settings.Highlighter.syntax_highlighting()['code'] == "cpp" or Settings.Highlighter.syntax_highlighting()['code'] == "c":
+            run(command.format(file=f"Run{ext[Settings.Highlighter.syntax_highlighting()['code']]}", output="Final.exe").split())
+
         runtool = subprocess.Popen (
-            ["python", "Run.py"],
+            command=["cmd", "Final.exe"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
 
-        stdout, stderr = runtool.communicate(inputarea.get())
+        stdout, stderr = runtool.communicate(inputarea.get(0.0, END).encode(encoding=Settings.Editor.file_encoding()))
         stdout = stdout.decode(errors="replace")
         stderr = stderr.decode(errors="replace")
 
@@ -447,8 +455,8 @@ def run():
 
     def update_printarea(stdout, stderr, returncode=0):
         printarea.delete(0.0, END)
-        printarea.insert(END, stdout.decode(errors="replace")+'\n')
-        printarea.insert(END, stderr.decode(errors="replace")+'\n')
+        printarea.insert(END, stdout+'\n')
+        printarea.insert(END, stderr+'\n')
         printarea.insert(END, f"\nReturn code: {returncode}\n")
 
     threading.Thread(target=execute_in_thread, daemon=True).start()
