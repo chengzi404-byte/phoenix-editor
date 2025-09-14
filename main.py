@@ -11,7 +11,7 @@ from tkinter import (
     W, X, E, BOTH, VERTICAL, HORIZONTAL, END,
     Frame, Label, Button, Scrollbar, DISABLED, NORMAL
 )
-from tkinter.ttk import *
+from ttkbootstrap import *
 from pathlib import Path
 from library.thridPartyLicense import show as tplshow
 import os
