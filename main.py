@@ -505,19 +505,49 @@ def exit_editor():
         sys.exit(0)
 
 def execute_commands():
-    """Excute commands in commandarea"""
-    command = commandarea.get()
-    try:
-        args = shlex.split(command)
-        runtool = subprocess.Popen(args, stdin=subprocess.PIPE, 
-                                   stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   shell=True)
+    """Execute commands in commandarea"""
+    command = commandarea.get().strip()
+    if not command:
+        return
         
-        stdout, stderr = runtool.communicate()
-
-        printarea.delete(0.0, END)
-        printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
-        printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
+    try:
+        # Split command into args safely
+        args = shlex.split(command)
+        
+        # Basic command validation
+        if not args[0] or args[0].startswith('.'):
+            raise ValueError("Invalid command")
+            
+        # Execute without shell=True
+        runtool = subprocess.Popen(
+            args,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            shell=False # Prevent shell injection
+        )
+        
+        try:
+            stdout, stderr = runtool.communicate(timeout=30) # Add timeout
+            
+            printarea.delete(0.0, END)
+            if stdout:
+                printarea.insert(END, stdout.decode(errors="replace"))
+            if stderr:    
+                printarea.insert(END, stderr.decode(errors="replace"))
+                
+        except subprocess.TimeoutExpired:
+            runtool.kill()
+            printarea.insert(END, "Command timed out\n")
+            
+        finally:
+            # Cleanup
+            if runtool.poll() is None:
+                runtool.terminate()
+                
+    except ValueError as e:
+        printarea.insert(END, f"Invalid command: {str(e)}\n")
+        messagebox.showerror("Error", f"Invalid command: {str(e)}")
     except Exception as e:
         printarea.insert(END, f"Execution error: {str(e)}\n")
         messagebox.showerror("Error", f"Execution error: {str(e)}")
