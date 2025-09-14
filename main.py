@@ -241,7 +241,7 @@ def open_settings_panel():
     # Font
     font_var = StringVar(value=Settings.Editor.font())
     Label(settings_window, text=lang_dict["settings"]["font"]).pack(anchor=W)
-    Entry(settings_window, textvariable=font_var).pack(anchor=W, fill=X)
+    Entry(settings_window, textvariable=font_var, bootstyle="dark").pack(anchor=W, fill=X)
 
     # Font size
     fontsize_var = IntVar(value=Settings.Editor.font_size())
@@ -656,9 +656,9 @@ try:
 
     commandpaned = PanedWindow(code_paned, orient=HORIZONTAL)
     code_paned.add(commandpaned, weight=2)
-    commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()), bootstyle="dark")
     commandpaned.add(commandarea,weight=18)
-    executebutton = Button(commandpaned, text=lang_dict["menus"]["run"], command=execute_commands)
+    executebutton = Button(commandpaned, text=lang_dict["menus"]["run"], command=execute_commands, bootstyle="info-outline")
     commandpaned.add(executebutton, weight=1)
 
     # Config commandpaned widgets background color
@@ -719,11 +719,11 @@ try:
     ai_input_frame = Frame(ai_sidebar)
     ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
 
-    ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()), bootstyle="dark")
     ai_input.pack(side="left", fill=X, expand=True, padx=(0, 10))
     ai_input.bind("<Return>", on_ai_input_enter)
 
-    ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
+    ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request, bootstyle="primary-outline")
     ai_send_button.pack(side="right")
 
     update_ai_sidebar_theme()
