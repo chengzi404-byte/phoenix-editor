@@ -270,7 +270,7 @@ def open_settings_panel():
     code_var.trace_add('write', lambda *args: apply_restart_settings())
 
     # Clear cache
-    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache).pack(anchor=E)
+    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache, ).pack(anchor=E)
 
     Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
 
@@ -557,58 +557,51 @@ try:
     root.config(menu=menu)
 
     # File menu
-    filemenu = Menu(tearoff=0)
-    menu.add_cascade(menu=filemenu, label=lang_dict["menus"]["file"])
-    filemenu.add_command(command=new_file, label=lang_dict["menus"]["new-file"])
-    filemenu.add_command(command=new_window, label=lang_dict["menus"]["new-window"])
+    filemenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["file"], menu=filemenu)
+    filemenu.add_command(label=lang_dict["menus"]["new-file"], command=new_file)
+    filemenu.add_command(label=lang_dict["menus"]["new-window"], command=new_window)
     filemenu.add_separator()
-    filemenu.add_command(command=open_file, label=lang_dict["menus"]["open-file"])
-    filemenu.add_command(command=save_file, label=lang_dict["menus"]["save-file"])
-    filemenu.add_command(command=save_as_file, label=lang_dict["menus"]["save-as-file"])
+    filemenu.add_command(label=lang_dict["menus"]["open-file"], command=open_file)
+    filemenu.add_command(label=lang_dict["menus"]["save-file"], command=save_file)
+    filemenu.add_command(label=lang_dict["menus"]["save-as-file"], command=save_as_file)
     filemenu.add_separator()
-    filemenu.add_command(command=show_current_file_dir, label=lang_dict["menus"]["show-file-dir"])
+    filemenu.add_command(label=lang_dict["menus"]["show-file-dir"], command=show_current_file_dir)
     filemenu.add_separator()
-    filemenu.add_command(command=exit_editor, label=lang_dict["menus"]["exit"])
+    filemenu.add_command(label=lang_dict["menus"]["exit"], command=exit_editor)
 
     # Edit menu
-    editmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=editmenu, label=lang_dict["menus"]["edit"])
-    editmenu.add_command(command=undo, label=lang_dict["menus"]["undo"])
-    editmenu.add_command(command=redo, label=lang_dict["menus"]["redo"])
+    editmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["edit"], menu=editmenu)
+    editmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
+    editmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
     editmenu.add_separator()
-    editmenu.add_command(command=copy, label=lang_dict["menus"]["copy"])
-    editmenu.add_command(command=paste, label=lang_dict["menus"]["paste"])
-    editmenu.add_command(command=delete, label=lang_dict["menus"]["delete"])
+    editmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
+    editmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
+    editmenu.add_command(label=lang_dict["menus"]["delete"], command=delete)
 
     # Run menu
-    runmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
-    runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
-    runmenu.add_command(command=clear, label=lang_dict["menus"]["clear-output"])
+    runmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["run"], menu=runmenu)
+    runmenu.add_command(label=lang_dict["menus"]["run"], command=run)
+    runmenu.add_command(label=lang_dict["menus"]["clear-output"], command=clear)
 
-    # Pop menu
-    popmenu = Menu(root, tearoff=0)
-    popmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
-    popmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
-    popmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
-    popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
-
-    # Plugin menu (comming soon)
-    pluginmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
+    # Plugin menu
+    pluginmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["plugin"], menu=pluginmenu)
 
     # AI menu
-    aimenu = Menu(tearoff=0)
-    menu.add_cascade(menu=aimenu, label="AI")
-    aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), label=lang_dict["ai"]["show"])
-    aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
+    aimenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label="AI", menu=aimenu)
+    aimenu.add_command(label=lang_dict["ai"]["show"], command=lambda: ai_sidebar.pack(side="right", fill="y"))
+    aimenu.add_command(label=lang_dict["ai"]["hide"], command=lambda: ai_sidebar.pack_forget())
 
     # Settings menu
-    settingsmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["help"])
+    settingsmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["help"], menu=settingsmenu)
     settingsmenu.add_command(label=lang_dict["menus"]["help"], command=helpFunction)
-    settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
-    settingsmenu.add_command(command=tplshow, label="TPL")
+    settingsmenu.add_command(label=lang_dict["menus"]["open-settings"], command=open_settings_panel)
+    settingsmenu.add_command(label="TPL", command=tplshow)
 
     logger.info("Window Starting - Menu-set successfully")
 
@@ -635,7 +628,7 @@ try:
     code_paned.add(commandpaned, weight=2)
     commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
     commandpaned.add(commandarea,weight=18)
-    executebutton = Button(text=lang_dict["menus"]["run"], command=execute_commands)
+    executebutton = Button(commandpaned, text=lang_dict["menus"]["run"], command=execute_commands)
     commandpaned.add(executebutton, weight=1)
 
     # Config commandpaned widgets background color
@@ -801,4 +794,4 @@ try:
     root.mainloop()
 
 except Exception as e:
-    logger.critical(f"Crashed! {e} \n Traceback: {traceback.print_last()}")
+    logger.critical(f"Crashed! {e}\nTraceback: {traceback.format_exc()}")
