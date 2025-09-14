@@ -236,7 +236,7 @@ def open_settings_panel():
     for theme in rawdata:
         themes.append(theme.split('.')[0])
 
-    OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
+    OptionMenu(settings_window, theme_var, *themes, bootstyle="dark-outline").pack(anchor=W, fill=X)
 
     # Font
     font_var = StringVar(value=Settings.Editor.font())
@@ -256,7 +256,7 @@ def open_settings_panel():
     # Multi-languange support
     lang_var = StringVar(value=Settings.Editor.lang())
     Label(settings_window, text=lang_dict["settings"]["languange"]).pack(anchor=W)
-    OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
+    OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian", bootstyle="dark-outline").pack(anchor=W, fill=X)
 
     lang_var.trace_add('write', lambda *args: apply_restart_settings())
 
@@ -265,14 +265,14 @@ def open_settings_panel():
     with open(f"{Path.cwd() / "asset" / "packages" / "code_support.json"}", "r", encoding="utf-8") as fp:
         support_code_type = json.load(fp)
     Label(settings_window, text=lang_dict["settings"]["coding-languange"]).pack(anchor=W)
-    OptionMenu(settings_window, code_var, *support_code_type).pack(anchor=W, fill=X)
+    OptionMenu(settings_window, code_var, *support_code_type, bootstyle="dark-outline").pack(anchor=W, fill=X)
 
     code_var.trace_add('write', lambda *args: apply_restart_settings())
 
     # Clear cache
-    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache, ).pack(anchor=E)
+    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache, bootstyle="danger-outline").pack(anchor=W)
 
-    Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
+    Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy, bootstyle="info-outline").pack(anchor=E)
 
 # -------------------- File Operations --------------------
 def open_file():
