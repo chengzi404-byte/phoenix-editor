@@ -11,7 +11,7 @@ from tkinter import (
     W, X, E, BOTH, VERTICAL, HORIZONTAL, END,
     Frame, Label, Button, Scrollbar, DISABLED, NORMAL
 )
-from tkinter.ttk import *
+from ttkbootstrap import *
 from pathlib import Path
 from library.thridPartyLicense import show as tplshow
 import os
@@ -236,12 +236,12 @@ def open_settings_panel():
     for theme in rawdata:
         themes.append(theme.split('.')[0])
 
-    OptionMenu(settings_window, theme_var, *themes).pack(anchor=W, fill=X)
+    OptionMenu(settings_window, theme_var, *themes, bootstyle="dark-outline").pack(anchor=W, fill=X)
 
     # Font
     font_var = StringVar(value=Settings.Editor.font())
     Label(settings_window, text=lang_dict["settings"]["font"]).pack(anchor=W)
-    Entry(settings_window, textvariable=font_var).pack(anchor=W, fill=X)
+    Entry(settings_window, textvariable=font_var, bootstyle="dark").pack(anchor=W, fill=X)
 
     # Font size
     fontsize_var = IntVar(value=Settings.Editor.font_size())
@@ -256,7 +256,7 @@ def open_settings_panel():
     # Multi-languange support
     lang_var = StringVar(value=Settings.Editor.lang())
     Label(settings_window, text=lang_dict["settings"]["languange"]).pack(anchor=W)
-    OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian").pack(anchor=W, fill=X)
+    OptionMenu(settings_window, lang_var, "Chinese", "English", "French", "German", "Japanese", "Russian", bootstyle="dark-outline").pack(anchor=W, fill=X)
 
     lang_var.trace_add('write', lambda *args: apply_restart_settings())
 
@@ -265,14 +265,14 @@ def open_settings_panel():
     with open(f"{Path.cwd() / "asset" / "packages" / "code_support.json"}", "r", encoding="utf-8") as fp:
         support_code_type = json.load(fp)
     Label(settings_window, text=lang_dict["settings"]["coding-languange"]).pack(anchor=W)
-    OptionMenu(settings_window, code_var, *support_code_type).pack(anchor=W, fill=X)
+    OptionMenu(settings_window, code_var, *support_code_type, bootstyle="dark-outline").pack(anchor=W, fill=X)
 
     code_var.trace_add('write', lambda *args: apply_restart_settings())
 
     # Clear cache
-    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache).pack(anchor=E)
+    Button(settings_window, text=lang_dict["settings"]["clear-cache"], command=clear_cache, bootstyle="danger-outline").pack(anchor=W)
 
-    Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy).pack(anchor=E)
+    Button(settings_window, text=lang_dict["settings"]["close"], command=settings_window.destroy, bootstyle="info-outline").pack(anchor=E)
 
 # -------------------- File Operations --------------------
 def open_file():
@@ -505,19 +505,49 @@ def exit_editor():
         sys.exit(0)
 
 def execute_commands():
-    """Excute commands in commandarea"""
-    command = commandarea.get()
-    try:
-        args = shlex.split(command)
-        runtool = subprocess.Popen(args, stdin=subprocess.PIPE, 
-                                   stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   shell=True)
+    """Execute commands in commandarea"""
+    command = commandarea.get().strip()
+    if not command:
+        return
         
-        stdout, stderr = runtool.communicate()
-
-        printarea.delete(0.0, END)
-        printarea.insert(END, stdout.decode(errors="replace"))  # Decode as a string
-        printarea.insert(END, stderr.decode(errors="replace"))  # Decode as a string
+    try:
+        # Split command into args safely
+        args = shlex.split(command)
+        
+        # Basic command validation
+        if not args[0] or args[0].startswith('.'):
+            raise ValueError("Invalid command")
+            
+        # Execute without shell=True
+        runtool = subprocess.Popen(
+            args,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            shell=False # Prevent shell injection
+        )
+        
+        try:
+            stdout, stderr = runtool.communicate(timeout=30) # Add timeout
+            
+            printarea.delete(0.0, END)
+            if stdout:
+                printarea.insert(END, stdout.decode(errors="replace"))
+            if stderr:    
+                printarea.insert(END, stderr.decode(errors="replace"))
+                
+        except subprocess.TimeoutExpired:
+            runtool.kill()
+            printarea.insert(END, "Command timed out\n")
+            
+        finally:
+            # Cleanup
+            if runtool.poll() is None:
+                runtool.terminate()
+                
+    except ValueError as e:
+        printarea.insert(END, f"Invalid command: {str(e)}\n")
+        messagebox.showerror("Error", f"Invalid command: {str(e)}")
     except Exception as e:
         printarea.insert(END, f"Execution error: {str(e)}\n")
         messagebox.showerror("Error", f"Execution error: {str(e)}")
@@ -557,58 +587,51 @@ try:
     root.config(menu=menu)
 
     # File menu
-    filemenu = Menu(tearoff=0)
-    menu.add_cascade(menu=filemenu, label=lang_dict["menus"]["file"])
-    filemenu.add_command(command=new_file, label=lang_dict["menus"]["new-file"])
-    filemenu.add_command(command=new_window, label=lang_dict["menus"]["new-window"])
+    filemenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["file"], menu=filemenu)
+    filemenu.add_command(label=lang_dict["menus"]["new-file"], command=new_file)
+    filemenu.add_command(label=lang_dict["menus"]["new-window"], command=new_window)
     filemenu.add_separator()
-    filemenu.add_command(command=open_file, label=lang_dict["menus"]["open-file"])
-    filemenu.add_command(command=save_file, label=lang_dict["menus"]["save-file"])
-    filemenu.add_command(command=save_as_file, label=lang_dict["menus"]["save-as-file"])
+    filemenu.add_command(label=lang_dict["menus"]["open-file"], command=open_file)
+    filemenu.add_command(label=lang_dict["menus"]["save-file"], command=save_file)
+    filemenu.add_command(label=lang_dict["menus"]["save-as-file"], command=save_as_file)
     filemenu.add_separator()
-    filemenu.add_command(command=show_current_file_dir, label=lang_dict["menus"]["show-file-dir"])
+    filemenu.add_command(label=lang_dict["menus"]["show-file-dir"], command=show_current_file_dir)
     filemenu.add_separator()
-    filemenu.add_command(command=exit_editor, label=lang_dict["menus"]["exit"])
+    filemenu.add_command(label=lang_dict["menus"]["exit"], command=exit_editor)
 
     # Edit menu
-    editmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=editmenu, label=lang_dict["menus"]["edit"])
-    editmenu.add_command(command=undo, label=lang_dict["menus"]["undo"])
-    editmenu.add_command(command=redo, label=lang_dict["menus"]["redo"])
+    editmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["edit"], menu=editmenu)
+    editmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
+    editmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
     editmenu.add_separator()
-    editmenu.add_command(command=copy, label=lang_dict["menus"]["copy"])
-    editmenu.add_command(command=paste, label=lang_dict["menus"]["paste"])
-    editmenu.add_command(command=delete, label=lang_dict["menus"]["delete"])
+    editmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
+    editmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
+    editmenu.add_command(label=lang_dict["menus"]["delete"], command=delete)
 
     # Run menu
-    runmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=runmenu, label=lang_dict["menus"]["run"])
-    runmenu.add_command(command=run, label=lang_dict["menus"]["run"])
-    runmenu.add_command(command=clear, label=lang_dict["menus"]["clear-output"])
+    runmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["run"], menu=runmenu)
+    runmenu.add_command(label=lang_dict["menus"]["run"], command=run)
+    runmenu.add_command(label=lang_dict["menus"]["clear-output"], command=clear)
 
-    # Pop menu
-    popmenu = Menu(root, tearoff=0)
-    popmenu.add_command(label=lang_dict["menus"]["copy"], command=copy)
-    popmenu.add_command(label=lang_dict["menus"]["paste"], command=paste)
-    popmenu.add_command(label=lang_dict["menus"]["undo"], command=undo)
-    popmenu.add_command(label=lang_dict["menus"]["redo"], command=redo)
-
-    # Plugin menu (comming soon)
-    pluginmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=pluginmenu, label=lang_dict["menus"]["plugin"])
+    # Plugin menu
+    pluginmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["plugin"], menu=pluginmenu)
 
     # AI menu
-    aimenu = Menu(tearoff=0)
-    menu.add_cascade(menu=aimenu, label="AI")
-    aimenu.add_command(command=lambda: ai_sidebar.pack(side="right", fill="y"), label=lang_dict["ai"]["show"])
-    aimenu.add_command(command=lambda: ai_sidebar.pack_forget(), label=lang_dict["ai"]["hide"])
+    aimenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label="AI", menu=aimenu)
+    aimenu.add_command(label=lang_dict["ai"]["show"], command=lambda: ai_sidebar.pack(side="right", fill="y"))
+    aimenu.add_command(label=lang_dict["ai"]["hide"], command=lambda: ai_sidebar.pack_forget())
 
     # Settings menu
-    settingsmenu = Menu(tearoff=0)
-    menu.add_cascade(menu=settingsmenu, label=lang_dict["menus"]["help"])
+    settingsmenu = Menu(menu, tearoff=0)
+    menu.add_cascade(label=lang_dict["menus"]["help"], menu=settingsmenu)
     settingsmenu.add_command(label=lang_dict["menus"]["help"], command=helpFunction)
-    settingsmenu.add_command(command=open_settings_panel, label=lang_dict["menus"]["open-settings"])
-    settingsmenu.add_command(command=tplshow, label="TPL")
+    settingsmenu.add_command(label=lang_dict["menus"]["open-settings"], command=open_settings_panel)
+    settingsmenu.add_command(label="TPL", command=tplshow)
 
     logger.info("Window Starting - Menu-set successfully")
 
@@ -633,9 +656,9 @@ try:
 
     commandpaned = PanedWindow(code_paned, orient=HORIZONTAL)
     code_paned.add(commandpaned, weight=2)
-    commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    commandarea = Entry(commandpaned, font=Font(root, family=Settings.Editor.font(), size=Settings.Editor.font_size()), bootstyle="dark")
     commandpaned.add(commandarea,weight=18)
-    executebutton = Button(text=lang_dict["menus"]["run"], command=execute_commands)
+    executebutton = Button(commandpaned, text=lang_dict["menus"]["run"], command=execute_commands, bootstyle="info-outline")
     commandpaned.add(executebutton, weight=1)
 
     # Config commandpaned widgets background color
@@ -696,11 +719,11 @@ try:
     ai_input_frame = Frame(ai_sidebar)
     ai_input_frame.pack(fill=X, padx=10, pady=(0, 10))
 
-    ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()))
+    ai_input = Entry(ai_input_frame, font=Font(ai_sidebar, family=Settings.Editor.font(), size=Settings.Editor.font_size()), bootstyle="dark")
     ai_input.pack(side="left", fill=X, expand=True, padx=(0, 10))
     ai_input.bind("<Return>", on_ai_input_enter)
 
-    ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request)
+    ai_send_button = Button(ai_input_frame, text=lang_dict["ai"]["send"], command=send_ai_request, bootstyle="primary-outline")
     ai_send_button.pack(side="right")
 
     update_ai_sidebar_theme()
@@ -801,4 +824,4 @@ try:
     root.mainloop()
 
 except Exception as e:
-    logger.critical(f"Crashed! {e} \n Traceback: {traceback.print_last()}")
+    logger.critical(f"Crashed! {e}\nTraceback: {traceback.format_exc()}")
