@@ -33,6 +33,7 @@ def setup_logger(log_dir="./logs", debug=False):
         logger.add(log_dir)
 
         return logger
+    
     except Exception as e:
         print(f"Failed to setup logger: {e}")
         
